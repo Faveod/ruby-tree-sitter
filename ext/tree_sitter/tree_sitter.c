@@ -7,4 +7,5 @@ void Init_tree_sitter() {
 
   init_parser();
   init_language();
+  init_range();
 }

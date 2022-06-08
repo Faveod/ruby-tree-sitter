@@ -3,13 +3,15 @@
 
 #include "tree_sitter/api.h"
 #include <ruby.h>
+/* #include <ruby/util.h> */
 
-// All new_* functions create ruby objects from a TS* ptr
 VALUE new_language(const TSLanguage *);
+VALUE new_range(const TSRange *);
 
 // All init_* functions are called from Init_tree_sitter
 void init_language(void);
 void init_parser(void);
+void init_range(void);
 
 // This is a special entry-point for the extension
 void Init_tree_sitter(void);
