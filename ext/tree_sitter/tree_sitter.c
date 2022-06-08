@@ -1,9 +1,10 @@
 #include "tree_sitter.h"
 
-VALUE rb_mTreeSitter;
+VALUE mTreeSitter;
 
 void Init_tree_sitter() {
-  rb_mTreeSitter = rb_define_module("TreeSitter");
+  mTreeSitter = rb_define_module("TreeSitter");
 
   init_parser();
+  init_language();
 }
