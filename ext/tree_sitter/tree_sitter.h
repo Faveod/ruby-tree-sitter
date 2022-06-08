@@ -1,12 +1,10 @@
-#ifndef TREE_SITTER_H
-#define TREE_SITTER_H
+#ifndef _RB_TREE_SITTER_H
+#define _RB_TREE_SITTER_H
 
-#include "ruby.h"
+#include "tree_sitter/api.h"
+#include <ruby.h>
 
-VALUE TreeSitter = Qnil;
-
-static VALUE hello_world(VALUE mod);
-
-void Init_tree_sitter();
+void init_parser(void);
+void Init_tree_sitter(void);
 
 #endif

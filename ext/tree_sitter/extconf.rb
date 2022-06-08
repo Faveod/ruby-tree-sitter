@@ -1,18 +1,38 @@
 require 'mkmf'
 
-ROOT                    = File.expand_path(__dir__)
-TREE_SITTER_DIR         = File.join(ROOT, '..', '..', 'vendor', 'tree-sitter')
-TREE_SITTER_OUT_DIR     = TREE_SITTER_DIR
-TREE_SITTER_INCLUDE_DIR = File.join(TREE_SITTER_DIR, 'lib', 'include')
-# TREE_SITTER_SRC_DIR     = File.join(TREE_SITTER_DIR, 'lib', 'src')
+RbConfig::MAKEFILE_CONFIG['CC'] = ENV['CC'] if ENV['CC']
 
-HEADER_DIRS = [TREE_SITTER_INCLUDE_DIR]
-LIB_DIRS    = [TREE_SITTER_OUT_DIR]
+$CFLAGS << " -O0"
+$CFLAGS << " -std=c99"
+$CFLAGS << " -Wall"
+
+header = find_header('tree_sitter/api.h',
+                     # Usual paths
+                     '/opt/include',
+                     '/opt/local/include',
+                     '/usr/include',
+                     '/usr/local/include')
+
+library = find_library('tree-sitter',   # libtree-sitter
+                       'ts_parser_new', # a symbol
+                       # Usual paths
+                       '/opt/lib',
+                       '/opt/local/lib',
+                       '/usr/lib',
+                       '/usr/local/lib')
 
 
-Dir.chdir(TREE_SITTER_DIR) do
-  puts `make`
+if !header || !library
+    crash(<<~EOL)
+      Missing header: #{header ? 'no' : 'yes'}, library: #{library ? 'no' : 'yes'}.
+      Install the library or try one of the following options to extconf.rb:
+
+        --with-tree-sitter-dir=/path/to/tree-sitter
+        --with-tree-sitter-lib=/path/to/tree-sitter/lib
+        --with-tree-sitter-include=/path/to/tree-sitter/include
+    EOL
 end
 
-dir_config('tree_sitter', HEADER_DIRS, LIB_DIRS)
+dir_config('tree-sitter')
+create_header()
 create_makefile('tree_sitter/tree_sitter')
