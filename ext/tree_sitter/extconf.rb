@@ -14,5 +14,5 @@ Dir.chdir(TREE_SITTER_DIR) do
   puts `make`
 end
 
-dir_config('grenadier', HEADER_DIRS, LIB_DIRS)
-create_makefile('grenadier/grenadier')
+dir_config('tree_sitter', HEADER_DIRS, LIB_DIRS)
+create_makefile('tree_sitter/tree_sitter')
