@@ -1,4 +1,3 @@
-
 #include "tree_sitter.h"
 
 extern VALUE mTreeSitter;

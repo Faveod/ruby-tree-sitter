@@ -65,6 +65,19 @@ static VALUE parser_set_included_ranges(VALUE self, VALUE array) {
   return res ? Qtrue : Qfalse;
 }
 
+static VALUE parser_parse(VALUE self, VALUE old_tree, VALUE input) {
+  TSParser *parser;
+  TSTree *tree = NULL;
+  TSInput *in;
+  Data_Get_Struct(self, TSParser, parser);
+  if (old_tree != Qnil) {
+    Data_Get_Struct(old_tree, TSTree, tree);
+  }
+  Data_Get_Struct(input, TSInput, in);
+
+  return new_tree(ts_parser_parse(parser, tree, *in));
+}
+
 void init_parser(void) {
   cParser = rb_define_class_under(mTreeSitter, "Parser", rb_cObject);
 
@@ -74,4 +87,5 @@ void init_parser(void) {
   rb_define_method(cParser, "language=", parser_set_language, 1);
   rb_define_method(cParser, "included_ranges", parser_get_included_ranges, 0);
   rb_define_method(cParser, "included_ranges=", parser_set_included_ranges, 1);
+  rb_define_method(cParser, "parse", parser_parse, 2);
 }
