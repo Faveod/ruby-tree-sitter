@@ -32,6 +32,24 @@ static VALUE query_cursor_exec(VALUE self, VALUE query, VALUE node) {
   return Qnil;
 }
 
+static VALUE query_cursor_did_exceed_match_limit(VALUE self) {
+  TSQueryCursor *cursor = value_to_query_cursor(self);
+  return ts_query_cursor_did_exceed_match_limit(cursor) ? Qtrue : Qfalse;
+}
+
+static VALUE query_cursor_get_match_limit(VALUE self) {
+  TSQueryCursor *cursor = value_to_query_cursor(self);
+  return INT2NUM(ts_query_cursor_match_limit(cursor));
+}
+
+static VALUE query_cursor_set_match_limit(VALUE self, VALUE limit) {
+  TSQueryCursor *cursor = value_to_query_cursor(self);
+
+  ts_query_cursor_set_match_limit(cursor, NUM2INT(limit));
+
+  return Qnil;
+}
+
 void init_query_cursor(void) {
   cQueryCursor = rb_define_class_under(mTreeSitter, "QueryCursor", rb_cObject);
 
@@ -39,4 +57,10 @@ void init_query_cursor(void) {
 
   /* Class methods */
   rb_define_method(cQueryCursor, "allocate", query_cursor_exec, 2);
+  rb_define_method(cQueryCursor, "exceed_match_limit?",
+                   query_cursor_did_exceed_match_limit, 0);
+  rb_define_method(cQueryCursor, "match_limit", query_cursor_get_match_limit,
+                   0);
+  rb_define_method(cQueryCursor, "match_limit=", query_cursor_set_match_limit,
+                   1);
 }
