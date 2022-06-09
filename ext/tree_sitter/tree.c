@@ -49,6 +49,14 @@ VALUE tree_root_node(VALUE self) {
   return new_node(&root);
 }
 
+VALUE tree_language(VALUE self) {
+  TSTree *tree = value_to_tree(self);
+
+  const TSLanguage *language = ts_tree_language(tree);
+
+  return new_language(language);
+}
+
 void init_tree(void) {
   cTree = rb_define_class_under(mTreeSitter, "Tree", rb_cObject);
 
@@ -56,4 +64,5 @@ void init_tree(void) {
   rb_define_method(cTree, "copy", tree_copy, 0);
   rb_define_method(cTree, "delete", tree_delete, 0);
   rb_define_method(cTree, "root_node", tree_root_node, 0);
+  rb_define_method(cTree, "language", tree_language, 0);
 }
