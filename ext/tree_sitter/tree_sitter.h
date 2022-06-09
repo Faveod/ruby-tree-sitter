@@ -8,6 +8,7 @@
 // VALUE to TS* converters
 TSInput *value_to_input(VALUE);
 TSInputEncoding value_to_encoding(VALUE);
+TSInputEdit *value_to_input_edit(VALUE);
 TSLanguage *value_to_language(VALUE);
 TSLogger *value_to_logger(VALUE);
 TSRange *value_to_range(VALUE);

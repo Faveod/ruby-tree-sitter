@@ -57,6 +57,15 @@ VALUE tree_language(VALUE self) {
   return new_language(language);
 }
 
+VALUE tree_edit(VALUE self, VALUE edit) {
+  TSTree *tree = value_to_tree(self);
+  TSInputEdit *in = value_to_input_edit(edit);
+
+  ts_tree_edit(tree, in);
+
+  return Qnil;
+}
+
 void init_tree(void) {
   cTree = rb_define_class_under(mTreeSitter, "Tree", rb_cObject);
 
@@ -65,4 +74,5 @@ void init_tree(void) {
   rb_define_method(cTree, "delete", tree_delete, 0);
   rb_define_method(cTree, "root_node", tree_root_node, 0);
   rb_define_method(cTree, "language", tree_language, 0);
+  rb_define_method(cTree, "edit", tree_edit, 1);
 }
