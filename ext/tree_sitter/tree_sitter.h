@@ -17,6 +17,7 @@ TSTree *value_to_tree(VALUE);
 VALUE new_input(const TSInput *);
 VALUE new_language(const TSLanguage *);
 VALUE new_logger(const TSLogger *);
+VALUE new_node(const TSNode *);
 VALUE new_range(const TSRange *);
 VALUE new_tree(const TSTree *);
 

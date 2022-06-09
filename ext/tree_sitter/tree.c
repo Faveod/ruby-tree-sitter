@@ -41,10 +41,19 @@ VALUE tree_delete(VALUE self) {
   return Qnil;
 }
 
+VALUE tree_root_node(VALUE self) {
+  TSTree *tree = value_to_tree(self);
+
+  TSNode root = ts_tree_root_node(tree);
+
+  return new_node(&root);
+}
+
 void init_tree(void) {
   cTree = rb_define_class_under(mTreeSitter, "Tree", rb_cObject);
 
   /* Class methods */
   rb_define_method(cTree, "copy", tree_copy, 0);
   rb_define_method(cTree, "delete", tree_delete, 0);
+  rb_define_method(cTree, "root_node", tree_root_node, 0);
 }
