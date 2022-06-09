@@ -84,6 +84,16 @@ static VALUE tree_cursor_goto_first_child_for_point(VALUE self, VALUE point) {
   return LL2NUM(ts_tree_cursor_goto_first_child_for_point(tree_cursor, *p));
 }
 
+static VALUE tree_cursor_copy(VALUE self) {
+  TSTreeCursor *tree_cursor = value_to_tree_cursor(self);
+  VALUE res = tree_cursor_allocate(cTreeCursor);
+  TSTreeCursor *ptr = value_to_tree_cursor(res);
+
+  *ptr = ts_tree_cursor_copy(tree_cursor);
+
+  return res;
+}
+
 void init_tree_cursor(void) {
   cTreeCursor = rb_define_class_under(mTreeSitter, "TreeCursor", rb_cObject);
 
@@ -106,4 +116,5 @@ void init_tree_cursor(void) {
                    tree_cursor_goto_first_child_for_byte, 1);
   rb_define_method(cTreeCursor, "goto_first_child_for_point",
                    tree_cursor_goto_first_child_for_point, 1);
+  rb_define_method(cTreeCursor, "copy", tree_cursor_copy, 0);
 }
