@@ -33,9 +33,30 @@ static VALUE query_initialize(VALUE self, VALUE language, VALUE source) {
   return self;
 }
 
+static VALUE query_pattern_count(VALUE self) {
+  TSQuery *query = value_to_query(self);
+
+  return INT2NUM(ts_query_pattern_count(query));
+}
+
+static VALUE query_capture_count(VALUE self) {
+  TSQuery *query = value_to_query(self);
+
+  return INT2NUM(ts_query_capture_count(query));
+}
+
+static VALUE query_string_count(VALUE self) {
+  TSQuery *query = value_to_query(self);
+
+  return INT2NUM(ts_query_string_count(query));
+}
+
 void init_query(void) {
   cQuery = rb_define_class_under(mTreeSitter, "Query", rb_cObject);
 
   /* Class methods */
   rb_define_method(cQuery, "initialize", query_initialize, 2);
+  rb_define_method(cQuery, "pattern_count", query_pattern_count, 0);
+  rb_define_method(cQuery, "capture_count", query_capture_count, 0);
+  rb_define_method(cQuery, "string_count", query_string_count, 0);
 }
