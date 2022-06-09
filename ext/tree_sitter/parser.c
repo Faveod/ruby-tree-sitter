@@ -70,7 +70,7 @@ static VALUE parser_parse(VALUE self, VALUE old_tree, VALUE input) {
   TSTree *tree = NULL;
   TSInput *in;
   Data_Get_Struct(self, TSParser, parser);
-  if (old_tree != Qnil) {
+  if (!NIL_P(old_tree)) {
     Data_Get_Struct(old_tree, TSTree, tree);
   }
   Data_Get_Struct(input, TSInput, in);
