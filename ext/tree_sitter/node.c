@@ -26,9 +26,16 @@ VALUE node_type(VALUE self) {
   return rb_str_new_cstr(ts_node_type(*node));
 }
 
+VALUE node_symbol(VALUE self) {
+  TSNode *node = value_to_node(self);
+
+  return INT2NUM(ts_node_symbol(*node));
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
   /* Class methods */
   rb_define_method(cNode, "type", node_type, 0);
+  rb_define_method(cNode, "symbol", node_symbol, 0);
 }
