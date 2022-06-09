@@ -135,18 +135,16 @@ static VALUE parser_parse_string_encoding(VALUE self, VALUE old_tree,
                                           VALUE string, VALUE encoding) {
   TSParser *parser;
   TSTree *tree = NULL;
-  TSInputEncoding *enc;
   Data_Get_Struct(self, TSParser, parser);
   if (!NIL_P(old_tree)) {
     Data_Get_Struct(old_tree, TSTree, tree);
   }
-  Data_Get_Struct(encoding, TSInputEncoding, enc);
 
+  TSInputEncoding enc = value_to_encoding(encoding);
   const char *str = StringValuePtr(string);
   uint32_t len = (uint32_t)RSTRING_LEN(string);
 
-  return new_tree(
-      ts_parser_parse_string_encoding(parser, tree, str, len, *enc));
+  return new_tree(ts_parser_parse_string_encoding(parser, tree, str, len, enc));
 }
 
 static VALUE parser_reset(VALUE self) {

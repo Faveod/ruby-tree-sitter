@@ -3,7 +3,8 @@
 
 #include "tree_sitter/api.h"
 #include <ruby.h>
-/* #include <ruby/util.h> */
+
+TSInputEncoding value_to_encoding(VALUE);
 
 VALUE new_input(const TSInput *);
 VALUE new_language(const TSLanguage *);
@@ -12,6 +13,7 @@ VALUE new_range(const TSRange *);
 VALUE new_tree(const TSTree *);
 
 // All init_* functions are called from Init_tree_sitter
+void init_encoding(void);
 void init_input(void);
 void init_logger(void);
 void init_language(void);
