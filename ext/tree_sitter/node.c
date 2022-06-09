@@ -252,6 +252,13 @@ VALUE node_edit(VALUE self, VALUE input_edit) {
   return Qnil;
 }
 
+VALUE node_eq(VALUE self, VALUE other) {
+  TSNode *node = value_to_node(self);
+  TSNode *edon = value_to_node(other);
+
+  return ts_node_eq(*node, *edon) ? Qtrue : Qfalse;
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -294,4 +301,5 @@ void init_node(void) {
   rb_define_method(cNode, "named_descendant_for_point_range",
                    node_named_descendant_for_point_range, 2);
   rb_define_method(cNode, "edit", node_edit, 1);
+  rb_define_method(cNode, "eq?", node_eq, 1);
 }
