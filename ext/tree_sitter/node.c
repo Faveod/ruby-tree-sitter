@@ -199,6 +199,14 @@ VALUE node_first_child_for_byte(VALUE self, VALUE byte) {
   return new_node(&child);
 }
 
+VALUE node_first_named_child_for_byte(VALUE self, VALUE byte) {
+  TSNode *node = value_to_node(self);
+  uint32_t b = NUM2INT(byte);
+  TSNode child = ts_node_first_named_child_for_byte(*node, b);
+
+  return new_node(&child);
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -230,4 +238,6 @@ void init_node(void) {
   rb_define_method(cNode, "next_named_sibling", node_next_named_sibling, 0);
   rb_define_method(cNode, "prev_named_sibling", node_prev_named_sibling, 0);
   rb_define_method(cNode, "first_child_for_byte", node_first_child_for_byte, 1);
+  rb_define_method(cNode, "first_named_child_for_byte",
+                   node_first_child_for_byte, 1);
 }
