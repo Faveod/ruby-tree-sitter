@@ -57,6 +57,21 @@ static VALUE tree_cursor_current_field_id(VALUE self) {
   return INT2NUM(ts_tree_cursor_current_field_id(tree_cursor));
 }
 
+static VALUE tree_cursor_goto_parent(VALUE self) {
+  TSTreeCursor *tree_cursor = value_to_tree_cursor(self);
+  return ts_tree_cursor_goto_parent(tree_cursor) ? Qtrue : Qfalse;
+}
+
+static VALUE tree_cursor_goto_next_sibling(VALUE self) {
+  TSTreeCursor *tree_cursor = value_to_tree_cursor(self);
+  return ts_tree_cursor_goto_next_sibling(tree_cursor) ? Qtrue : Qfalse;
+}
+
+static VALUE tree_cursor_goto_first_child(VALUE self) {
+  TSTreeCursor *tree_cursor = value_to_tree_cursor(self);
+  return ts_tree_cursor_goto_first_child(tree_cursor) ? Qtrue : Qfalse;
+}
+
 void init_tree_cursor(void) {
   cTreeCursor = rb_define_class_under(mTreeSitter, "TreeCursor", rb_cObject);
 
@@ -70,4 +85,9 @@ void init_tree_cursor(void) {
                    tree_cursor_current_field_name, 0);
   rb_define_method(cTreeCursor, "current_field_id",
                    tree_cursor_current_field_id, 0);
+  rb_define_method(cTreeCursor, "goto_parent", tree_cursor_goto_parent, 0);
+  rb_define_method(cTreeCursor, "goto_next_sibling",
+                   tree_cursor_goto_next_sibling, 0);
+  rb_define_method(cTreeCursor, "goto_first_child",
+                   tree_cursor_goto_first_child, 0);
 }
