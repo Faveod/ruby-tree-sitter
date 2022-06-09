@@ -100,6 +100,13 @@ VALUE node_has_error(VALUE self) {
   return ts_node_has_error(*node) ? Qtrue : Qfalse;
 }
 
+VALUE node_parent(VALUE self) {
+  TSNode *node = value_to_node(self);
+  TSNode parent = ts_node_parent(*node);
+
+  return new_node(&parent);
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -118,4 +125,5 @@ void init_node(void) {
   rb_define_method(cNode, "extra?", node_is_extra, 0);
   rb_define_method(cNode, "changes?", node_has_changes, 0);
   rb_define_method(cNode, "error?", node_has_error, 0);
+  rb_define_method(cNode, "parent", node_parent, 0);
 }
