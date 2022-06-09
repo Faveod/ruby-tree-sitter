@@ -6,6 +6,7 @@ void Init_tree_sitter() {
   mTreeSitter = rb_define_module("TreeSitter");
 
   init_input();
+  init_logger();
   init_language();
   init_parser();
   init_range();

@@ -44,6 +44,14 @@ static VALUE parser_get_timeout_micros(VALUE self) {
   return res;
 }
 
+static VALUE parser_get_logger(VALUE self) {
+  TSParser *parser;
+  Data_Get_Struct(self, TSParser, parser);
+
+  TSLogger logger = ts_parser_logger(parser);
+  return new_logger(&logger);
+}
+
 static VALUE parser_set_language(VALUE self, VALUE lang) {
   TSParser *parser;
   TSLanguage *language;
@@ -81,6 +89,17 @@ static VALUE parser_set_timeout_micros(VALUE self, VALUE timeout) {
 
   uint64_t t = NUM2ULL(timeout);
   ts_parser_set_timeout_micros(parser, t);
+
+  return Qnil;
+}
+
+static VALUE parser_set_logger(VALUE self, VALUE logger) {
+  TSParser *parser;
+  TSLogger *l;
+  Data_Get_Struct(self, TSParser, parser);
+  Data_Get_Struct(logger, TSLogger, l);
+
+  ts_parser_set_logger(parser, *l);
 
   return Qnil;
 }
@@ -142,8 +161,9 @@ static VALUE parser_reset(VALUE self) {
 void init_parser(void) {
   cParser = rb_define_class_under(mTreeSitter, "Parser", rb_cObject);
 
-  /* Class methods */
   rb_define_alloc_func(cParser, parser_allocate);
+
+  /* Class methods */
   rb_define_method(cParser, "language", parser_get_language, 0);
   rb_define_method(cParser, "language=", parser_set_language, 1);
   rb_define_method(cParser, "included_ranges", parser_get_included_ranges, 0);
@@ -155,4 +175,11 @@ void init_parser(void) {
   rb_define_method(cParser, "reset", parser_reset, 0);
   rb_define_method(cParser, "timeout_micros", parser_get_timeout_micros, 0);
   rb_define_method(cParser, "timeout_micros=", parser_set_timeout_micros, 1);
+  // TODO: How do we work with cancellation pointers? Do we need to expose them?
+  // rb_define_method(cParser, "cancellation_flag",
+  // parser_get_cancellation_flag, 0);
+  // rb_define_method(cParser, "cancellation_flag=",
+  // parser_set_cancellation_flag, 1);
+  rb_define_method(cParser, "logger", parser_get_logger, 0);
+  rb_define_method(cParser, "logger", parser_set_logger, 1);
 }
