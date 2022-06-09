@@ -4,6 +4,14 @@ extern VALUE mTreeSitter;
 
 VALUE cLogger;
 
+TSLogger *value_to_logger(VALUE self) {
+  TSLogger *logger;
+
+  Data_Get_Struct(self, TSLogger, logger);
+
+  return logger;
+}
+
 void logger_free(TSLogger *logger) { free(logger); }
 
 static VALUE logger_allocate(VALUE klass) {
@@ -13,9 +21,10 @@ static VALUE logger_allocate(VALUE klass) {
 
 VALUE new_logger(const TSLogger *logger) {
   VALUE res = logger_allocate(cLogger);
-  TSLogger *ptr;
-  Data_Get_Struct(res, TSLogger, ptr);
+  TSLogger *ptr = value_to_logger(res);
+
   memcpy(ptr, logger, sizeof(TSLogger));
+
   return res;
 }
 

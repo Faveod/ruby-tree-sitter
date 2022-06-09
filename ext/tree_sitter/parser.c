@@ -4,29 +4,36 @@ extern VALUE mTreeSitter;
 
 VALUE cParser;
 
+TSParser *value_to_parser(VALUE self) {
+  TSParser *parser;
+
+  Data_Get_Struct(self, TSParser, parser);
+
+  return parser;
+}
+
 void parser_free(TSParser *parser) { ts_parser_delete(parser); }
 
 static VALUE parser_allocate(VALUE klass) {
   TSParser *parser;
+
   parser = ts_parser_new();
+
   return Data_Wrap_Struct(klass, NULL, parser_free, parser);
 }
 
 static VALUE parser_get_language(VALUE self) {
-  TSParser *parser;
-  Data_Get_Struct(self, TSParser, parser);
+  TSParser *parser = value_to_parser(self);
 
   return new_language(ts_parser_language(parser));
 }
 
 static VALUE parser_get_included_ranges(VALUE self) {
-  TSParser *parser;
-  Data_Get_Struct(self, TSParser, parser);
+  TSParser *parser = value_to_parser(self);
   uint32_t length;
-
   const TSRange *ranges = ts_parser_included_ranges(parser, &length);
-
   VALUE res = rb_ary_new_capa(length);
+
   for (uint32_t i = 0; i < length; i++) {
     rb_ary_store(res, i, new_range(&ranges[i]));
   }
@@ -35,9 +42,7 @@ static VALUE parser_get_included_ranges(VALUE self) {
 }
 
 static VALUE parser_get_timeout_micros(VALUE self) {
-  TSParser *parser;
-  Data_Get_Struct(self, TSParser, parser);
-
+  TSParser *parser = value_to_parser(self);
   uint64_t timeout = ts_parser_timeout_micros(parser);
   VALUE res = ULL2NUM(timeout);
 
@@ -45,34 +50,29 @@ static VALUE parser_get_timeout_micros(VALUE self) {
 }
 
 static VALUE parser_get_logger(VALUE self) {
-  TSParser *parser;
-  Data_Get_Struct(self, TSParser, parser);
-
+  TSParser *parser = value_to_parser(self);
   TSLogger logger = ts_parser_logger(parser);
+
   return new_logger(&logger);
 }
 
-static VALUE parser_set_language(VALUE self, VALUE lang) {
-  TSParser *parser;
-  TSLanguage *language;
+static VALUE parser_set_language(VALUE self, VALUE language) {
+  TSParser *parser = value_to_parser(self);
+  TSLanguage *lang = value_to_language(language);
 
-  Data_Get_Struct(self, TSParser, parser);
-  Data_Get_Struct(self, TSLanguage, language);
-
-  return ts_parser_set_language(parser, language) ? Qtrue : Qfalse;
+  return ts_parser_set_language(parser, lang) ? Qtrue : Qfalse;
 }
 
 static VALUE parser_set_included_ranges(VALUE self, VALUE array) {
   Check_Type(array, T_ARRAY);
 
-  TSParser *parser;
-  Data_Get_Struct(self, TSParser, parser);
-
+  TSParser *parser = value_to_parser(self);
   long length = rb_array_len(array);
   TSRange *ranges = (TSRange *)malloc(length * sizeof(TSRange));
+
   for (int i = 0; i < length; i++) {
-    TSRange *range;
-    Data_Get_Struct(rb_ary_entry(array, i), TSRange, range);
+    VALUE entry = rb_ary_entry(array, i);
+    TSRange *range = value_to_range(entry);
 
     memcpy(&ranges[i], (void *)range, sizeof(TSRange));
   }
@@ -84,20 +84,17 @@ static VALUE parser_set_included_ranges(VALUE self, VALUE array) {
 }
 
 static VALUE parser_set_timeout_micros(VALUE self, VALUE timeout) {
-  TSParser *parser;
-  Data_Get_Struct(self, TSParser, parser);
-
+  TSParser *parser = value_to_parser(self);
   uint64_t t = NUM2ULL(timeout);
+
   ts_parser_set_timeout_micros(parser, t);
 
   return Qnil;
 }
 
 static VALUE parser_set_logger(VALUE self, VALUE logger) {
-  TSParser *parser;
-  TSLogger *l;
-  Data_Get_Struct(self, TSParser, parser);
-  Data_Get_Struct(logger, TSLogger, l);
+  TSParser *parser = value_to_parser(self);
+  TSLogger *l = value_to_logger(logger);
 
   ts_parser_set_logger(parser, *l);
 
@@ -105,26 +102,16 @@ static VALUE parser_set_logger(VALUE self, VALUE logger) {
 }
 
 static VALUE parser_parse(VALUE self, VALUE old_tree, VALUE input) {
-  TSParser *parser;
-  TSTree *tree = NULL;
-  TSInput *in;
-  Data_Get_Struct(self, TSParser, parser);
-  if (!NIL_P(old_tree)) {
-    Data_Get_Struct(old_tree, TSTree, tree);
-  }
-  Data_Get_Struct(input, TSInput, in);
+  TSParser *parser = value_to_parser(self);
+  TSTree *tree = value_to_tree(old_tree);
+  TSInput *in = value_to_input(input);
 
   return new_tree(ts_parser_parse(parser, tree, *in));
 }
 
 static VALUE parser_parse_string(VALUE self, VALUE old_tree, VALUE string) {
-  TSParser *parser;
-  TSTree *tree = NULL;
-  Data_Get_Struct(self, TSParser, parser);
-  if (!NIL_P(old_tree)) {
-    Data_Get_Struct(old_tree, TSTree, tree);
-  }
-
+  TSParser *parser = value_to_parser(self);
+  TSTree *tree = value_to_tree(old_tree);
   const char *str = StringValuePtr(string);
   uint32_t len = (uint32_t)RSTRING_LEN(string);
 
@@ -133,13 +120,8 @@ static VALUE parser_parse_string(VALUE self, VALUE old_tree, VALUE string) {
 
 static VALUE parser_parse_string_encoding(VALUE self, VALUE old_tree,
                                           VALUE string, VALUE encoding) {
-  TSParser *parser;
-  TSTree *tree = NULL;
-  Data_Get_Struct(self, TSParser, parser);
-  if (!NIL_P(old_tree)) {
-    Data_Get_Struct(old_tree, TSTree, tree);
-  }
-
+  TSParser *parser = value_to_parser(self);
+  TSTree *tree = value_to_tree(old_tree);
   TSInputEncoding enc = value_to_encoding(encoding);
   const char *str = StringValuePtr(string);
   uint32_t len = (uint32_t)RSTRING_LEN(string);
@@ -148,8 +130,7 @@ static VALUE parser_parse_string_encoding(VALUE self, VALUE old_tree,
 }
 
 static VALUE parser_reset(VALUE self) {
-  TSParser *parser;
-  Data_Get_Struct(self, TSParser, parser);
+  TSParser *parser = value_to_parser(self);
 
   ts_parser_reset(parser);
 
@@ -158,13 +139,15 @@ static VALUE parser_reset(VALUE self) {
 
 static VALUE parser_print_dot_graphs(VALUE self, VALUE file) {
   Check_Type(file, T_STRING);
-  TSParser *parser;
-  Data_Get_Struct(self, TSParser, parser);
+
+  TSParser *parser = value_to_parser(self);
   char *path = StringValueCStr(file);
   int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC,
                 0644); // 0644 = all read + user write
+
   ts_parser_print_dot_graphs(parser, fd);
   close(fd);
+
   return Qnil;
 }
 

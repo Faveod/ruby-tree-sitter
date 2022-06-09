@@ -5,8 +5,15 @@
 #include <ruby.h>
 #include <tree_sitter/api.h>
 
+// VALUE to TS* converters
+TSInput *value_to_input(VALUE);
 TSInputEncoding value_to_encoding(VALUE);
+TSLanguage *value_to_language(VALUE);
+TSLogger *value_to_logger(VALUE);
+TSRange *value_to_range(VALUE);
+TSTree *value_to_tree(VALUE);
 
+// TS* to VALUE converters
 VALUE new_input(const TSInput *);
 VALUE new_language(const TSLanguage *);
 VALUE new_logger(const TSLogger *);

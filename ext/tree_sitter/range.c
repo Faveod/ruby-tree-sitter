@@ -4,6 +4,14 @@ extern VALUE mTreeSitter;
 
 VALUE cRange;
 
+TSRange *value_to_range(VALUE self) {
+  TSRange *range;
+
+  Data_Get_Struct(self, TSRange, range);
+
+  return range;
+}
+
 VALUE new_range(const TSRange *range) {
   return Data_Wrap_Struct(cRange, NULL, NULL, (void *)range);
 }
