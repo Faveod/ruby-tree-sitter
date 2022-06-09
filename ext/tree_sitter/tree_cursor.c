@@ -72,6 +72,18 @@ static VALUE tree_cursor_goto_first_child(VALUE self) {
   return ts_tree_cursor_goto_first_child(tree_cursor) ? Qtrue : Qfalse;
 }
 
+static VALUE tree_cursor_goto_first_child_for_byte(VALUE self, VALUE byte) {
+  TSTreeCursor *tree_cursor = value_to_tree_cursor(self);
+  uint32_t b = NUM2INT(byte);
+  return LL2NUM(ts_tree_cursor_goto_first_child_for_byte(tree_cursor, b));
+}
+
+static VALUE tree_cursor_goto_first_child_for_point(VALUE self, VALUE point) {
+  TSTreeCursor *tree_cursor = value_to_tree_cursor(self);
+  TSPoint *p = value_to_point(point);
+  return LL2NUM(ts_tree_cursor_goto_first_child_for_point(tree_cursor, *p));
+}
+
 void init_tree_cursor(void) {
   cTreeCursor = rb_define_class_under(mTreeSitter, "TreeCursor", rb_cObject);
 
@@ -90,4 +102,8 @@ void init_tree_cursor(void) {
                    tree_cursor_goto_next_sibling, 0);
   rb_define_method(cTreeCursor, "goto_first_child",
                    tree_cursor_goto_first_child, 0);
+  rb_define_method(cTreeCursor, "goto_first_child_for_byte",
+                   tree_cursor_goto_first_child_for_byte, 1);
+  rb_define_method(cTreeCursor, "goto_first_child_for_point",
+                   tree_cursor_goto_first_child_for_point, 1);
 }
