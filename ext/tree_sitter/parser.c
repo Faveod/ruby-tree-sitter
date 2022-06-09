@@ -110,6 +110,15 @@ static VALUE parser_parse_string_encoding(VALUE self, VALUE old_tree,
       ts_parser_parse_string_encoding(parser, tree, str, len, *enc));
 }
 
+static VALUE parser_reset(VALUE self) {
+  TSParser *parser;
+  Data_Get_Struct(self, TSParser, parser);
+
+  ts_parser_reset(parser);
+
+  return Qnil;
+}
+
 void init_parser(void) {
   cParser = rb_define_class_under(mTreeSitter, "Parser", rb_cObject);
 
@@ -123,4 +132,5 @@ void init_parser(void) {
   rb_define_method(cParser, "parse_string", parser_parse_string, 2);
   rb_define_method(cParser, "parse_string_encoding",
                    parser_parse_string_encoding, 3);
+  rb_define_method(cParser, "reset", parser_reset, 0);
 }
