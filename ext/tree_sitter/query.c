@@ -51,6 +51,13 @@ static VALUE query_string_count(VALUE self) {
   return INT2NUM(ts_query_string_count(query));
 }
 
+static VALUE query_start_byte_for_pattern(VALUE self, VALUE byte) {
+  TSQuery *query = value_to_query(self);
+  uint32_t b = NUM2INT(byte);
+
+  return INT2NUM(ts_query_start_byte_for_pattern(query, b));
+}
+
 void init_query(void) {
   cQuery = rb_define_class_under(mTreeSitter, "Query", rb_cObject);
 
@@ -59,4 +66,6 @@ void init_query(void) {
   rb_define_method(cQuery, "pattern_count", query_pattern_count, 0);
   rb_define_method(cQuery, "capture_count", query_capture_count, 0);
   rb_define_method(cQuery, "string_count", query_string_count, 0);
+  rb_define_method(cQuery, "start_byte_for_pattern",
+                   query_start_byte_for_pattern, 1);
 }
