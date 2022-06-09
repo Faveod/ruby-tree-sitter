@@ -28,12 +28,19 @@ task :checkout do
 end
 # Rake::Task[:compile].prerequisites.insert(0, :checkout)
 
-namespace :clean do
-  task :treesitter do
-    puts `make clean`
+task :clean do
+  require 'fileutils'
+  bundle = File.join(__dir__, *%w[lib tree_sitter tree_sitter.bundle])
+  tmp = File.join(__dir__, 'tmp')
+  [bundle, tmp].each do |f|
+    if File.exist?(f)
+      puts "rm #{f}"
+      File.directory?(f) ? FileUtils.rm_rf(f) : FileUtils.rm(f)
+    else
+      puts "skipping #{f}"
+    end
   end
 end
-Rake::Task[:clean].prerequisites << "clean:tree-sitter"
 
 task :console do
   require 'pry'
