@@ -1,4 +1,5 @@
 #include "tree_sitter.h"
+#include <sys/_types/_u_int32_t.h>
 
 extern VALUE mTreeSitter;
 
@@ -66,6 +67,20 @@ VALUE tree_edit(VALUE self, VALUE edit) {
   return Qnil;
 }
 
+VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
+  TSTree *old = value_to_tree(old_tree);
+  TSTree *new = value_to_tree(new_tree);
+  uint32_t length;
+  TSRange *ranges = ts_tree_get_changed_ranges(old, new, &length);
+  VALUE res = rb_ary_new_capa(length);
+
+  for (uint32_t i = 0; i < length; i++) {
+    rb_ary_store(res, i, new_range(&ranges[i], true)); // must free
+  }
+
+  return res;
+}
+
 void init_tree(void) {
   cTree = rb_define_class_under(mTreeSitter, "Tree", rb_cObject);
 
@@ -75,4 +90,5 @@ void init_tree(void) {
   rb_define_method(cTree, "root_node", tree_root_node, 0);
   rb_define_method(cTree, "language", tree_language, 0);
   rb_define_method(cTree, "edit", tree_edit, 1);
+  rb_define_module_function(cTree, "changed_ranges", tree_changed_ranges, 2);
 }

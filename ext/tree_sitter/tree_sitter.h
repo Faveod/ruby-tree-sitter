@@ -19,7 +19,7 @@ VALUE new_input(const TSInput *);
 VALUE new_language(const TSLanguage *);
 VALUE new_logger(const TSLogger *);
 VALUE new_node(const TSNode *);
-VALUE new_range(const TSRange *);
+VALUE new_range(const TSRange *, bool);
 VALUE new_tree(const TSTree *);
 
 // All init_* functions are called from Init_tree_sitter

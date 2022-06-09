@@ -12,8 +12,11 @@ TSRange *value_to_range(VALUE self) {
   return range;
 }
 
-VALUE new_range(const TSRange *range) {
-  return Data_Wrap_Struct(cRange, NULL, NULL, (void *)range);
+void range_free(TSRange *range) { free(range); }
+
+VALUE new_range(const TSRange *range, bool must_free) {
+  return Data_Wrap_Struct(cRange, NULL, must_free ? range_free : NULL,
+                          (void *)range);
 }
 
 void init_range(void) {
