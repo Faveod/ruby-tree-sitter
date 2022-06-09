@@ -12,6 +12,7 @@ TSInputEncoding value_to_encoding(VALUE);
 TSInputEdit *value_to_input_edit(VALUE);
 TSLanguage *value_to_language(VALUE);
 TSLogger *value_to_logger(VALUE);
+TSPoint *value_to_point(VALUE);
 TSRange *value_to_range(VALUE);
 TSTree *value_to_tree(VALUE);
 
@@ -21,6 +22,7 @@ VALUE new_language(const TSLanguage *);
 VALUE new_logger(const TSLogger *);
 VALUE new_node(const TSNode *);
 VALUE new_range(const TSRange *, bool);
+VALUE new_point(const TSPoint *);
 VALUE new_tree(const TSTree *);
 
 // All init_* functions are called from Init_tree_sitter
