@@ -56,7 +56,7 @@ void init_query_cursor(void) {
   rb_define_alloc_func(cQueryCursor, query_cursor_allocate);
 
   /* Class methods */
-  rb_define_method(cQueryCursor, "allocate", query_cursor_exec, 2);
+  rb_define_method(cQueryCursor, "exec", query_cursor_exec, 2);
   rb_define_method(cQueryCursor, "exceed_match_limit?",
                    query_cursor_did_exceed_match_limit, 0);
   rb_define_method(cQueryCursor, "match_limit", query_cursor_get_match_limit,
