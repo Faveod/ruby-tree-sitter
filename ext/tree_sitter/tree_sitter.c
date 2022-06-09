@@ -11,6 +11,7 @@ void Init_tree_sitter() {
   init_language();
   init_parser();
   init_query();
+  init_query_predicate_step();
   init_query_error();
   init_range();
   init_tree();

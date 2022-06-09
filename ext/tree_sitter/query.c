@@ -53,9 +53,23 @@ static VALUE query_string_count(VALUE self) {
 
 static VALUE query_start_byte_for_pattern(VALUE self, VALUE byte) {
   TSQuery *query = value_to_query(self);
-  uint32_t b = NUM2INT(byte);
 
-  return INT2NUM(ts_query_start_byte_for_pattern(query, b));
+  return INT2NUM(ts_query_start_byte_for_pattern(query, NUM2INT(byte)));
+}
+
+static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
+  TSQuery *query = value_to_query(self);
+  uint32_t length;
+  const TSQueryPredicateStep *steps =
+      ts_query_predicates_for_pattern(query, NUM2INT(pattern_index), &length);
+
+  VALUE res = rb_ary_new_capa(length);
+
+  for (uint32_t i = 0; i < length; i++) {
+    rb_ary_push(res, new_query_predicate_step(&steps[i])); // must free
+  }
+
+  return res;
 }
 
 void init_query(void) {
@@ -68,4 +82,6 @@ void init_query(void) {
   rb_define_method(cQuery, "string_count", query_string_count, 0);
   rb_define_method(cQuery, "start_byte_for_pattern",
                    query_start_byte_for_pattern, 1);
+  rb_define_method(cQuery, "predicates_for_pattern",
+                   query_predicates_for_pattern, 1);
 }

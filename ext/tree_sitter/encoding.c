@@ -22,6 +22,8 @@ TSInputEncoding value_to_encoding(VALUE encoding) {
 
 void init_encoding(void) {
   mEncoding = rb_define_module_under(mTreeSitter, "Encoding");
+
+  /* Constants */
   rb_define_const(mEncoding, utf8, ID2SYM(rb_intern(utf8)));
   rb_define_const(mEncoding, utf16, ID2SYM(rb_intern(utf16)));
 }
