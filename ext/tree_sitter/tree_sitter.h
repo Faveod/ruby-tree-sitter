@@ -12,9 +12,11 @@ TSInputEncoding value_to_encoding(VALUE);
 TSInputEdit *value_to_input_edit(VALUE);
 TSLanguage *value_to_language(VALUE);
 TSLogger *value_to_logger(VALUE);
+TSNode *value_to_node(VALUE);
 TSPoint *value_to_point(VALUE);
 TSRange *value_to_range(VALUE);
 TSTree *value_to_tree(VALUE);
+TSTreeCursor *value_to_tree_cursor(VALUE);
 
 // TS* to VALUE converters
 VALUE new_input(const TSInput *);
@@ -33,6 +35,7 @@ void init_language(void);
 void init_parser(void);
 void init_range(void);
 void init_tree(void);
+void init_tree_cursor(void);
 
 // This is a special entry-point for the extension
 void Init_tree_sitter(void);

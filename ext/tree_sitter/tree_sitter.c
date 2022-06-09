@@ -12,4 +12,5 @@ void Init_tree_sitter() {
   init_parser();
   init_range();
   init_tree();
+  init_tree_cursor();
 }
