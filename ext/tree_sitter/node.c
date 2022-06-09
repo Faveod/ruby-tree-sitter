@@ -243,6 +243,15 @@ VALUE node_named_descendant_for_point_range(VALUE self, VALUE from, VALUE to) {
   return new_node(&child);
 }
 
+VALUE node_edit(VALUE self, VALUE input_edit) {
+  TSNode *node = value_to_node(self);
+  TSInputEdit *in = value_to_input_edit(input_edit);
+
+  ts_node_edit(node, in);
+
+  return Qnil;
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -284,4 +293,5 @@ void init_node(void) {
                    node_named_descendant_for_byte_range, 2);
   rb_define_method(cNode, "named_descendant_for_point_range",
                    node_named_descendant_for_point_range, 2);
+  rb_define_method(cNode, "edit", node_edit, 1);
 }
