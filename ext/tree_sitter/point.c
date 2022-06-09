@@ -12,7 +12,7 @@ TSPoint *value_to_point(VALUE self) {
   return point;
 }
 
-void point_free(TSPoint *point) { free(point); }
+static void point_free(TSPoint *point) { free(point); }
 
 static VALUE point_allocate(VALUE klass) {
   TSPoint *point = (TSPoint *)malloc(sizeof(TSPoint));
