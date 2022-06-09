@@ -87,6 +87,28 @@ static VALUE query_cursor_remove_match(VALUE self, VALUE id) {
   return Qnil;
 }
 
+// NOTE: maybe this is the limit of how "transparent" the bindings need to be.
+// Pending benchmarks, this can be very inefficient because obviously
+// ts_query_cursor_next_capture is intended to be used in a loop.  Creating an
+// array of two values and returning them, intuitively speaking, seem very
+// inefficient.
+static VALUE query_cursor_next_capture(VALUE self) {
+  TSQueryCursor *cursor = value_to_query_cursor(self);
+  TSQueryMatch *match = NULL;
+  uint32_t index;
+
+  if (ts_query_cursor_next_capture(cursor, match, &index)) {
+    VALUE res = rb_ary_new_capa(2);
+
+    rb_ary_push(res, new_query_match(match));
+    rb_ary_push(res, INT2NUM(index));
+
+    return res;
+  } else {
+    return Qnil;
+  }
+}
+
 void init_query_cursor(void) {
   cQueryCursor = rb_define_class_under(mTreeSitter, "QueryCursor", rb_cObject);
 
@@ -105,4 +127,5 @@ void init_query_cursor(void) {
                    2);
   rb_define_method(cQueryCursor, "next_match", query_cursor_next_match, 0);
   rb_define_method(cQueryCursor, "remove_match", query_cursor_remove_match, 1);
+  rb_define_method(cQueryCursor, "next_capture", query_cursor_next_capture, 0);
 }
