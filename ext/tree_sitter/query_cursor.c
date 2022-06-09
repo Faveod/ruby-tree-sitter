@@ -50,6 +50,24 @@ static VALUE query_cursor_set_match_limit(VALUE self, VALUE limit) {
   return Qnil;
 }
 
+static VALUE query_cursor_set_byte_range(VALUE self, VALUE from, VALUE to) {
+  TSQueryCursor *cursor = value_to_query_cursor(self);
+
+  ts_query_cursor_set_byte_range(cursor, NUM2INT(from), NUM2INT(to));
+
+  return Qnil;
+}
+
+static VALUE query_cursor_set_point_range(VALUE self, VALUE from, VALUE to) {
+  TSQueryCursor *cursor = value_to_query_cursor(self);
+  TSPoint *f = value_to_point(from);
+  TSPoint *t = value_to_point(to);
+
+  ts_query_cursor_set_point_range(cursor, *f, *t);
+
+  return Qnil;
+}
+
 void init_query_cursor(void) {
   cQueryCursor = rb_define_class_under(mTreeSitter, "QueryCursor", rb_cObject);
 
@@ -63,4 +81,7 @@ void init_query_cursor(void) {
                    0);
   rb_define_method(cQueryCursor, "match_limit=", query_cursor_set_match_limit,
                    1);
+  rb_define_method(cQueryCursor, "byte_range=", query_cursor_set_byte_range, 2);
+  rb_define_method(cQueryCursor, "point_range=", query_cursor_set_point_range,
+                   2);
 }
