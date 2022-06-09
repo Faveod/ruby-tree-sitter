@@ -12,7 +12,7 @@ TSLogger *value_to_logger(VALUE self) {
   return logger;
 }
 
-void logger_free(TSLogger *logger) { free(logger); }
+static void logger_free(TSLogger *logger) { free(logger); }
 
 static VALUE logger_allocate(VALUE klass) {
   TSLogger *logger = (TSLogger *)malloc(sizeof(TSLogger));
