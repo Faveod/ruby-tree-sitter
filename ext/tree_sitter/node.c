@@ -177,6 +177,20 @@ VALUE node_prev_sibling(VALUE self) {
   return new_node(&sibling);
 }
 
+VALUE node_next_named_sibling(VALUE self) {
+  TSNode *node = value_to_node(self);
+  TSNode sibling = ts_node_next_named_sibling(*node);
+
+  return new_node(&sibling);
+}
+
+VALUE node_prev_named_sibling(VALUE self) {
+  TSNode *node = value_to_node(self);
+  TSNode sibling = ts_node_prev_named_sibling(*node);
+
+  return new_node(&sibling);
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -205,4 +219,6 @@ void init_node(void) {
   rb_define_method(cNode, "child_by_field_id", node_child_by_field_id, 1);
   rb_define_method(cNode, "next_sibling", node_next_sibling, 0);
   rb_define_method(cNode, "prev_sibling", node_prev_sibling, 0);
+  rb_define_method(cNode, "next_named_sibling", node_next_named_sibling, 0);
+  rb_define_method(cNode, "prev_named_sibling", node_prev_named_sibling, 0);
 }
