@@ -115,6 +115,17 @@ VALUE node_child(VALUE self, VALUE index) {
   return new_node(&child);
 }
 
+VALUE node_field_name_for_child(VALUE self, VALUE index) {
+  TSNode *node = value_to_node(self);
+  uint32_t idx = NUM2INT(index);
+  const char *name = ts_node_field_name_for_child(*node, idx);
+  if (name == NULL) {
+    return Qnil;
+  } else {
+    return rb_str_new_cstr(name);
+  }
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -135,4 +146,5 @@ void init_node(void) {
   rb_define_method(cNode, "error?", node_has_error, 0);
   rb_define_method(cNode, "parent", node_parent, 0);
   rb_define_method(cNode, "child", node_child, 1);
+  rb_define_method(cNode, "field_name_for_child", node_field_name_for_child, 1);
 }
