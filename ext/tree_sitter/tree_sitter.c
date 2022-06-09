@@ -13,6 +13,7 @@ void Init_tree_sitter() {
   init_quantifier();
   init_query();
   init_query_cursor();
+  init_query_match();
   init_query_predicate_step();
   init_query_error();
   init_range();

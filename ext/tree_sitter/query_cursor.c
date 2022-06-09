@@ -68,6 +68,17 @@ static VALUE query_cursor_set_point_range(VALUE self, VALUE from, VALUE to) {
   return Qnil;
 }
 
+static VALUE query_cursor_next_match(VALUE self) {
+  TSQueryCursor *cursor = value_to_query_cursor(self);
+  TSQueryMatch *match = NULL;
+
+  if (ts_query_cursor_next_match(cursor, match)) {
+    return new_query_match(match);
+  } else {
+    return Qnil;
+  }
+}
+
 void init_query_cursor(void) {
   cQueryCursor = rb_define_class_under(mTreeSitter, "QueryCursor", rb_cObject);
 
@@ -84,4 +95,5 @@ void init_query_cursor(void) {
   rb_define_method(cQueryCursor, "byte_range=", query_cursor_set_byte_range, 2);
   rb_define_method(cQueryCursor, "point_range=", query_cursor_set_point_range,
                    2);
+  rb_define_method(cQueryCursor, "next_match", query_cursor_next_match, 0);
 }
