@@ -1,8 +1,9 @@
 #ifndef _RB_TREE_SITTER_H
 #define _RB_TREE_SITTER_H
 
-#include "tree_sitter/api.h"
+#include <fcntl.h>
 #include <ruby.h>
+#include <tree_sitter/api.h>
 
 TSInputEncoding value_to_encoding(VALUE);
 

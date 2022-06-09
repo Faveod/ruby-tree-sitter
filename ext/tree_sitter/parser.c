@@ -156,6 +156,18 @@ static VALUE parser_reset(VALUE self) {
   return Qnil;
 }
 
+static VALUE parser_print_dot_graphs(VALUE self, VALUE file) {
+  Check_Type(file, T_STRING);
+  TSParser *parser;
+  Data_Get_Struct(self, TSParser, parser);
+  char *path = StringValueCStr(file);
+  int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC,
+                0644); // 0644 = all read + user write
+  ts_parser_print_dot_graphs(parser, fd);
+  close(fd);
+  return Qnil;
+}
+
 void init_parser(void) {
   cParser = rb_define_class_under(mTreeSitter, "Parser", rb_cObject);
 
@@ -180,4 +192,5 @@ void init_parser(void) {
   // parser_set_cancellation_flag, 1);
   rb_define_method(cParser, "logger", parser_get_logger, 0);
   rb_define_method(cParser, "logger", parser_set_logger, 1);
+  rb_define_method(cParser, "print_dot_graphs", parser_print_dot_graphs, 1);
 }
