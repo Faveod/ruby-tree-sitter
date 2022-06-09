@@ -20,14 +20,6 @@ Rake::ExtensionTask.new('tree_sitter', gemspec) do |r|
   r.lib_dir = 'lib/tree_sitter'
 end
 
-desc "checkout tree-sitter source"
-task :checkout do
-  if !ENV['CI_BUILD']
-    sh "git submodule update --init"
-  end
-end
-# Rake::Task[:compile].prerequisites.insert(0, :checkout)
-
 task :clean do
   require 'fileutils'
   bundle = File.join(__dir__, *%w[lib tree_sitter tree_sitter.bundle])
