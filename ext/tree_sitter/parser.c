@@ -92,6 +92,24 @@ static VALUE parser_parse_string(VALUE self, VALUE old_tree, VALUE string) {
   return new_tree(ts_parser_parse_string(parser, tree, str, len));
 }
 
+static VALUE parser_parse_string_encoding(VALUE self, VALUE old_tree,
+                                          VALUE string, VALUE encoding) {
+  TSParser *parser;
+  TSTree *tree = NULL;
+  TSInputEncoding *enc;
+  Data_Get_Struct(self, TSParser, parser);
+  if (!NIL_P(old_tree)) {
+    Data_Get_Struct(old_tree, TSTree, tree);
+  }
+  Data_Get_Struct(encoding, TSInputEncoding, enc);
+
+  const char *str = StringValuePtr(string);
+  uint32_t len = (uint32_t)RSTRING_LEN(string);
+
+  return new_tree(
+      ts_parser_parse_string_encoding(parser, tree, str, len, *enc));
+}
+
 void init_parser(void) {
   cParser = rb_define_class_under(mTreeSitter, "Parser", rb_cObject);
 
@@ -103,4 +121,6 @@ void init_parser(void) {
   rb_define_method(cParser, "included_ranges=", parser_set_included_ranges, 1);
   rb_define_method(cParser, "parse", parser_parse, 2);
   rb_define_method(cParser, "parse_string", parser_parse_string, 2);
+  rb_define_method(cParser, "parse_string_encoding",
+                   parser_parse_string_encoding, 3);
 }
