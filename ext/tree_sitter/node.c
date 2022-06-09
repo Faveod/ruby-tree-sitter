@@ -225,6 +225,24 @@ VALUE node_descendant_for_point_range(VALUE self, VALUE from, VALUE to) {
   return new_node(&child);
 }
 
+VALUE node_named_descendant_for_byte_range(VALUE self, VALUE from, VALUE to) {
+  TSNode *node = value_to_node(self);
+  uint32_t f = NUM2INT(from);
+  uint32_t t = NUM2INT(to);
+  TSNode child = ts_node_named_descendant_for_byte_range(*node, f, t);
+
+  return new_node(&child);
+}
+
+VALUE node_named_descendant_for_point_range(VALUE self, VALUE from, VALUE to) {
+  TSNode *node = value_to_node(self);
+  TSPoint *f = value_to_point(from);
+  TSPoint *t = value_to_point(to);
+  TSNode child = ts_node_named_descendant_for_point_range(*node, *f, *t);
+
+  return new_node(&child);
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -262,4 +280,8 @@ void init_node(void) {
                    node_descendant_for_byte_range, 2);
   rb_define_method(cNode, "descendant_for_point_range",
                    node_descendant_for_point_range, 2);
+  rb_define_method(cNode, "named_descendant_for_byte_range",
+                   node_named_descendant_for_byte_range, 2);
+  rb_define_method(cNode, "named_descendant_for_point_range",
+                   node_named_descendant_for_point_range, 2);
 }
