@@ -33,7 +33,7 @@ static VALUE parser_get_included_ranges(VALUE self) {
   VALUE res = rb_ary_new_capa(length);
 
   for (uint32_t i = 0; i < length; i++) {
-    rb_ary_store(res, i, new_range(&ranges[i], false)); // mustn't free
+    rb_ary_push(res, new_range(&ranges[i], false)); // mustn't free
   }
 
   return res;
