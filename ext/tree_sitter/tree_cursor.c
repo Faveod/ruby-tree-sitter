@@ -41,6 +41,12 @@ static VALUE tree_cursor_reset(VALUE self, VALUE node) {
   return Qnil;
 }
 
+static VALUE tree_cursor_current_node(VALUE self) {
+  TSTreeCursor *tree_cursor = value_to_tree_cursor(self);
+  TSNode node = ts_tree_cursor_current_node(tree_cursor);
+  return new_node(&node);
+}
+
 void init_tree_cursor(void) {
   cTreeCursor = rb_define_class_under(mTreeSitter, "TreeCursor", rb_cObject);
 
@@ -49,4 +55,5 @@ void init_tree_cursor(void) {
   /* Class methods */
   rb_define_method(cTreeCursor, "initialize", tree_cursor_initialize, 1);
   rb_define_method(cTreeCursor, "reset", tree_cursor_reset, 1);
+  rb_define_method(cTreeCursor, "current_node", tree_cursor_current_node, 0);
 }
