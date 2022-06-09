@@ -79,6 +79,14 @@ static VALUE query_pattern_guaranteed_at_step(VALUE self, VALUE byte_offset) {
       ts_query_is_pattern_guaranteed_at_step(query, NUM2INT(byte_offset)));
 }
 
+static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
+  TSQuery *query = value_to_query(self);
+  uint32_t length;
+  const char *name = ts_query_capture_name_for_id(query, NUM2INT(id), &length);
+
+  return rb_str_new(name, length);
+}
+
 void init_query(void) {
   cQuery = rb_define_class_under(mTreeSitter, "Query", rb_cObject);
 
@@ -93,4 +101,5 @@ void init_query(void) {
                    query_predicates_for_pattern, 1);
   rb_define_method(cQuery, "pattern_guaranteed_at_step?",
                    query_pattern_guaranteed_at_step, 1);
+  rb_define_method(cQuery, "capture_name_for_id", query_capture_name_for_id, 1);
 }
