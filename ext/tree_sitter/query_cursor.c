@@ -79,6 +79,14 @@ static VALUE query_cursor_next_match(VALUE self) {
   }
 }
 
+static VALUE query_cursor_remove_match(VALUE self, VALUE id) {
+  TSQueryCursor *cursor = value_to_query_cursor(self);
+
+  ts_query_cursor_remove_match(cursor, NUM2INT(id));
+
+  return Qnil;
+}
+
 void init_query_cursor(void) {
   cQueryCursor = rb_define_class_under(mTreeSitter, "QueryCursor", rb_cObject);
 
@@ -96,4 +104,5 @@ void init_query_cursor(void) {
   rb_define_method(cQueryCursor, "point_range=", query_cursor_set_point_range,
                    2);
   rb_define_method(cQueryCursor, "next_match", query_cursor_next_match, 0);
+  rb_define_method(cQueryCursor, "remove_match", query_cursor_remove_match, 1);
 }
