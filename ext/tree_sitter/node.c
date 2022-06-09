@@ -146,6 +146,15 @@ VALUE node_named_child_count(VALUE self) {
   return INT2NUM(ts_node_named_child_count(*node));
 }
 
+VALUE node_child_by_field_name(VALUE self, VALUE field_name) {
+  TSNode *node = value_to_node(self);
+  const char *name = StringValuePtr(field_name);
+  uint32_t length = (uint32_t)RSTRING_LEN(field_name);
+  TSNode child = ts_node_child_by_field_name(*node, name, length);
+
+  return new_node(&child);
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -170,4 +179,5 @@ void init_node(void) {
   rb_define_method(cNode, "child_count", node_child_count, 0);
   rb_define_method(cNode, "named_child", node_named_child, 1);
   rb_define_method(cNode, "named_child_count", node_named_child_count, 0);
+  rb_define_method(cNode, "child_by_field_name", node_child_by_field_name, 1);
 }
