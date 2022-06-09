@@ -114,6 +114,14 @@ static VALUE query_disable_capture(VALUE self, VALUE capture) {
   return Qnil;
 }
 
+static VALUE query_disable_pattern(VALUE self, VALUE pattern) {
+  TSQuery *query = value_to_query(self);
+
+  ts_query_disable_pattern(query, NUM2INT(pattern));
+
+  return Qnil;
+}
+
 void init_query(void) {
   cQuery = rb_define_class_under(mTreeSitter, "Query", rb_cObject);
 
@@ -133,4 +141,5 @@ void init_query(void) {
                    query_capture_quantifier_for_id, 2);
   rb_define_method(cQuery, "string_value_for_id", query_string_value_for_id, 1);
   rb_define_method(cQuery, "disable_capture", query_disable_capture, 1);
+  rb_define_method(cQuery, "disable_pattern", query_disable_pattern, 1);
 }
