@@ -12,7 +12,7 @@ TSParser *value_to_parser(VALUE self) {
   return parser;
 }
 
-void parser_free(TSParser *parser) { ts_parser_delete(parser); }
+static void parser_free(TSParser *parser) { ts_parser_delete(parser); }
 
 static VALUE parser_allocate(VALUE klass) {
   TSParser *parser;
