@@ -72,6 +72,13 @@ static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
   return res;
 }
 
+static VALUE query_pattern_guaranteed_at_step(VALUE self, VALUE byte_offset) {
+  TSQuery *query = value_to_query(self);
+
+  return INT2NUM(
+      ts_query_is_pattern_guaranteed_at_step(query, NUM2INT(byte_offset)));
+}
+
 void init_query(void) {
   cQuery = rb_define_class_under(mTreeSitter, "Query", rb_cObject);
 
@@ -84,4 +91,6 @@ void init_query(void) {
                    query_start_byte_for_pattern, 1);
   rb_define_method(cQuery, "predicates_for_pattern",
                    query_predicates_for_pattern, 1);
+  rb_define_method(cQuery, "pattern_guaranteed_at_step?",
+                   query_pattern_guaranteed_at_step, 1);
 }
