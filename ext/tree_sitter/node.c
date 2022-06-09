@@ -20,6 +20,15 @@ VALUE new_node(const TSNode *node) {
   return Data_Wrap_Struct(cNode, NULL, node_free, ptr);
 }
 
+VALUE node_type(VALUE self) {
+  TSNode *node = value_to_node(self);
+
+  return rb_str_new_cstr(ts_node_type(*node));
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
+
+  /* Class methods */
+  rb_define_method(cNode, "type", node_type, 0);
 }
