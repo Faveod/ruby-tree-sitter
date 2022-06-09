@@ -27,11 +27,24 @@ VALUE new_tree(const TSTree *tree) {
   return Data_Wrap_Struct(cTree, NULL, NULL, (void *)tree);
 }
 
-VALUE tree_copy(VALUE self) { return Qnil; }
+VALUE tree_copy(VALUE self) {
+  TSTree *tree = value_to_tree(self);
+
+  return new_tree(ts_tree_copy(tree));
+}
+
+VALUE tree_delete(VALUE self) {
+  TSTree *tree = value_to_tree(self);
+
+  ts_tree_delete(tree);
+
+  return Qnil;
+}
 
 void init_tree(void) {
   cTree = rb_define_class_under(mTreeSitter, "Tree", rb_cObject);
 
   /* Class methods */
   rb_define_method(cTree, "copy", tree_copy, 0);
+  rb_define_method(cTree, "delete", tree_delete, 0);
 }
