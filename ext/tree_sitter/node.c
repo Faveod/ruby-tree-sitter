@@ -107,6 +107,14 @@ VALUE node_parent(VALUE self) {
   return new_node(&parent);
 }
 
+VALUE node_child(VALUE self, VALUE index) {
+  TSNode *node = value_to_node(self);
+  uint32_t idx = NUM2INT(index);
+  TSNode child = ts_node_child(*node, idx);
+
+  return new_node(&child);
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -126,4 +134,5 @@ void init_node(void) {
   rb_define_method(cNode, "changes?", node_has_changes, 0);
   rb_define_method(cNode, "error?", node_has_error, 0);
   rb_define_method(cNode, "parent", node_parent, 0);
+  rb_define_method(cNode, "child", node_child, 1);
 }
