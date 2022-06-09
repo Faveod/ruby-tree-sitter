@@ -34,6 +34,16 @@ static VALUE parser_get_included_ranges(VALUE self) {
   return res;
 }
 
+static VALUE parser_get_timeout_micros(VALUE self) {
+  TSParser *parser;
+  Data_Get_Struct(self, TSParser, parser);
+
+  uint64_t timeout = ts_parser_timeout_micros(parser);
+  VALUE res = ULL2NUM(timeout);
+
+  return res;
+}
+
 static VALUE parser_set_language(VALUE self, VALUE lang) {
   TSParser *parser;
   TSLanguage *language;
@@ -63,6 +73,16 @@ static VALUE parser_set_included_ranges(VALUE self, VALUE array) {
   free(ranges);
 
   return res ? Qtrue : Qfalse;
+}
+
+static VALUE parser_set_timeout_micros(VALUE self, VALUE timeout) {
+  TSParser *parser;
+  Data_Get_Struct(self, TSParser, parser);
+
+  uint64_t t = NUM2ULL(timeout);
+  ts_parser_set_timeout_micros(parser, t);
+
+  return Qnil;
 }
 
 static VALUE parser_parse(VALUE self, VALUE old_tree, VALUE input) {
@@ -133,4 +153,6 @@ void init_parser(void) {
   rb_define_method(cParser, "parse_string_encoding",
                    parser_parse_string_encoding, 3);
   rb_define_method(cParser, "reset", parser_reset, 0);
+  rb_define_method(cParser, "timeout_micros", parser_get_timeout_micros, 0);
+  rb_define_method(cParser, "timeout_micros=", parser_set_timeout_micros, 1);
 }
