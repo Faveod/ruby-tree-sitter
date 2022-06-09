@@ -81,6 +81,19 @@ VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
   return res;
 }
 
+static VALUE tree_print_dot_graph(VALUE self, VALUE file) {
+  Check_Type(file, T_STRING);
+
+  TSTree *parser = value_to_tree(self);
+  char *path = StringValueCStr(file);
+  FILE *fd = fopen(path, "w+");
+
+  ts_tree_print_dot_graph(parser, fd);
+  fclose(fd);
+
+  return Qnil;
+}
+
 void init_tree(void) {
   cTree = rb_define_class_under(mTreeSitter, "Tree", rb_cObject);
 
@@ -91,4 +104,5 @@ void init_tree(void) {
   rb_define_method(cTree, "language", tree_language, 0);
   rb_define_method(cTree, "edit", tree_edit, 1);
   rb_define_module_function(cTree, "changed_ranges", tree_changed_ranges, 2);
+  rb_define_method(cTree, "print_dot_graph", tree_print_dot_graph, 1);
 }

@@ -3,6 +3,7 @@
 
 #include <fcntl.h>
 #include <ruby.h>
+#include <stdio.h>
 #include <tree_sitter/api.h>
 
 // VALUE to TS* converters
