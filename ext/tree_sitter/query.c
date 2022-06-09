@@ -104,6 +104,16 @@ static VALUE query_string_value_for_id(VALUE self, VALUE id) {
   return rb_str_new(string, length);
 }
 
+static VALUE query_disable_capture(VALUE self, VALUE capture) {
+  TSQuery *query = value_to_query(self);
+  const char *cap = StringValuePtr(capture);
+  uint32_t length = (uint32_t)RSTRING_LEN(capture);
+
+  ts_query_disable_capture(query, cap, length);
+
+  return Qnil;
+}
+
 void init_query(void) {
   cQuery = rb_define_class_under(mTreeSitter, "Query", rb_cObject);
 
@@ -122,4 +132,5 @@ void init_query(void) {
   rb_define_method(cQuery, "capture_quantifier_for_id",
                    query_capture_quantifier_for_id, 2);
   rb_define_method(cQuery, "string_value_for_id", query_string_value_for_id, 1);
+  rb_define_method(cQuery, "disable_capture", query_disable_capture, 1);
 }
