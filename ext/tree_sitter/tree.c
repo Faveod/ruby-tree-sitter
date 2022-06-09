@@ -28,13 +28,13 @@ VALUE new_tree(const TSTree *tree) {
   return Data_Wrap_Struct(cTree, NULL, NULL, (void *)tree);
 }
 
-VALUE tree_copy(VALUE self) {
+static VALUE tree_copy(VALUE self) {
   TSTree *tree = value_to_tree(self);
 
   return new_tree(ts_tree_copy(tree));
 }
 
-VALUE tree_delete(VALUE self) {
+static VALUE tree_delete(VALUE self) {
   TSTree *tree = value_to_tree(self);
 
   ts_tree_delete(tree);
@@ -42,7 +42,7 @@ VALUE tree_delete(VALUE self) {
   return Qnil;
 }
 
-VALUE tree_root_node(VALUE self) {
+static VALUE tree_root_node(VALUE self) {
   TSTree *tree = value_to_tree(self);
 
   TSNode root = ts_tree_root_node(tree);
@@ -50,7 +50,7 @@ VALUE tree_root_node(VALUE self) {
   return new_node(&root);
 }
 
-VALUE tree_language(VALUE self) {
+static VALUE tree_language(VALUE self) {
   TSTree *tree = value_to_tree(self);
 
   const TSLanguage *language = ts_tree_language(tree);
@@ -58,7 +58,7 @@ VALUE tree_language(VALUE self) {
   return new_language(language);
 }
 
-VALUE tree_edit(VALUE self, VALUE edit) {
+static VALUE tree_edit(VALUE self, VALUE edit) {
   TSTree *tree = value_to_tree(self);
   TSInputEdit *in = value_to_input_edit(edit);
 
@@ -67,7 +67,7 @@ VALUE tree_edit(VALUE self, VALUE edit) {
   return Qnil;
 }
 
-VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
+static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
   TSTree *old = value_to_tree(old_tree);
   TSTree *new = value_to_tree(new_tree);
   uint32_t length;
