@@ -58,6 +58,12 @@ VALUE node_end_point(VALUE self) {
   return new_point(&point);
 }
 
+VALUE node_string(VALUE self) {
+  TSNode *node = value_to_node(self);
+
+  return rb_str_new_cstr(ts_node_string(*node));
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -68,4 +74,6 @@ void init_node(void) {
   rb_define_method(cNode, "start_point", node_start_point, 0);
   rb_define_method(cNode, "end_byte", node_end_byte, 0);
   rb_define_method(cNode, "end_point", node_end_point, 0);
+  rb_define_method(cNode, "string", node_string, 0);
+  rb_define_method(cNode, "to_s", node_string, 0);
 }
