@@ -23,7 +23,7 @@ VALUE new_logger(const TSLogger *logger) {
   VALUE res = logger_allocate(cLogger);
   TSLogger *ptr = value_to_logger(res);
 
-  memcpy(ptr, logger, sizeof(TSLogger));
+  *ptr = *logger;
 
   return res;
 }

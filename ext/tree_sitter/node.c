@@ -16,7 +16,7 @@ TSNode *value_to_node(VALUE self) {
 
 VALUE new_node(const TSNode *node) {
   TSNode *ptr = (TSNode *)malloc(sizeof(TSNode));
-  memcpy(ptr, node, sizeof(TSNode));
+  *ptr = *node;
   return Data_Wrap_Struct(cNode, NULL, node_free, ptr);
 }
 

@@ -23,7 +23,7 @@ VALUE new_point(const TSPoint *point) {
   VALUE res = point_allocate(cPoint);
   TSPoint *ptr = value_to_point(res);
 
-  memcpy(ptr, point, sizeof(TSPoint));
+  *ptr = *point;
 
   return res;
 }

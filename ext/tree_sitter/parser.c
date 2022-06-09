@@ -71,10 +71,7 @@ static VALUE parser_set_included_ranges(VALUE self, VALUE array) {
   TSRange *ranges = (TSRange *)malloc(length * sizeof(TSRange));
 
   for (int i = 0; i < length; i++) {
-    VALUE entry = rb_ary_entry(array, i);
-    TSRange *range = value_to_range(entry);
-
-    memcpy(&ranges[i], (void *)range, sizeof(TSRange));
+    ranges[i] = *value_to_range(rb_ary_entry(array, i));
   }
 
   bool res = ts_parser_set_included_ranges(parser, ranges, (uint32_t)length);

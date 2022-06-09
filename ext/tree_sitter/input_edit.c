@@ -22,7 +22,9 @@ static VALUE input_edit_allocate(VALUE klass) {
 
 VALUE new_input_edit(const TSInputEdit *input_edit) {
   TSInputEdit *ptr = (TSInputEdit *)malloc(sizeof(TSInputEdit));
-  memcpy(ptr, input_edit, sizeof(TSInputEdit));
+
+  *ptr = *input_edit;
+
   return Data_Wrap_Struct(cInputEdit, NULL, input_edit_free, ptr);
 }
 
