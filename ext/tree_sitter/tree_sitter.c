@@ -10,6 +10,8 @@ void Init_tree_sitter() {
   init_logger();
   init_language();
   init_parser();
+  init_query();
+  init_query_error();
   init_range();
   init_tree();
   init_tree_cursor();

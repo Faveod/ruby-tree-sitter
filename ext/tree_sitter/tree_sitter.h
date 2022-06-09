@@ -14,6 +14,8 @@ TSLanguage *value_to_language(VALUE);
 TSLogger *value_to_logger(VALUE);
 TSNode *value_to_node(VALUE);
 TSPoint *value_to_point(VALUE);
+TSQuery *value_to_query(VALUE);
+TSQueryError value_to_query_error(VALUE);
 TSRange *value_to_range(VALUE);
 TSTree *value_to_tree(VALUE);
 TSTreeCursor *value_to_tree_cursor(VALUE);
@@ -33,9 +35,14 @@ void init_input(void);
 void init_logger(void);
 void init_language(void);
 void init_parser(void);
+void init_query(void);
+void init_query_error(void);
 void init_range(void);
 void init_tree(void);
 void init_tree_cursor(void);
+
+// Other helpers
+const char *query_error_name(TSQueryError);
 
 // This is a special entry-point for the extension
 void Init_tree_sitter(void);
