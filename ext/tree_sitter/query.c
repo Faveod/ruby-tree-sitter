@@ -87,6 +87,14 @@ static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
   return rb_str_new(name, length);
 }
 
+static VALUE query_capture_quantifier_for_id(VALUE self, VALUE id,
+                                             VALUE capture_id) {
+  TSQuery *query = value_to_query(self);
+
+  return INT2NUM(ts_query_capture_quantifier_for_id(query, NUM2INT(id),
+                                                    NUM2INT(capture_id)));
+}
+
 void init_query(void) {
   cQuery = rb_define_class_under(mTreeSitter, "Query", rb_cObject);
 
@@ -102,4 +110,6 @@ void init_query(void) {
   rb_define_method(cQuery, "pattern_guaranteed_at_step?",
                    query_pattern_guaranteed_at_step, 1);
   rb_define_method(cQuery, "capture_name_for_id", query_capture_name_for_id, 1);
+  rb_define_method(cQuery, "capture_quantifier_for_id",
+                   query_capture_quantifier_for_id, 2);
 }

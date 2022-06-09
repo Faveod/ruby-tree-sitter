@@ -14,6 +14,7 @@ TSLanguage *value_to_language(VALUE);
 TSLogger *value_to_logger(VALUE);
 TSNode *value_to_node(VALUE);
 TSPoint *value_to_point(VALUE);
+TSQuantifier value_to_quantifier(VALUE);
 TSQuery *value_to_query(VALUE);
 TSQueryPredicateStep *value_to_query_predicate_step(VALUE);
 TSQueryPredicateStepType value_to_query_predicate_step_type(VALUE);
@@ -38,6 +39,7 @@ void init_input(void);
 void init_logger(void);
 void init_language(void);
 void init_parser(void);
+void init_quantifier(void);
 void init_query(void);
 void init_query_predicate_step(void);
 void init_query_error(void);
@@ -47,6 +49,7 @@ void init_tree_cursor(void);
 
 // Other helpers
 const char *query_error_name(TSQueryError);
+const char *quantifier_name(TSQuantifier);
 
 // This is a special entry-point for the extension
 void Init_tree_sitter(void);
