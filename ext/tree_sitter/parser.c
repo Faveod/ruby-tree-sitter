@@ -15,9 +15,7 @@ TSParser *value_to_parser(VALUE self) {
 static void parser_free(TSParser *parser) { ts_parser_delete(parser); }
 
 static VALUE parser_allocate(VALUE klass) {
-  TSParser *parser;
-
-  parser = ts_parser_new();
+  TSParser *parser = ts_parser_new();
 
   return Data_Wrap_Struct(klass, NULL, parser_free, parser);
 }
