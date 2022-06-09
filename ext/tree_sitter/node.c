@@ -155,6 +155,14 @@ VALUE node_child_by_field_name(VALUE self, VALUE field_name) {
   return new_node(&child);
 }
 
+VALUE node_child_by_field_id(VALUE self, VALUE field_id) {
+  TSNode *node = value_to_node(self);
+  uint16_t id = (uint16_t)NUM2INT(field_id);
+  TSNode child = ts_node_child_by_field_id(*node, id);
+
+  return new_node(&child);
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -180,4 +188,5 @@ void init_node(void) {
   rb_define_method(cNode, "named_child", node_named_child, 1);
   rb_define_method(cNode, "named_child_count", node_named_child_count, 0);
   rb_define_method(cNode, "child_by_field_name", node_child_by_field_name, 1);
+  rb_define_method(cNode, "child_by_field_id", node_child_by_field_id, 1);
 }
