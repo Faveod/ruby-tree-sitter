@@ -38,13 +38,24 @@ TSQueryPredicateStepType value_to_query_predicate_step_type(VALUE step_type) {
   }
 }
 
+static VALUE query_predicate_step_inspect(VALUE self) {
+  query_predicate_step_t *step;
+
+  TypedData_Get_Struct(self, query_predicate_step_t,
+                       &query_predicate_step_data_type, step);
+  return rb_sprintf("{value_id=%i, type=%i}", step->data.value_id,
+                    step->data.type);
+}
+
 DATA_ACCESSOR(query_predicate_step, type, new_query_predicate_step_type,
               value_to_query_predicate_step_type)
 DATA_ACCESSOR(query_predicate_step, value_id, INT2NUM, NUM2INT)
 
 void init_query_predicate_step(void) {
   cQueryPredicateStep =
-      rb_define_module_under(mTreeSitter, "QueryPredicateStep");
+      rb_define_class_under(mTreeSitter, "QueryPredicateStep", rb_cObject);
+
+  rb_define_alloc_func(cQueryPredicateStep, query_predicate_step_allocate);
 
   /* Constants */
   rb_define_const(cQueryPredicateStep, "DONE", ID2SYM(rb_intern(done)));
@@ -54,4 +65,9 @@ void init_query_predicate_step(void) {
   /* Class methods */
   DEFINE_ACCESSOR(cQueryPredicateStep, query_predicate_step, type)
   DEFINE_ACCESSOR(cQueryPredicateStep, query_predicate_step, value_id)
+
+  rb_define_method(cQueryPredicateStep, "inspect", query_predicate_step_inspect,
+                   0);
+  rb_define_method(cQueryPredicateStep, "to_s", query_predicate_step_inspect,
+                   0);
 }
