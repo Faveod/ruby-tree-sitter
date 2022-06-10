@@ -21,9 +21,15 @@ static VALUE language_symbol_count(VALUE self) {
   return INT2NUM(ts_language_symbol_count(language));
 }
 
+static VALUE language_symbol_name(VALUE self, VALUE symbol) {
+  TSLanguage *language = value_to_language(self);
+  return rb_str_new_cstr(ts_language_symbol_name(language, NUM2INT(symbol)));
+}
+
 void init_language(void) {
   cLanguage = rb_define_class_under(mTreeSitter, "Language", rb_cObject);
 
   /* Class methods */
   rb_define_method(cLanguage, "symbol_count", language_symbol_count, 0);
+  rb_define_method(cLanguage, "symbol_name", language_symbol_name, 1);
 }
