@@ -34,13 +34,6 @@ static VALUE point_allocate(VALUE klass) {
   return TypedData_Make_Struct(klass, point_t, &point_data_type, point);
 }
 
-TSPoint value_to_point(VALUE self) {
-  point_t *point;
-  TypedData_Get_Struct(self, point_t, &point_data_type, point);
-
-  return point->data;
-}
-
 static VALUE point_inspect(VALUE self) {
   point_t *point;
 
@@ -50,6 +43,7 @@ static VALUE point_inspect(VALUE self) {
 }
 
 DATA_NEW(cPoint, TSPoint, point)
+DATA_FROM_VALUE(TSPoint, point)
 DATA_ACCESSOR(point, row, INT2NUM, NUM2INT)
 DATA_ACCESSOR(point, column, INT2NUM, NUM2INT)
 

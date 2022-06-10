@@ -54,6 +54,13 @@
     return val;                                                                \
   }
 
+#define DATA_FROM_VALUE(struct, type)                                          \
+  struct value_to_##type(VALUE self) {                                         \
+    type##_t *obj;                                                             \
+    TypedData_Get_Struct(self, type##_t, &type##_data_type, obj);              \
+    return obj->data;                                                          \
+  }
+
 #define DEFINE_GETTER(klass, type, field)                                      \
   rb_define_method(klass, #field, type##_get_##field, 0);
 
