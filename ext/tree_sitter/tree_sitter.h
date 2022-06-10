@@ -2,6 +2,7 @@
 #define _RB_TREE_SITTER_H
 
 #include "macros.h"
+#include <dlfcn.h>
 #include <fcntl.h>
 #include <ruby.h>
 #include <stdio.h>
