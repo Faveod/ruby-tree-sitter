@@ -19,7 +19,7 @@ TSQuantifier value_to_quantifier(VALUE);
 TSQuery *value_to_query(VALUE);
 TSQueryMatch *value_to_query_match(VALUE);
 TSQueryCursor *value_to_query_cursor(VALUE);
-TSQueryPredicateStep *value_to_query_predicate_step(VALUE);
+TSQueryPredicateStep value_to_query_predicate_step(VALUE);
 TSQueryPredicateStepType value_to_query_predicate_step_type(VALUE);
 TSQueryError value_to_query_error(VALUE);
 TSRange value_to_range(VALUE);
