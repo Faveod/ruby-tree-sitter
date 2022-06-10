@@ -1,7 +1,7 @@
 #ifndef _RB_TREE_SITTER_MACROS_H
 #define _RB_TREE_SITTER_MACROS_H
 
-// RB_* are for TypedData structs, reaching their top-level
+// Plain GETTER/SETTER/etc are for TypedData structs, reaching their top-level
 // fields, and are of type VALUE
 //
 // DATA_* are for TypeData structs, raching their data field
