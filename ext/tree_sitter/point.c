@@ -10,12 +10,8 @@ typedef struct {
   TSPoint data;
 } point_t;
 
-static size_t point_memsize(const void *ptr) {
-  point_t *point = (point_t *)ptr;
-  return sizeof(point);
-}
-
 DATA_FREE(point)
+DATA_MEMSIZE(point)
 DATA_DECLARE_DATA_TYPE(point)
 DATA_ALLOCATE(point)
 DATA_NEW(cPoint, TSPoint, point)

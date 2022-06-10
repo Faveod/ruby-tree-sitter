@@ -77,6 +77,12 @@
     return obj->data;                                                          \
   }
 
+#define DATA_MEMSIZE(type)                                                     \
+  static size_t type##_memsize(const void *ptr) {                              \
+    type##_t *type = (type##_t *)ptr;                                          \
+    return sizeof(type);                                                       \
+  }
+
 #define DATA_ALLOCATE(type)                                                    \
   static VALUE point_allocate(VALUE klass) {                                   \
     type##_t *type;                                                            \
