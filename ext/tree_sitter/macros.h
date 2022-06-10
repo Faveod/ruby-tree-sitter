@@ -54,6 +54,19 @@
     return val;                                                                \
   }
 
+#define DATA_DECLARE_DATA_TYPE(type)                                           \
+  const rb_data_type_t type##_data_type = {                                    \
+      .wrap_struct_name = #type "",                                            \
+      .function =                                                              \
+          {                                                                    \
+              .dmark = NULL,                                                   \
+              .dfree = type##_free,                                            \
+              .dsize = type##_memsize,                                         \
+              .dcompact = NULL,                                                \
+          },                                                                   \
+      .flags = RUBY_TYPED_FREE_IMMEDIATELY,                                    \
+  };
+
 #define DATA_FROM_VALUE(struct, type)                                          \
   struct value_to_##type(VALUE self) {                                         \
     type##_t *obj;                                                             \
