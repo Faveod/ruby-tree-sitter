@@ -35,6 +35,7 @@ VALUE new_node(const TSNode *);
 VALUE new_query_match(const TSQueryMatch *);
 VALUE new_query_predicate_step(const TSQueryPredicateStep *);
 VALUE new_range(const TSRange *);
+VALUE new_point_by_val(TSPoint);
 VALUE new_point(const TSPoint *);
 VALUE new_symbol_type(TSSymbolType);
 VALUE new_tree(const TSTree *);

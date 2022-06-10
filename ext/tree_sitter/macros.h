@@ -46,11 +46,18 @@
   DATA_SETTER(type, field, cast_set)
 
 #define DATA_NEW(klass, struct, type)                                          \
-  VALUE new_##type(const struct *point) {                                      \
-    VALUE val = type##_allocate(cPoint);                                       \
+  VALUE new_##type(const struct *ptr) {                                        \
+    VALUE val = type##_allocate(klass);                                        \
     type##_t *obj;                                                             \
     TypedData_Get_Struct(klass, type##_t, &type##_data_type, obj);             \
-    obj->data = *point;                                                        \
+    obj->data = *ptr;                                                          \
+    return val;                                                                \
+  }                                                                            \
+  VALUE new_##type##_by_val(struct ptr) {                                      \
+    VALUE val = type##_allocate(klass);                                        \
+    type##_t *obj;                                                             \
+    TypedData_Get_Struct(klass, type##_t, &type##_data_type, obj);             \
+    obj->data = ptr;                                                           \
     return val;                                                                \
   }
 
@@ -84,7 +91,7 @@
   }
 
 #define DATA_ALLOCATE(type)                                                    \
-  static VALUE point_allocate(VALUE klass) {                                   \
+  static VALUE type##_allocate(VALUE klass) {                                  \
     type##_t *type;                                                            \
     return TypedData_Make_Struct(klass, type##_t, &type##_data_type, type);    \
   }
