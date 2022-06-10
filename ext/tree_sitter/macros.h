@@ -49,14 +49,14 @@
   VALUE new_##type(const struct *ptr) {                                        \
     VALUE val = type##_allocate(klass);                                        \
     type##_t *obj;                                                             \
-    TypedData_Get_Struct(klass, type##_t, &type##_data_type, obj);             \
+    TypedData_Get_Struct(val, type##_t, &type##_data_type, obj);               \
     obj->data = *ptr;                                                          \
     return val;                                                                \
   }                                                                            \
   VALUE new_##type##_by_val(struct ptr) {                                      \
     VALUE val = type##_allocate(klass);                                        \
     type##_t *obj;                                                             \
-    TypedData_Get_Struct(klass, type##_t, &type##_data_type, obj);             \
+    TypedData_Get_Struct(val, type##_t, &type##_data_type, obj);               \
     obj->data = ptr;                                                           \
     return val;                                                                \
   }
