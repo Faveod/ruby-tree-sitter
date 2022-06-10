@@ -7,19 +7,12 @@ VALUE cPoint;
 // This wrapper's raison d'etre is to avoid conversion and construction of Ruby
 // VALUEs when accessing members.
 typedef struct {
-  VALUE row;
-  VALUE column;
+  TSPoint data;
 } point_t;
 
 static size_t point_memsize(const void *ptr) {
   point_t *point = (point_t *)ptr;
   return sizeof(point);
-}
-
-static void point_mark(void *ptr) {
-  point_t *point = (point_t *)ptr;
-  rb_gc_mark_movable(point->row);
-  rb_gc_mark_movable(point->column);
 }
 
 static void point_free(void *ptr) { xfree(ptr); }
@@ -28,7 +21,7 @@ const rb_data_type_t point_data_type = {
     .wrap_struct_name = "point",
     .function =
         {
-            .dmark = point_mark,
+            .dmark = NULL,
             .dfree = point_free,
             .dsize = point_memsize,
             .dcompact = NULL,
@@ -38,36 +31,23 @@ const rb_data_type_t point_data_type = {
 
 static VALUE point_allocate(VALUE klass) {
   point_t *point;
-
-  VALUE res = TypedData_Make_Struct(klass, point_t, &point_data_type, point);
-
-  point->row = Qnil;
-  point->column = Qnil;
-
-  return res;
+  return TypedData_Make_Struct(klass, point_t, &point_data_type, point);
 }
 
 TSPoint value_to_point(VALUE self) {
   point_t *point;
-
   TypedData_Get_Struct(self, point_t, &point_data_type, point);
 
-  TSPoint res = {
-      .row = NUM2INT(point->row),
-      .column = NUM2INT(point->column),
-  };
-
-  return res;
+  return point->data;
 }
 
 VALUE new_point(const TSPoint *point) {
   VALUE val = point_allocate(cPoint);
-  point_t *obj;
 
+  point_t *obj;
   TypedData_Get_Struct(cPoint, point_t, &point_data_type, obj);
 
-  obj->row = NUM2INT(point->row);
-  obj->column = NUM2INT(point->column);
+  obj->data = *point;
 
   return val;
 }
@@ -77,12 +57,11 @@ static VALUE point_inspect(VALUE self) {
 
   TypedData_Get_Struct(self, point_t, &point_data_type, point);
 
-  return rb_sprintf("{row=%+" PRIsVALUE ", column=%+" PRIsVALUE "}", point->row,
-                    point->column);
+  return rb_sprintf("{row=%i, column=%i}", point->data.row, point->data.column);
 }
 
-ACCESSOR(point, row)
-ACCESSOR(point, column)
+DATA_ACCESSOR(point, row, INT2NUM, NUM2INT)
+DATA_ACCESSOR(point, column, INT2NUM, NUM2INT)
 
 void init_point(void) {
   cPoint = rb_define_class_under(mTreeSitter, "Point", rb_cObject);

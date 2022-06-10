@@ -1,40 +1,11 @@
 #ifndef _RB_TREE_SITTER_H
 #define _RB_TREE_SITTER_H
 
+#include "macros.h"
 #include <fcntl.h>
 #include <ruby.h>
 #include <stdio.h>
 #include <tree_sitter/api.h>
-
-// Macros for mechanical stuff
-#define GETTER(type, field)                                                    \
-  static VALUE type##_get_##field(VALUE self) {                                \
-    type##_t *ptr;                                                             \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, ptr);              \
-    return ptr->field;                                                         \
-  }
-
-#define SETTER(type, field)                                                    \
-  static VALUE type##_set_##field(VALUE self, VALUE val) {                     \
-    type##_t *ptr;                                                             \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, ptr);              \
-    ptr->field = val;                                                          \
-    return Qnil;                                                               \
-  }
-
-#define ACCESSOR(type, field)                                                  \
-  GETTER(type, field)                                                          \
-  SETTER(type, field)
-
-#define DEFINE_GETTER(klass, type, field)                                      \
-  rb_define_method(klass, #field, type##_get_##field, 0);
-
-#define DEFINE_SETTER(klass, type, field)                                      \
-  rb_define_method(klass, #field "=", type##_set_##field, 1);
-
-#define DEFINE_ACCESSOR(klass, type, field)                                    \
-  DEFINE_GETTER(klass, type, field)                                            \
-  DEFINE_SETTER(klass, type, field)
 
 // VALUE to TS* converters
 TSInput *value_to_input(VALUE);

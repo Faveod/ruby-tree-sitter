@@ -1,5 +1,9 @@
 # Notes
 
+## Missing
+
+1. Logger support. Don't use methods that do logging for now.
+
 ## Tree-Sitter API
 
 We provide direct translation for tree-sitter's `C` public API.
