@@ -44,6 +44,13 @@ static VALUE language_field_count(VALUE self) {
   return INT2NUM(ts_language_field_count(language));
 }
 
+static VALUE language_field_name_for_id(VALUE self, VALUE field_id) {
+  TSLanguage *language = value_to_language(self);
+
+  return rb_str_new_cstr(
+      ts_language_field_name_for_id(language, NUM2INT(field_id)));
+}
+
 void init_language(void) {
   cLanguage = rb_define_class_under(mTreeSitter, "Language", rb_cObject);
 
@@ -52,4 +59,6 @@ void init_language(void) {
   rb_define_method(cLanguage, "symbol_name", language_symbol_name, 1);
   rb_define_method(cLanguage, "symbol_for_name", language_symbol_for_name, 2);
   rb_define_method(cLanguage, "field_count", language_field_count, 0);
+  rb_define_method(cLanguage, "field_name_for_id", language_field_name_for_id,
+                   1);
 }
