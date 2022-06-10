@@ -69,9 +69,9 @@ TSInputEdit value_to_input_edit(VALUE self) {
       .start_byte = NUM2INT(input_edit->start_byte),
       .old_end_byte = NUM2INT(input_edit->old_end_byte),
       .new_end_byte = NUM2INT(input_edit->new_end_byte),
-      .start_point = *value_to_point(input_edit->start_point),
-      .old_end_point = *value_to_point(input_edit->old_end_point),
-      .new_end_point = *value_to_point(input_edit->new_end_point),
+      .start_point = value_to_point(input_edit->start_point),
+      .old_end_point = value_to_point(input_edit->old_end_point),
+      .new_end_point = value_to_point(input_edit->new_end_point),
   };
 
   return res;

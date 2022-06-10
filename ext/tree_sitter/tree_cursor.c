@@ -80,8 +80,8 @@ static VALUE tree_cursor_goto_first_child_for_byte(VALUE self, VALUE byte) {
 
 static VALUE tree_cursor_goto_first_child_for_point(VALUE self, VALUE point) {
   TSTreeCursor *tree_cursor = value_to_tree_cursor(self);
-  TSPoint *p = value_to_point(point);
-  return LL2NUM(ts_tree_cursor_goto_first_child_for_point(tree_cursor, *p));
+  TSPoint p = value_to_point(point);
+  return LL2NUM(ts_tree_cursor_goto_first_child_for_point(tree_cursor, p));
 }
 
 static VALUE tree_cursor_copy(VALUE self) {

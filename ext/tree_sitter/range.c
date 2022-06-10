@@ -59,8 +59,8 @@ TSRange value_to_range(VALUE self) {
   TypedData_Get_Struct(self, range_t, &range_data_type, range);
 
   TSRange res = {
-      .start_point = *value_to_point(range->start_point),
-      .end_point = *value_to_point(range->end_point),
+      .start_point = value_to_point(range->start_point),
+      .end_point = value_to_point(range->end_point),
       .start_byte = NUM2INT(range->start_byte),
       .end_byte = NUM2INT(range->end_byte),
   };

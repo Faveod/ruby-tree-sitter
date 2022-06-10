@@ -11,6 +11,7 @@ void Init_tree_sitter() {
   init_logger();
   init_language();
   init_parser();
+  init_point();
   init_quantifier();
   init_query();
   init_query_cursor();

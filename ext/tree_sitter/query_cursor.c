@@ -60,10 +60,10 @@ static VALUE query_cursor_set_byte_range(VALUE self, VALUE from, VALUE to) {
 
 static VALUE query_cursor_set_point_range(VALUE self, VALUE from, VALUE to) {
   TSQueryCursor *cursor = value_to_query_cursor(self);
-  TSPoint *f = value_to_point(from);
-  TSPoint *t = value_to_point(to);
+  TSPoint f = value_to_point(from);
+  TSPoint t = value_to_point(to);
 
-  ts_query_cursor_set_point_range(cursor, *f, *t);
+  ts_query_cursor_set_point_range(cursor, f, t);
 
   return Qnil;
 }

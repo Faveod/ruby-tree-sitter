@@ -218,9 +218,9 @@ static VALUE node_descendant_for_byte_range(VALUE self, VALUE from, VALUE to) {
 
 static VALUE node_descendant_for_point_range(VALUE self, VALUE from, VALUE to) {
   TSNode *node = value_to_node(self);
-  TSPoint *f = value_to_point(from);
-  TSPoint *t = value_to_point(to);
-  TSNode child = ts_node_descendant_for_point_range(*node, *f, *t);
+  TSPoint f = value_to_point(from);
+  TSPoint t = value_to_point(to);
+  TSNode child = ts_node_descendant_for_point_range(*node, f, t);
 
   return new_node(&child);
 }
@@ -238,9 +238,9 @@ static VALUE node_named_descendant_for_byte_range(VALUE self, VALUE from,
 static VALUE node_named_descendant_for_point_range(VALUE self, VALUE from,
                                                    VALUE to) {
   TSNode *node = value_to_node(self);
-  TSPoint *f = value_to_point(from);
-  TSPoint *t = value_to_point(to);
-  TSNode child = ts_node_named_descendant_for_point_range(*node, *f, *t);
+  TSPoint f = value_to_point(from);
+  TSPoint t = value_to_point(to);
+  TSNode child = ts_node_named_descendant_for_point_range(*node, f, t);
 
   return new_node(&child);
 }
