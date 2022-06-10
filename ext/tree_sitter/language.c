@@ -59,6 +59,12 @@ static VALUE language_field_id_for_name(VALUE self, VALUE name) {
   return INT2NUM(ts_language_field_id_for_name(language, str, length));
 }
 
+static VALUE language_symbol_type(VALUE self, VALUE symbol) {
+  TSLanguage *language = value_to_language(self);
+
+  return new_symbol_type(ts_language_symbol_type(language, NUM2INT(symbol)));
+}
+
 void init_language(void) {
   cLanguage = rb_define_class_under(mTreeSitter, "Language", rb_cObject);
 
@@ -71,4 +77,5 @@ void init_language(void) {
                    1);
   rb_define_method(cLanguage, "field_id_for_name", language_field_id_for_name,
                    1);
+  rb_define_method(cLanguage, "symbol_type", language_symbol_type, 1);
 }
