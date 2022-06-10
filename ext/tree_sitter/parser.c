@@ -33,7 +33,7 @@ static VALUE parser_get_included_ranges(VALUE self) {
   VALUE res = rb_ary_new_capa(length);
 
   for (uint32_t i = 0; i < length; i++) {
-    rb_ary_push(res, new_range(&ranges[i], false)); // mustn't free
+    rb_ary_push(res, new_range(&ranges[i]));
   }
 
   return res;
@@ -69,7 +69,7 @@ static VALUE parser_set_included_ranges(VALUE self, VALUE array) {
   TSRange *ranges = (TSRange *)malloc(length * sizeof(TSRange));
 
   for (int i = 0; i < length; i++) {
-    ranges[i] = *value_to_range(rb_ary_entry(array, i));
+    ranges[i] = value_to_range(rb_ary_entry(array, i));
   }
 
   bool res = ts_parser_set_included_ranges(parser, ranges, (uint32_t)length);

@@ -75,8 +75,10 @@ static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
   VALUE res = rb_ary_new_capa(length);
 
   for (uint32_t i = 0; i < length; i++) {
-    rb_ary_push(res, new_range(&ranges[i], true)); // must free
+    rb_ary_push(res, new_range(&ranges[i]));
   }
+
+  free(ranges);
 
   return res;
 }

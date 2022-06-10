@@ -4,21 +4,82 @@ extern VALUE mTreeSitter;
 
 VALUE cRange;
 
-TSRange *value_to_range(VALUE self) {
-  TSRange *range;
+// This wrapper's raison d'etre is to avoid conversion and construction of Ruby
+// VALUEs when accessing members.
+typedef struct {
+  VALUE start_point;
+  VALUE end_point;
+  VALUE start_byte;
+  VALUE end_byte;
+} range_t;
 
-  Data_Get_Struct(self, TSRange, range);
-
-  return range;
+static size_t range_memsize(const void *ptr) {
+  range_t *range = (range_t *)ptr;
+  return sizeof(range);
 }
 
-static void range_free(TSRange *range) { free(range); }
+static void range_mark(void *ptr) {
+  range_t *range = (range_t *)ptr;
+  rb_gc_mark_movable(range->start_point);
+  rb_gc_mark_movable(range->end_point);
+  rb_gc_mark_movable(range->start_byte);
+  rb_gc_mark_movable(range->end_byte);
+}
 
-VALUE new_range(const TSRange *range, bool must_free) {
-  return Data_Wrap_Struct(cRange, NULL, must_free ? range_free : NULL,
-                          (void *)range);
+static void range_free(void *ptr) { xfree(ptr); }
+
+const rb_data_type_t range_data_type = {
+    .wrap_struct_name = "range",
+    .function =
+        {
+            .dmark = range_mark,
+            .dfree = range_free,
+            .dsize = range_memsize,
+            .dcompact = NULL,
+        },
+    .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
+static VALUE range_allocate(VALUE klass) {
+  range_t *range;
+  return TypedData_Make_Struct(klass, range_t, &range_data_type, range);
+}
+
+TSRange value_to_range(VALUE self) {
+  range_t *range;
+
+  TypedData_Get_Struct(self, range_t, &range_data_type, range);
+
+  TSRange res = {
+      .start_point = *value_to_point(range->start_point),
+      .end_point = *value_to_point(range->end_point),
+      .start_byte = NUM2INT(range->start_byte),
+      .end_byte = NUM2INT(range->end_byte),
+  };
+
+  return res;
+}
+
+VALUE new_range(const TSRange *range) {
+  VALUE val = range_allocate(cRange);
+  range_t *obj;
+
+  TypedData_Get_Struct(cRange, range_t, &range_data_type, obj);
+
+  obj->start_point = new_point(&range->start_point);
+  obj->end_point = new_point(&range->end_point);
+  obj->start_byte = NUM2INT(range->start_byte);
+  obj->end_byte = NUM2INT(range->end_byte);
+
+  return val;
 }
 
 void init_range(void) {
   cRange = rb_define_class_under(mTreeSitter, "Range", rb_cObject);
+
+  rb_define_alloc_func(cRange, range_allocate);
+
+  /* Class methods */
+  /* rb_define_method(cRange, "start_point", point_inspect, 0); */
+  /* rb_define_method(cRange, "to_s", point_inspect, 0); */
 }
