@@ -40,7 +40,7 @@ void init_query_predicate_step(void) {
       rb_define_module_under(mTreeSitter, "QueryPredicateStep");
 
   /* Constants */
-  rb_define_const(cQueryPredicateStep, done, ID2SYM(rb_intern(done)));
-  rb_define_const(cQueryPredicateStep, capture, ID2SYM(rb_intern(capture)));
-  rb_define_const(cQueryPredicateStep, string, ID2SYM(rb_intern(string)));
+  rb_define_const(cQueryPredicateStep, "DONE", ID2SYM(rb_intern(done)));
+  rb_define_const(cQueryPredicateStep, "CAPTURE", ID2SYM(rb_intern(capture)));
+  rb_define_const(cQueryPredicateStep, "STRING", ID2SYM(rb_intern(string)));
 }

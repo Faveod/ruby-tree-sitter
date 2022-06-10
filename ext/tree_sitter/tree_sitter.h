@@ -22,6 +22,7 @@ TSQueryPredicateStep *value_to_query_predicate_step(VALUE);
 TSQueryPredicateStepType value_to_query_predicate_step_type(VALUE);
 TSQueryError value_to_query_error(VALUE);
 TSRange *value_to_range(VALUE);
+TSSymbolType value_to_symbol_type(VALUE);
 TSTree *value_to_tree(VALUE);
 TSTreeCursor *value_to_tree_cursor(VALUE);
 
@@ -34,6 +35,7 @@ VALUE new_query_match(const TSQueryMatch *);
 VALUE new_query_predicate_step(const TSQueryPredicateStep *);
 VALUE new_range(const TSRange *, bool);
 VALUE new_point(const TSPoint *);
+VALUE new_symbol_type(TSSymbolType);
 VALUE new_tree(const TSTree *);
 
 // All init_* functions are called from Init_tree_sitter
@@ -49,6 +51,7 @@ void init_query_match(void);
 void init_query_predicate_step(void);
 void init_query_error(void);
 void init_range(void);
+void init_symbol_type(void);
 void init_tree(void);
 void init_tree_cursor(void);
 

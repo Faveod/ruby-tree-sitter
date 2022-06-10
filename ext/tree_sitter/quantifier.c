@@ -27,9 +27,9 @@ const char *quantifier_name(TSQuantifier error) {
 
 void init_quantifier(void) {
   mQuantifier = rb_define_module_under(mTreeSitter, "Quantifier");
-  rb_define_const(mQuantifier, "Zero", INT2NUM(0));
-  rb_define_const(mQuantifier, "ZeroOrOne", INT2NUM(1));
-  rb_define_const(mQuantifier, "ZeroOrMore", INT2NUM(2));
-  rb_define_const(mQuantifier, "One", INT2NUM(3));
-  rb_define_const(mQuantifier, "OneOrMore", INT2NUM(4));
+  rb_define_const(mQuantifier, "ZERO", INT2NUM(0));
+  rb_define_const(mQuantifier, "ZERO_OR_ONE", INT2NUM(1));
+  rb_define_const(mQuantifier, "ZERO_OR_MORE", INT2NUM(2));
+  rb_define_const(mQuantifier, "ONE", INT2NUM(3));
+  rb_define_const(mQuantifier, "ONE_OR_MORE", INT2NUM(4));
 }

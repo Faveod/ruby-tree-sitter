@@ -4,8 +4,8 @@ extern VALUE mTreeSitter;
 
 VALUE mEncoding;
 
-const char *utf8 = "UTF8";
-const char *utf16 = "UTF16";
+const char *utf8 = "utf8";
+const char *utf16 = "utf16";
 
 TSInputEncoding value_to_encoding(VALUE encoding) {
   VALUE enc = SYM2ID(encoding);
@@ -24,6 +24,6 @@ void init_encoding(void) {
   mEncoding = rb_define_module_under(mTreeSitter, "Encoding");
 
   /* Constants */
-  rb_define_const(mEncoding, utf8, ID2SYM(rb_intern(utf8)));
-  rb_define_const(mEncoding, utf16, ID2SYM(rb_intern(utf16)));
+  rb_define_const(mEncoding, "UTF8", ID2SYM(rb_intern(utf8)));
+  rb_define_const(mEncoding, "UTF16", ID2SYM(rb_intern(utf16)));
 }

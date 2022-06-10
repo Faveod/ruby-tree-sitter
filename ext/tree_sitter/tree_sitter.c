@@ -17,6 +17,7 @@ void Init_tree_sitter() {
   init_query_predicate_step();
   init_query_error();
   init_range();
+  init_symbol_type();
   init_tree();
   init_tree_cursor();
 }
