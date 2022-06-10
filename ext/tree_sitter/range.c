@@ -42,7 +42,15 @@ const rb_data_type_t range_data_type = {
 
 static VALUE range_allocate(VALUE klass) {
   range_t *range;
-  return TypedData_Make_Struct(klass, range_t, &range_data_type, range);
+
+  VALUE res = TypedData_Make_Struct(klass, range_t, &range_data_type, range);
+
+  range->start_point = Qnil;
+  range->end_point = Qnil;
+  range->start_byte = Qnil;
+  range->end_byte = Qnil;
+
+  return res;
 }
 
 TSRange value_to_range(VALUE self) {
@@ -74,12 +82,22 @@ VALUE new_range(const TSRange *range) {
   return val;
 }
 
+static VALUE range_inspect(VALUE self) {
+  range_t *range;
+
+  TypedData_Get_Struct(self, range_t, &range_data_type, range);
+  return rb_sprintf("{start_point= %+" PRIsVALUE ", end_point=%+" PRIsVALUE
+                    ", start_byte=%+" PRIsVALUE ", end_byte=%+" PRIsVALUE "}",
+                    range->start_point, range->end_point, range->start_byte,
+                    range->end_byte);
+}
+
 void init_range(void) {
   cRange = rb_define_class_under(mTreeSitter, "Range", rb_cObject);
 
   rb_define_alloc_func(cRange, range_allocate);
 
   /* Class methods */
-  /* rb_define_method(cRange, "start_point", point_inspect, 0); */
-  /* rb_define_method(cRange, "to_s", point_inspect, 0); */
+  rb_define_method(cRange, "inspect", range_inspect, 0);
+  rb_define_method(cRange, "to_s", range_inspect, 0);
 }
