@@ -89,6 +89,11 @@
     return TypedData_Make_Struct(klass, type##_t, &type##_data_type, type);    \
   }
 
+#define DATA_TYPE(klass, type)                                                 \
+  typedef struct {                                                             \
+    klass data;                                                                \
+  } type##_t;
+
 #define DEFINE_GETTER(klass, type, field)                                      \
   rb_define_method(klass, #field, type##_get_##field, 0);
 

@@ -4,12 +4,7 @@ extern VALUE mTreeSitter;
 
 VALUE cPoint;
 
-// This wrapper's raison d'etre is to avoid conversion and construction of Ruby
-// VALUEs when accessing members.
-typedef struct {
-  TSPoint data;
-} point_t;
-
+DATA_TYPE(TSPoint, point)
 DATA_FREE(point)
 DATA_MEMSIZE(point)
 DATA_DECLARE_DATA_TYPE(point)
