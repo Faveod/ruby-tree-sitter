@@ -67,6 +67,9 @@
       .flags = RUBY_TYPED_FREE_IMMEDIATELY,                                    \
   };
 
+#define DATA_FREE(type)                                                        \
+  static void type##_free(void *ptr) { xfree(ptr); }
+
 #define DATA_FROM_VALUE(struct, type)                                          \
   struct value_to_##type(VALUE self) {                                         \
     type##_t *obj;                                                             \

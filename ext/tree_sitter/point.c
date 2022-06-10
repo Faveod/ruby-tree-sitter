@@ -15,8 +15,7 @@ static size_t point_memsize(const void *ptr) {
   return sizeof(point);
 }
 
-static void point_free(void *ptr) { xfree(ptr); }
-
+DATA_FREE(point)
 DATA_DECLARE_DATA_TYPE(point)
 DATA_ALLOCATE(point)
 DATA_NEW(cPoint, TSPoint, point)
