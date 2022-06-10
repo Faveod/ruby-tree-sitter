@@ -92,12 +92,22 @@ static VALUE range_inspect(VALUE self) {
                     range->end_byte);
 }
 
+ACCESSOR(range, start_point)
+ACCESSOR(range, end_point)
+ACCESSOR(range, start_byte)
+ACCESSOR(range, end_byte)
+
 void init_range(void) {
   cRange = rb_define_class_under(mTreeSitter, "Range", rb_cObject);
 
   rb_define_alloc_func(cRange, range_allocate);
 
   /* Class methods */
+  DEFINE_ACCESSOR(cRange, range, start_point)
+  DEFINE_ACCESSOR(cRange, range, end_point)
+  DEFINE_ACCESSOR(cRange, range, start_byte)
+  DEFINE_ACCESSOR(cRange, range, end_byte)
+
   rb_define_method(cRange, "inspect", range_inspect, 0);
   rb_define_method(cRange, "to_s", range_inspect, 0);
 }
