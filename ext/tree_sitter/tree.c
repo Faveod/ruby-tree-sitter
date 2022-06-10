@@ -60,9 +60,9 @@ static VALUE tree_language(VALUE self) {
 
 static VALUE tree_edit(VALUE self, VALUE edit) {
   TSTree *tree = value_to_tree(self);
-  TSInputEdit *in = value_to_input_edit(edit);
+  TSInputEdit in = value_to_input_edit(edit);
 
-  ts_tree_edit(tree, in);
+  ts_tree_edit(tree, &in);
 
   return Qnil;
 }

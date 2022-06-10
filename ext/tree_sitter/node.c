@@ -247,9 +247,9 @@ static VALUE node_named_descendant_for_point_range(VALUE self, VALUE from,
 
 static VALUE node_edit(VALUE self, VALUE input_edit) {
   TSNode *node = value_to_node(self);
-  TSInputEdit *in = value_to_input_edit(input_edit);
+  TSInputEdit in = value_to_input_edit(input_edit);
 
-  ts_node_edit(node, in);
+  ts_node_edit(node, &in);
 
   return Qnil;
 }

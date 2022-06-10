@@ -7,6 +7,7 @@ void Init_tree_sitter() {
 
   init_encoding();
   init_input();
+  init_input_edit();
   init_logger();
   init_language();
   init_parser();

@@ -39,7 +39,7 @@
 // VALUE to TS* converters
 TSInput *value_to_input(VALUE);
 TSInputEncoding value_to_encoding(VALUE);
-TSInputEdit *value_to_input_edit(VALUE);
+TSInputEdit value_to_input_edit(VALUE);
 TSLanguage *value_to_language(VALUE);
 TSLogger *value_to_logger(VALUE);
 TSNode *value_to_node(VALUE);
@@ -71,6 +71,7 @@ VALUE new_tree(const TSTree *);
 // All init_* functions are called from Init_tree_sitter
 void init_encoding(void);
 void init_input(void);
+void init_input_edit(void);
 void init_logger(void);
 void init_language(void);
 void init_parser(void);
