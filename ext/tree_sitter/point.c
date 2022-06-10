@@ -41,17 +41,6 @@ TSPoint value_to_point(VALUE self) {
   return point->data;
 }
 
-VALUE new_point(const TSPoint *point) {
-  VALUE val = point_allocate(cPoint);
-
-  point_t *obj;
-  TypedData_Get_Struct(cPoint, point_t, &point_data_type, obj);
-
-  obj->data = *point;
-
-  return val;
-}
-
 static VALUE point_inspect(VALUE self) {
   point_t *point;
 
@@ -60,6 +49,7 @@ static VALUE point_inspect(VALUE self) {
   return rb_sprintf("{row=%i, column=%i}", point->data.row, point->data.column);
 }
 
+DATA_NEW(cPoint, TSPoint, point)
 DATA_ACCESSOR(point, row, INT2NUM, NUM2INT)
 DATA_ACCESSOR(point, column, INT2NUM, NUM2INT)
 

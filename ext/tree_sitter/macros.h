@@ -45,6 +45,15 @@
   DATA_GETTER(type, field, cast_get)                                           \
   DATA_SETTER(type, field, cast_set)
 
+#define DATA_NEW(klass, struct, type)                                          \
+  VALUE new_##type(const struct *point) {                                      \
+    VALUE val = type##_allocate(cPoint);                                       \
+    type##_t *obj;                                                             \
+    TypedData_Get_Struct(klass, type##_t, &type##_data_type, obj);             \
+    obj->data = *point;                                                        \
+    return val;                                                                \
+  }
+
 #define DEFINE_GETTER(klass, type, field)                                      \
   rb_define_method(klass, #field, type##_get_##field, 0);
 
