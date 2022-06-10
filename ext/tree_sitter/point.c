@@ -4,13 +4,7 @@ extern VALUE mTreeSitter;
 
 VALUE cPoint;
 
-DATA_TYPE(TSPoint, point)
-DATA_FREE(point)
-DATA_MEMSIZE(point)
-DATA_DECLARE_DATA_TYPE(point)
-DATA_ALLOCATE(point)
-DATA_NEW(cPoint, TSPoint, point)
-DATA_FROM_VALUE(TSPoint, point)
+DATA_WRAP(cPoint, TSPoint, point)
 DATA_ACCESSOR(point, row, INT2NUM, NUM2INT)
 DATA_ACCESSOR(point, column, INT2NUM, NUM2INT)
 

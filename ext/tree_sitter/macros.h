@@ -94,6 +94,15 @@
     klass data;                                                                \
   } type##_t;
 
+#define DATA_WRAP(klass, struct, type)                                         \
+  DATA_TYPE(struct, type)                                                      \
+  DATA_FREE(type)                                                              \
+  DATA_MEMSIZE(type)                                                           \
+  DATA_DECLARE_DATA_TYPE(type)                                                 \
+  DATA_ALLOCATE(type)                                                          \
+  DATA_NEW(klass, struct, type)                                                \
+  DATA_FROM_VALUE(struct, type)
+
 #define DEFINE_GETTER(klass, type, field)                                      \
   rb_define_method(klass, #field, type##_get_##field, 0);
 
