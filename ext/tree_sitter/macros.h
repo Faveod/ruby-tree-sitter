@@ -61,6 +61,12 @@
     return obj->data;                                                          \
   }
 
+#define DATA_ALLOCATE(type)                                                    \
+  static VALUE point_allocate(VALUE klass) {                                   \
+    type##_t *type;                                                            \
+    return TypedData_Make_Struct(klass, type##_t, &type##_data_type, type);    \
+  }
+
 #define DEFINE_GETTER(klass, type, field)                                      \
   rb_define_method(klass, #field, type##_get_##field, 0);
 

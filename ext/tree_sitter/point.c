@@ -29,11 +29,6 @@ const rb_data_type_t point_data_type = {
     .flags = RUBY_TYPED_FREE_IMMEDIATELY,
 };
 
-static VALUE point_allocate(VALUE klass) {
-  point_t *point;
-  return TypedData_Make_Struct(klass, point_t, &point_data_type, point);
-}
-
 static VALUE point_inspect(VALUE self) {
   point_t *point;
 
@@ -42,6 +37,7 @@ static VALUE point_inspect(VALUE self) {
   return rb_sprintf("{row=%i, column=%i}", point->data.row, point->data.column);
 }
 
+DATA_ALLOCATE(point)
 DATA_NEW(cPoint, TSPoint, point)
 DATA_FROM_VALUE(TSPoint, point)
 DATA_ACCESSOR(point, row, INT2NUM, NUM2INT)
