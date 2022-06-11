@@ -120,4 +120,15 @@
     return type->data;                                                         \
   }
 
+#define DATA_FAST_FORWARD_FNV(type, fn, field)                                 \
+  static VALUE type##_##fn(int argc, VALUE *argv, VALUE self) {                \
+    type##_t *type;                                                            \
+    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
+    if (!NIL_P(type->field)) {                                                 \
+      return rb_funcallv(type->field, rb_intern(#fn ""), argc, argv);          \
+    } else {                                                                   \
+      return Qnil;                                                             \
+    }                                                                          \
+  }
+
 #endif
