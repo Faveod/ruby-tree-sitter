@@ -8,7 +8,7 @@ const char *done = "Done";
 const char *capture = "capture";
 const char *string = "String";
 
-DATA_WRAP(cQueryPredicateStep, TSQueryPredicateStep, query_predicate_step)
+DATA_WRAP(QueryPredicateStep, query_predicate_step)
 
 VALUE new_query_predicate_step_type(TSQueryPredicateStepType type) {
   switch (type) {

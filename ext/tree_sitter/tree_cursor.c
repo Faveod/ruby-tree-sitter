@@ -4,7 +4,7 @@ extern VALUE mTreeSitter;
 
 VALUE cTreeCursor;
 
-DATA_WRAP(cTreeCursor, TSTreeCursor, tree_cursor)
+DATA_WRAP(TreeCursor, tree_cursor)
 
 static VALUE tree_cursor_initialize(VALUE self, VALUE node) {
   TSNode n = value_to_node(self);

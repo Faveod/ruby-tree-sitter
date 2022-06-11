@@ -30,15 +30,15 @@
   GETTER(type, field)                                                          \
   SETTER(type, field)
 
-#define DATA_WRAP(klass, struct, type)                                         \
-  DATA_TYPE(struct, type)                                                      \
+#define DATA_WRAP(base, type)                                                  \
+  DATA_TYPE(TS##base, type)                                                    \
   DATA_FREE(type)                                                              \
   DATA_MEMSIZE(type)                                                           \
   DATA_DECLARE_DATA_TYPE(type)                                                 \
   DATA_ALLOCATE(type)                                                          \
   DATA_UNWRAP(type)                                                            \
-  DATA_NEW(klass, struct, type)                                                \
-  DATA_FROM_VALUE(struct, type)
+  DATA_NEW(c##base, TS##base, type)                                            \
+  DATA_FROM_VALUE(TS##base, type)
 
 #define DATA_TYPE(klass, type)                                                 \
   typedef struct {                                                             \

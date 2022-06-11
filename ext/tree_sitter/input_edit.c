@@ -4,7 +4,7 @@ extern VALUE mTreeSitter;
 
 VALUE cInputEdit;
 
-DATA_WRAP(cInputEdit, TSInputEdit, input_edit)
+DATA_WRAP(InputEdit, input_edit)
 DATA_ACCESSOR(input_edit, start_byte, INT2NUM, NUM2INT)
 DATA_ACCESSOR(input_edit, old_end_byte, INT2NUM, NUM2INT)
 DATA_ACCESSOR(input_edit, new_end_byte, INT2NUM, NUM2INT)

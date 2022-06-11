@@ -4,7 +4,7 @@ extern VALUE mTreeSitter;
 
 VALUE cNode;
 
-DATA_WRAP(cNode, TSNode, node)
+DATA_WRAP(Node, node)
 
 static VALUE node_type(VALUE self) {
   node_t *node = unwrap(self);

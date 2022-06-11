@@ -4,7 +4,7 @@ extern VALUE mTreeSitter;
 
 VALUE cPoint;
 
-DATA_WRAP(cPoint, TSPoint, point)
+DATA_WRAP(Point, point)
 DATA_ACCESSOR(point, row, INT2NUM, NUM2INT)
 DATA_ACCESSOR(point, column, INT2NUM, NUM2INT)
 

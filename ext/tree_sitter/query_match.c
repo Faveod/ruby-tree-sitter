@@ -4,7 +4,7 @@ extern VALUE mTreeSitter;
 
 VALUE cQueryMatch;
 
-DATA_WRAP(cQueryMatch, TSQueryMatch, query_match)
+DATA_WRAP(QueryMatch, query_match)
 DATA_GETTER(query_match, id, INT2NUM)
 DATA_GETTER(query_match, pattern_index, INT2FIX)
 DATA_GETTER(query_match, capture_count, INT2FIX)

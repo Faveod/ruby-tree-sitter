@@ -4,7 +4,7 @@ extern VALUE mTreeSitter;
 
 VALUE cRange;
 
-DATA_WRAP(cRange, TSRange, range)
+DATA_WRAP(Range, range)
 DATA_ACCESSOR(range, start_point, new_point_by_val, value_to_point)
 DATA_ACCESSOR(range, end_point, new_point_by_val, value_to_point)
 DATA_ACCESSOR(range, start_byte, INT2NUM, NUM2INT)

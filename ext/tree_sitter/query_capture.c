@@ -4,7 +4,7 @@ extern VALUE mTreeSitter;
 
 VALUE cQueryCapture;
 
-DATA_WRAP(cQueryCapture, TSQueryCapture, query_capture)
+DATA_WRAP(QueryCapture, query_capture)
 DATA_GETTER(query_capture, index, INT2NUM)
 DATA_GETTER(query_capture, node, new_node_by_val)
 
