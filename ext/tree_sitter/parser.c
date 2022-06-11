@@ -152,23 +152,19 @@ void init_parser(void) {
   rb_define_alloc_func(cParser, parser_allocate);
 
   /* Class methods */
-  rb_define_method(cParser, "language", parser_get_language, 0);
-  rb_define_method(cParser, "language=", parser_set_language, 1);
-  rb_define_method(cParser, "included_ranges", parser_get_included_ranges, 0);
-  rb_define_method(cParser, "included_ranges=", parser_set_included_ranges, 1);
+  DEFINE_ACCESSOR(cParser, parser, language)
+  DEFINE_ACCESSOR(cParser, parser, included_ranges)
+  DEFINE_ACCESSOR(cParser, parser, timeout_micros)
+  DEFINE_ACCESSOR(cParser, parser, logger)
   rb_define_method(cParser, "parse", parser_parse, 2);
   rb_define_method(cParser, "parse_string", parser_parse_string, 2);
   rb_define_method(cParser, "parse_string_encoding",
                    parser_parse_string_encoding, 3);
   rb_define_method(cParser, "reset", parser_reset, 0);
-  rb_define_method(cParser, "timeout_micros", parser_get_timeout_micros, 0);
-  rb_define_method(cParser, "timeout_micros=", parser_set_timeout_micros, 1);
   // TODO: How do we work with cancellation pointers? Do we need to expose them?
   // rb_define_method(cParser, "cancellation_flag",
   // parser_get_cancellation_flag, 0);
   // rb_define_method(cParser, "cancellation_flag=",
   // parser_set_cancellation_flag, 1);
-  rb_define_method(cParser, "logger", parser_get_logger, 0);
-  rb_define_method(cParser, "logger", parser_set_logger, 1);
   rb_define_method(cParser, "print_dot_graphs", parser_print_dot_graphs, 1);
 }

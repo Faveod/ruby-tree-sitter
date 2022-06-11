@@ -115,13 +115,10 @@ void init_query_cursor(void) {
   rb_define_alloc_func(cQueryCursor, query_cursor_allocate);
 
   /* Class methods */
+  DEFINE_ACCESSOR(cQueryCursor, query_cursor, match_limit)
   rb_define_method(cQueryCursor, "exec", query_cursor_exec, 2);
   rb_define_method(cQueryCursor, "exceed_match_limit?",
                    query_cursor_did_exceed_match_limit, 0);
-  rb_define_method(cQueryCursor, "match_limit", query_cursor_get_match_limit,
-                   0);
-  rb_define_method(cQueryCursor, "match_limit=", query_cursor_set_match_limit,
-                   1);
   rb_define_method(cQueryCursor, "byte_range=", query_cursor_set_byte_range, 2);
   rb_define_method(cQueryCursor, "point_range=", query_cursor_set_point_range,
                    2);
