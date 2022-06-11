@@ -19,16 +19,16 @@
 
 #define GETTER(type, field)                                                    \
   static VALUE type##_get_##field(VALUE self) {                                \
-    type##_t *ptr;                                                             \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, ptr);              \
-    return ptr->field;                                                         \
+    type##_t *type;                                                            \
+    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
+    return type->field;                                                        \
   }
 
 #define SETTER(type, field)                                                    \
   static VALUE type##_set_##field(VALUE self, VALUE val) {                     \
-    type##_t *ptr;                                                             \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, ptr);              \
-    ptr->field = val;                                                          \
+    type##_t *type;                                                            \
+    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
+    type->field = val;                                                         \
     return Qnil;                                                               \
   }
 
@@ -80,32 +80,32 @@
 
 #define DATA_NEW(klass, struct, type)                                          \
   VALUE new_##type(const struct *ptr) {                                        \
-    VALUE val = type##_allocate(klass);                                        \
-    type##_t *obj;                                                             \
-    TypedData_Get_Struct(val, type##_t, &type##_data_type, obj);               \
-    obj->data = *ptr;                                                          \
-    return val;                                                                \
+    VALUE res = type##_allocate(klass);                                        \
+    type##_t *type;                                                            \
+    TypedData_Get_Struct(res, type##_t, &type##_data_type, type);              \
+    type->data = *ptr;                                                         \
+    return res;                                                                \
   }                                                                            \
   VALUE new_##type##_by_val(struct ptr) {                                      \
-    VALUE val = type##_allocate(klass);                                        \
-    type##_t *obj;                                                             \
-    TypedData_Get_Struct(val, type##_t, &type##_data_type, obj);               \
-    obj->data = ptr;                                                           \
-    return val;                                                                \
+    VALUE res = type##_allocate(klass);                                        \
+    type##_t *type;                                                            \
+    TypedData_Get_Struct(res, type##_t, &type##_data_type, type);              \
+    type->data = ptr;                                                          \
+    return res;                                                                \
   }
 
 #define DATA_GETTER(type, field, cast)                                         \
   static VALUE type##_get_##field(VALUE self) {                                \
-    type##_t *ptr;                                                             \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, ptr);              \
-    return cast(ptr->data.field);                                              \
+    type##_t *type;                                                            \
+    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
+    return cast(type->data.field);                                             \
   }
 
 #define DATA_SETTER(type, field, cast)                                         \
   static VALUE type##_set_##field(VALUE self, VALUE val) {                     \
-    type##_t *ptr;                                                             \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, ptr);              \
-    ptr->data.field = cast(val);                                               \
+    type##_t *type;                                                            \
+    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
+    type->data.field = cast(val);                                              \
     return Qnil;                                                               \
   }
 
@@ -115,9 +115,9 @@
 
 #define DATA_FROM_VALUE(struct, type)                                          \
   struct value_to_##type(VALUE self) {                                         \
-    type##_t *obj;                                                             \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, obj);              \
-    return obj->data;                                                          \
+    type##_t *type;                                                            \
+    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
+    return type->data;                                                         \
   }
 
 #endif
