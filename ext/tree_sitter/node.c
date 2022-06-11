@@ -4,121 +4,106 @@ extern VALUE mTreeSitter;
 
 VALUE cNode;
 
-static void node_free(TSNode *node) { free(node); }
-
-TSNode *value_to_node(VALUE self) {
-  TSNode *node;
-
-  Data_Get_Struct(self, TSNode, node);
-
-  return node;
-}
-
-VALUE new_node(const TSNode *node) {
-  TSNode *ptr = (TSNode *)malloc(sizeof(TSNode));
-  *ptr = *node;
-  return Data_Wrap_Struct(cNode, NULL, node_free, ptr);
-}
+DATA_WRAP(cNode, TSNode, node)
 
 static VALUE node_type(VALUE self) {
-  TSNode *node = value_to_node(self);
-
-  return rb_str_new_cstr(ts_node_type(*node));
+  node_t *node = unwrap(self);
+  return rb_str_new_cstr(ts_node_type(node->data));
 }
 
 static VALUE node_symbol(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return INT2NUM(ts_node_symbol(*node));
+  return INT2NUM(ts_node_symbol(node->data));
 }
 
 static VALUE node_start_byte(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return INT2NUM(ts_node_start_byte(*node));
+  return INT2NUM(ts_node_start_byte(node->data));
 }
 
 static VALUE node_start_point(VALUE self) {
-  TSNode *node = value_to_node(self);
-  TSPoint point = ts_node_start_point(*node);
+  node_t *node = unwrap(self);
+  TSPoint point = ts_node_start_point(node->data);
 
   return new_point(&point);
 }
 
 static VALUE node_end_byte(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return INT2NUM(ts_node_end_byte(*node));
+  return INT2NUM(ts_node_end_byte(node->data));
 }
 
 static VALUE node_end_point(VALUE self) {
-  TSNode *node = value_to_node(self);
-  TSPoint point = ts_node_end_point(*node);
+  node_t *node = unwrap(self);
+  TSPoint point = ts_node_end_point(node->data);
 
   return new_point(&point);
 }
 
 static VALUE node_string(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return rb_str_new_cstr(ts_node_string(*node));
+  return rb_str_new_cstr(ts_node_string(node->data));
 }
 
 static VALUE node_is_null(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return ts_node_is_null(*node) ? Qtrue : Qfalse;
+  return ts_node_is_null(node->data) ? Qtrue : Qfalse;
 }
 
 static VALUE node_is_named(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return ts_node_is_named(*node) ? Qtrue : Qfalse;
+  return ts_node_is_named(node->data) ? Qtrue : Qfalse;
 }
 
 static VALUE node_is_missing(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return ts_node_is_missing(*node) ? Qtrue : Qfalse;
+  return ts_node_is_missing(node->data) ? Qtrue : Qfalse;
 }
 
 static VALUE node_is_extra(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return ts_node_is_extra(*node) ? Qtrue : Qfalse;
+  return ts_node_is_extra(node->data) ? Qtrue : Qfalse;
 }
 
 static VALUE node_has_changes(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return ts_node_has_changes(*node) ? Qtrue : Qfalse;
+  return ts_node_has_changes(node->data) ? Qtrue : Qfalse;
 }
 
 static VALUE node_has_error(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return ts_node_has_error(*node) ? Qtrue : Qfalse;
+  return ts_node_has_error(node->data) ? Qtrue : Qfalse;
 }
 
 static VALUE node_parent(VALUE self) {
-  TSNode *node = value_to_node(self);
-  TSNode parent = ts_node_parent(*node);
+  node_t *node = unwrap(self);
+  TSNode parent = ts_node_parent(node->data);
 
   return new_node(&parent);
 }
 
 static VALUE node_child(VALUE self, VALUE index) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   uint32_t idx = NUM2INT(index);
-  TSNode child = ts_node_child(*node, idx);
+  TSNode child = ts_node_child(node->data, idx);
 
   return new_node(&child);
 }
 
 static VALUE node_field_name_for_child(VALUE self, VALUE index) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   uint32_t idx = NUM2INT(index);
-  const char *name = ts_node_field_name_for_child(*node, idx);
+  const char *name = ts_node_field_name_for_child(node->data, idx);
   if (name == NULL) {
     return Qnil;
   } else {
@@ -127,138 +112,137 @@ static VALUE node_field_name_for_child(VALUE self, VALUE index) {
 }
 
 static VALUE node_child_count(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return INT2NUM(ts_node_child_count(*node));
+  return INT2NUM(ts_node_child_count(node->data));
 }
 
 static VALUE node_named_child(VALUE self, VALUE index) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   uint32_t idx = NUM2INT(index);
-  TSNode child = ts_node_named_child(*node, idx);
+  TSNode child = ts_node_named_child(node->data, idx);
 
   return new_node(&child);
 }
 
 static VALUE node_named_child_count(VALUE self) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
 
-  return INT2NUM(ts_node_named_child_count(*node));
+  return INT2NUM(ts_node_named_child_count(node->data));
 }
 
 static VALUE node_child_by_field_name(VALUE self, VALUE field_name) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   const char *name = StringValuePtr(field_name);
   uint32_t length = (uint32_t)RSTRING_LEN(field_name);
-  TSNode child = ts_node_child_by_field_name(*node, name, length);
+  TSNode child = ts_node_child_by_field_name(node->data, name, length);
 
   return new_node(&child);
 }
 
 static VALUE node_child_by_field_id(VALUE self, VALUE field_id) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   uint16_t id = (uint16_t)NUM2INT(field_id);
-  TSNode child = ts_node_child_by_field_id(*node, id);
+  TSNode child = ts_node_child_by_field_id(node->data, id);
 
   return new_node(&child);
 }
 
 static VALUE node_next_sibling(VALUE self) {
-  TSNode *node = value_to_node(self);
-  TSNode sibling = ts_node_next_sibling(*node);
+  node_t *node = unwrap(self);
+  TSNode sibling = ts_node_next_sibling(node->data);
 
   return new_node(&sibling);
 }
 
 static VALUE node_prev_sibling(VALUE self) {
-  TSNode *node = value_to_node(self);
-  TSNode sibling = ts_node_prev_sibling(*node);
+  node_t *node = unwrap(self);
+  TSNode sibling = ts_node_prev_sibling(node->data);
 
   return new_node(&sibling);
 }
 
 static VALUE node_next_named_sibling(VALUE self) {
-  TSNode *node = value_to_node(self);
-  TSNode sibling = ts_node_next_named_sibling(*node);
+  node_t *node = unwrap(self);
+  TSNode sibling = ts_node_next_named_sibling(node->data);
 
   return new_node(&sibling);
 }
 
 static VALUE node_prev_named_sibling(VALUE self) {
-  TSNode *node = value_to_node(self);
-  TSNode sibling = ts_node_prev_named_sibling(*node);
+  node_t *node = unwrap(self);
+  TSNode sibling = ts_node_prev_named_sibling(node->data);
 
   return new_node(&sibling);
 }
 
 static VALUE node_first_child_for_byte(VALUE self, VALUE byte) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   uint32_t b = NUM2INT(byte);
-  TSNode child = ts_node_first_child_for_byte(*node, b);
+  TSNode child = ts_node_first_child_for_byte(node->data, b);
 
   return new_node(&child);
 }
 
 static VALUE node_first_named_child_for_byte(VALUE self, VALUE byte) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   uint32_t b = NUM2INT(byte);
-  TSNode child = ts_node_first_named_child_for_byte(*node, b);
+  TSNode child = ts_node_first_named_child_for_byte(node->data, b);
 
   return new_node(&child);
 }
 
 static VALUE node_descendant_for_byte_range(VALUE self, VALUE from, VALUE to) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   uint32_t f = NUM2INT(from);
   uint32_t t = NUM2INT(to);
-  TSNode child = ts_node_descendant_for_byte_range(*node, f, t);
+  TSNode child = ts_node_descendant_for_byte_range(node->data, f, t);
 
   return new_node(&child);
 }
 
 static VALUE node_descendant_for_point_range(VALUE self, VALUE from, VALUE to) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   TSPoint f = value_to_point(from);
   TSPoint t = value_to_point(to);
-  TSNode child = ts_node_descendant_for_point_range(*node, f, t);
+  TSNode child = ts_node_descendant_for_point_range(node->data, f, t);
 
   return new_node(&child);
 }
 
 static VALUE node_named_descendant_for_byte_range(VALUE self, VALUE from,
                                                   VALUE to) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   uint32_t f = NUM2INT(from);
   uint32_t t = NUM2INT(to);
-  TSNode child = ts_node_named_descendant_for_byte_range(*node, f, t);
+  TSNode child = ts_node_named_descendant_for_byte_range(node->data, f, t);
 
   return new_node(&child);
 }
 
 static VALUE node_named_descendant_for_point_range(VALUE self, VALUE from,
                                                    VALUE to) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   TSPoint f = value_to_point(from);
   TSPoint t = value_to_point(to);
-  TSNode child = ts_node_named_descendant_for_point_range(*node, f, t);
+  TSNode child = ts_node_named_descendant_for_point_range(node->data, f, t);
 
   return new_node(&child);
 }
 
 static VALUE node_edit(VALUE self, VALUE input_edit) {
-  TSNode *node = value_to_node(self);
+  node_t *node = unwrap(self);
   TSInputEdit in = value_to_input_edit(input_edit);
 
-  ts_node_edit(node, &in);
+  ts_node_edit(&node->data, &in);
 
   return Qnil;
 }
 
 static VALUE node_eq(VALUE self, VALUE other) {
-  TSNode *node = value_to_node(self);
-  TSNode *edon = value_to_node(other);
-
-  return ts_node_eq(*node, *edon) ? Qtrue : Qfalse;
+  node_t *node = unwrap(self);
+  node_t *edon = unwrap(other);
+  return ts_node_eq(node->data, edon->data) ? Qtrue : Qfalse;
 }
 
 void init_node(void) {

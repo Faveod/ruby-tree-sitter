@@ -6,6 +6,7 @@ VALUE cQueryCapture;
 
 DATA_WRAP(cQueryCapture, TSQueryCapture, query_capture)
 DATA_GETTER(query_capture, index, INT2NUM)
+DATA_GETTER(query_capture, node, new_node_by_val)
 
 void init_query_capture(void) {
   cQueryCapture =
@@ -15,4 +16,5 @@ void init_query_capture(void) {
 
   /* Class methods */
   DEFINE_GETTER(cQueryCapture, query_capture, index)
+  DEFINE_GETTER(cQueryCapture, query_capture, node)
 }

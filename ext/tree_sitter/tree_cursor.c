@@ -24,19 +24,19 @@ static VALUE tree_cursor_allocate(VALUE klass) {
 }
 
 static VALUE tree_cursor_initialize(VALUE self, VALUE node) {
-  TSNode *n = value_to_node(self);
+  TSNode n = value_to_node(self);
   TSTreeCursor *ptr = value_to_tree_cursor(self);
 
-  *ptr = ts_tree_cursor_new(*n);
+  *ptr = ts_tree_cursor_new(n);
 
   return self;
 }
 
 static VALUE tree_cursor_reset(VALUE self, VALUE node) {
-  TSNode *n = value_to_node(self);
+  TSNode n = value_to_node(self);
   TSTreeCursor *tree_cursor = value_to_tree_cursor(self);
 
-  ts_tree_cursor_reset(tree_cursor, *n);
+  ts_tree_cursor_reset(tree_cursor, n);
 
   return Qnil;
 }

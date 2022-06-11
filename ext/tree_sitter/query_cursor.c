@@ -25,9 +25,9 @@ static VALUE query_cursor_allocate(VALUE klass) {
 static VALUE query_cursor_exec(VALUE self, VALUE query, VALUE node) {
   TSQueryCursor *cursor = value_to_query_cursor(self);
   TSQuery *q = value_to_query(query);
-  TSNode *n = value_to_node(node);
+  TSNode n = value_to_node(node);
 
-  ts_query_cursor_exec(cursor, q, *n);
+  ts_query_cursor_exec(cursor, q, n);
 
   return Qnil;
 }
