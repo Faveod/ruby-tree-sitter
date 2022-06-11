@@ -26,7 +26,7 @@ TSQueryError value_to_query_error(VALUE);
 TSRange value_to_range(VALUE);
 TSSymbolType value_to_symbol_type(VALUE);
 TSTree *value_to_tree(VALUE);
-TSTreeCursor *value_to_tree_cursor(VALUE);
+TSTreeCursor value_to_tree_cursor(VALUE);
 
 // TS* to VALUE converters
 VALUE new_input(const TSInput *);
