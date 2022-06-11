@@ -8,6 +8,7 @@ VALUE cLogger;
 // data: the TSLogger object
 // payload: what will be used in TSLogger.log()
 //          therefore: data.payload = payload
+// format: optional formatting string. Passed to "printf" if it exists
 typedef struct {
   TSLogger data;
   VALUE payload;
@@ -38,16 +39,18 @@ static void logger_log_printf(void *ptr, TSLogType log_type,
 static void logger_log_puts(void *ptr, TSLogType log_type,
                             const char *message) {
   logger_t *logger = (logger_t *)ptr;
-  VALUE str = rb_sprintf("%s: %s", logger_log_type_str(log_type), message);
-
+  const char *format =
+      NIL_P(logger->format) ? "%s %s" : StringValueCStr(logger->format);
+  VALUE str = rb_sprintf(format, logger_log_type_str(log_type), message);
   rb_funcall(logger->payload, rb_intern("puts"), 1, str);
 }
 
 static void logger_log_write(void *ptr, TSLogType log_type,
                              const char *message) {
-
   logger_t *logger = (logger_t *)ptr;
-  VALUE str = rb_sprintf("%s: %s\n", logger_log_type_str(log_type), message);
+  const char *format =
+      NIL_P(logger->format) ? "%s %s\n" : StringValueCStr(logger->format);
+  VALUE str = rb_sprintf(format, logger_log_type_str(log_type), message);
 
   rb_funcall(logger->payload, rb_intern("write"), 1, str);
 }
