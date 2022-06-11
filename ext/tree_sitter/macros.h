@@ -18,17 +18,11 @@
 // which can be of an arbitraty tuype.
 
 #define GETTER(type, field)                                                    \
-  static VALUE type##_get_##field(VALUE self) {                                \
-    type##_t *type;                                                            \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
-    return type->field;                                                        \
-  }
+  static VALUE type##_get_##field(VALUE self) { return (unwrap(self))->field; }
 
 #define SETTER(type, field)                                                    \
   static VALUE type##_set_##field(VALUE self, VALUE val) {                     \
-    type##_t *type;                                                            \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
-    type->field = val;                                                         \
+    unwrap(self)->field = val;                                                 \
     return Qnil;                                                               \
   }
 
@@ -42,6 +36,7 @@
   DATA_MEMSIZE(type)                                                           \
   DATA_DECLARE_DATA_TYPE(type)                                                 \
   DATA_ALLOCATE(type)                                                          \
+  DATA_UNWRAP(type)                                                            \
   DATA_NEW(klass, struct, type)                                                \
   DATA_FROM_VALUE(struct, type)
 
@@ -78,33 +73,35 @@
     return TypedData_Make_Struct(klass, type##_t, &type##_data_type, type);    \
   }
 
+#define DATA_UNWRAP(type)                                                      \
+  static type##_t *unwrap(VALUE self) {                                        \
+    type##_t *type;                                                            \
+    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
+    return type;                                                               \
+  }
+
 #define DATA_NEW(klass, struct, type)                                          \
   VALUE new_##type(const struct *ptr) {                                        \
     VALUE res = type##_allocate(klass);                                        \
-    type##_t *type;                                                            \
-    TypedData_Get_Struct(res, type##_t, &type##_data_type, type);              \
+    type##_t *type = unwrap(res);                                              \
     type->data = *ptr;                                                         \
     return res;                                                                \
   }                                                                            \
   VALUE new_##type##_by_val(struct ptr) {                                      \
     VALUE res = type##_allocate(klass);                                        \
-    type##_t *type;                                                            \
-    TypedData_Get_Struct(res, type##_t, &type##_data_type, type);              \
+    type##_t *type = unwrap(res);                                              \
     type->data = ptr;                                                          \
     return res;                                                                \
   }
 
 #define DATA_GETTER(type, field, cast)                                         \
   static VALUE type##_get_##field(VALUE self) {                                \
-    type##_t *type;                                                            \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
-    return cast(type->data.field);                                             \
+    return cast((unwrap(self))->data.field);                                   \
   }
 
 #define DATA_SETTER(type, field, cast)                                         \
   static VALUE type##_set_##field(VALUE self, VALUE val) {                     \
-    type##_t *type;                                                            \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
+    type##_t *type = unwrap(self);                                             \
     type->data.field = cast(val);                                              \
     return Qnil;                                                               \
   }
@@ -115,15 +112,12 @@
 
 #define DATA_FROM_VALUE(struct, type)                                          \
   struct value_to_##type(VALUE self) {                                         \
-    type##_t *type;                                                            \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
-    return type->data;                                                         \
+    return (unwrap(self))->data;                                               \
   }
 
 #define DATA_FAST_FORWARD_FNV(type, fn, field)                                 \
   static VALUE type##_##fn(int argc, VALUE *argv, VALUE self) {                \
-    type##_t *type;                                                            \
-    TypedData_Get_Struct(self, type##_t, &type##_data_type, type);             \
+    type##_t *type = unwrap(self);                                             \
     if (!NIL_P(type->field)) {                                                 \
       return rb_funcallv(type->field, rb_intern(#fn ""), argc, argv);          \
     } else {                                                                   \

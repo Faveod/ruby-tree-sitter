@@ -9,10 +9,7 @@ DATA_ACCESSOR(point, row, INT2NUM, NUM2INT)
 DATA_ACCESSOR(point, column, INT2NUM, NUM2INT)
 
 static VALUE point_inspect(VALUE self) {
-  point_t *point;
-
-  TypedData_Get_Struct(self, point_t, &point_data_type, point);
-
+  point_t *point = unwrap(self);
   return rb_sprintf("{row=%i, column=%i}", point->data.row, point->data.column);
 }
 

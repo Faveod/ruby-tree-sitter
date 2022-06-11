@@ -10,9 +10,7 @@ DATA_GETTER(query_match, pattern_index, INT2FIX)
 DATA_GETTER(query_match, capture_count, INT2FIX)
 
 static VALUE query_match_get_captures(VALUE self) {
-  query_match_t *query_match;
-  TypedData_Get_Struct(self, query_match_t, &query_match_data_type,
-                       query_match);
+  query_match_t *query_match = unwrap(self);
 
   int length = NUM2INT(query_match->data.capture_count);
   VALUE res = rb_ary_new_capa(length);

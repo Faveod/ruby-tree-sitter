@@ -39,10 +39,7 @@ TSQueryPredicateStepType value_to_query_predicate_step_type(VALUE step_type) {
 }
 
 static VALUE query_predicate_step_inspect(VALUE self) {
-  query_predicate_step_t *step;
-
-  TypedData_Get_Struct(self, query_predicate_step_t,
-                       &query_predicate_step_data_type, step);
+  query_predicate_step_t *step = unwrap(self);
   return rb_sprintf("{value_id=%i, type=%i}", step->data.value_id,
                     step->data.type);
 }

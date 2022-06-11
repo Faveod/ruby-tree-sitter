@@ -11,9 +11,7 @@ DATA_ACCESSOR(range, start_byte, INT2NUM, NUM2INT)
 DATA_ACCESSOR(range, end_byte, INT2NUM, NUM2INT)
 
 static VALUE range_inspect(VALUE self) {
-  range_t *range;
-
-  TypedData_Get_Struct(self, range_t, &range_data_type, range);
+  range_t *range = unwrap(self);
   return rb_sprintf("{start_point= %+" PRIsVALUE ", end_point=%+" PRIsVALUE
                     ", start_byte=%i, end_byte=%i}",
                     new_point_by_val(range->data.start_point),

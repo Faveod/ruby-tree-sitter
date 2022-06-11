@@ -13,9 +13,8 @@ DATA_ACCESSOR(input_edit, old_end_point, new_point_by_val, value_to_point)
 DATA_ACCESSOR(input_edit, new_end_point, new_point_by_val, value_to_point)
 
 static VALUE input_edit_inspect(VALUE self) {
-  input_edit_t *input_edit;
+  input_edit_t *input_edit = unwrap(self);
 
-  TypedData_Get_Struct(self, input_edit_t, &input_edit_data_type, input_edit);
   return rb_sprintf("{start_byte=%i, old_end_byte=%i , new_end_byte=%i, "
                     "start_point=%+" PRIsVALUE ", old_end_point=%+" PRIsVALUE
                     ", new_end_point=%+" PRIsVALUE "}",

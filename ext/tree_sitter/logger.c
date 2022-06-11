@@ -100,6 +100,8 @@ const rb_data_type_t logger_data_type = {
     .flags = RUBY_TYPED_FREE_IMMEDIATELY,
 };
 
+DATA_UNWRAP(logger)
+
 static VALUE logger_allocate(VALUE klass) {
   logger_t *logger;
   return TypedData_Make_Struct(klass, logger_t, &logger_data_type, logger);
@@ -108,8 +110,7 @@ static VALUE logger_allocate(VALUE klass) {
 VALUE new_logger(const TSLogger *ptr) {
   if (ptr != NULL) {
     VALUE res = logger_allocate(cLogger);
-    logger_t *logger;
-    TypedData_Get_Struct(res, logger_t, &logger_data_type, logger);
+    logger_t *logger = unwrap(res);
 
     logger->data = *ptr;
     logger->data.payload = logger;
@@ -130,11 +131,7 @@ VALUE new_logger(const TSLogger *ptr) {
   }
 }
 
-TSLogger *value_to_logger(VALUE self) {
-  logger_t *obj;
-  TypedData_Get_Struct(self, logger_t, &logger_data_type, obj);
-  return &obj->data;
-}
+TSLogger *value_to_logger(VALUE self) { return &(unwrap(self))->data; }
 
 static void logger_initialize_stderr(logger_t *logger) {
   VALUE stderr = rb_gv_get("$stderr");
@@ -158,8 +155,7 @@ static void logger_initialize_stderr(logger_t *logger) {
 // end
 //
 static VALUE logger_initialize(int argc, VALUE *argv, VALUE self) {
-  logger_t *logger;
-  TypedData_Get_Struct(self, logger_t, &logger_data_type, logger);
+  logger_t *logger = unwrap(self);
 
   VALUE payload;
   VALUE format;
@@ -177,9 +173,8 @@ static VALUE logger_initialize(int argc, VALUE *argv, VALUE self) {
 }
 
 static VALUE logger_inspect(VALUE self) {
-  logger_t *logger;
+  logger_t *logger = unwrap(self);
 
-  TypedData_Get_Struct(self, logger_t, &logger_data_type, logger);
   return rb_sprintf("{payload=%+" PRIsVALUE ", format=%+" PRIsVALUE "}",
                     logger->payload, logger->format);
 }
