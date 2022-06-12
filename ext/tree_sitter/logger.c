@@ -31,7 +31,6 @@ static void logger_log_printf(void *ptr, TSLogType log_type,
   logger_t *logger = (logger_t *)ptr;
   VALUE type = rb_str_new_cstr(logger_log_type_str(log_type));
   VALUE msg = rb_str_new_cstr(message);
-
   rb_funcall(logger->payload, rb_intern("printf"), 3, logger->format, type,
              msg);
 }
@@ -51,7 +50,6 @@ static void logger_log_write(void *ptr, TSLogType log_type,
   const char *format =
       NIL_P(logger->format) ? "%s %s\n" : StringValueCStr(logger->format);
   VALUE str = rb_sprintf(format, logger_log_type_str(log_type), message);
-
   rb_funcall(logger->payload, rb_intern("write"), 1, str);
 }
 
@@ -181,7 +179,6 @@ static VALUE logger_initialize(int argc, VALUE *argv, VALUE self) {
 
 static VALUE logger_inspect(VALUE self) {
   logger_t *logger = unwrap(self);
-
   return rb_sprintf("{payload=%+" PRIsVALUE ", format=%+" PRIsVALUE "}",
                     logger->payload, logger->format);
 }
