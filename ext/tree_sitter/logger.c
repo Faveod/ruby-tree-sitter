@@ -115,7 +115,6 @@ VALUE new_logger(const TSLogger *ptr) {
     VALUE res = logger_allocate(cLogger);
     logger_t *logger = unwrap(res);
 
-    logger->data = *ptr;
     logger->data.payload = logger;
 
     VALUE payload = Qnil;
