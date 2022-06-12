@@ -47,4 +47,23 @@ task :console do
   Pry.start
 end
 
-task :default => [:compile, :test]
+Rake::TestTask.new(:test) do |t|
+  t.libs << 'lib' << 'test'
+  t.libs << 'minitest/autorun' << 'minitest/color'
+  t.pattern = 'test/**/*_test.rb'
+  t.verbose = false
+  t.warning = true
+end
+
+begin
+  require 'rdoc/task'
+  Rake::RDocTask.new('doc') do |rdoc|
+    rdoc.rdoc_dir = 'rdoc'
+    rdoc.rdoc_files.include('ext/**/*.c')
+    rdoc.rdoc_files.include('lib/**/*.rb')
+  end
+rescue LoadError
+  puts 'Could not load rdoc/task'
+end
+
+task :default => %i[clean compile test]
