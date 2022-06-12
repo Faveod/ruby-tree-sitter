@@ -16,11 +16,9 @@ VALUE cTree;
 
 TSTree *value_to_tree(VALUE self) {
   TSTree *tree = NULL;
-
   if (!NIL_P(self)) {
     Data_Get_Struct(self, TSTree, tree);
   }
-
   return tree;
 }
 
@@ -30,40 +28,31 @@ VALUE new_tree(const TSTree *tree) {
 
 static VALUE tree_copy(VALUE self) {
   TSTree *tree = value_to_tree(self);
-
   return new_tree(ts_tree_copy(tree));
 }
 
 static VALUE tree_delete(VALUE self) {
   TSTree *tree = value_to_tree(self);
-
   ts_tree_delete(tree);
-
   return Qnil;
 }
 
 static VALUE tree_root_node(VALUE self) {
   TSTree *tree = value_to_tree(self);
-
   TSNode root = ts_tree_root_node(tree);
-
   return new_node(&root);
 }
 
 static VALUE tree_language(VALUE self) {
   TSTree *tree = value_to_tree(self);
-
   const TSLanguage *language = ts_tree_language(tree);
-
   return new_language(language);
 }
 
 static VALUE tree_edit(VALUE self, VALUE edit) {
   TSTree *tree = value_to_tree(self);
   TSInputEdit in = value_to_input_edit(edit);
-
   ts_tree_edit(tree, &in);
-
   return Qnil;
 }
 
@@ -85,14 +74,11 @@ static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
 
 static VALUE tree_print_dot_graph(VALUE self, VALUE file) {
   Check_Type(file, T_STRING);
-
   TSTree *parser = value_to_tree(self);
   char *path = StringValueCStr(file);
   FILE *fd = fopen(path, "w+");
-
   ts_tree_print_dot_graph(parser, fd);
   fclose(fd);
-
   return Qnil;
 }
 
