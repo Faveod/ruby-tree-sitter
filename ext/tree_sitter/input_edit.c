@@ -5,12 +5,12 @@ extern VALUE mTreeSitter;
 VALUE cInputEdit;
 
 DATA_WRAP(InputEdit, input_edit)
-DATA_ACCESSOR(input_edit, start_byte, INT2NUM, NUM2INT)
-DATA_ACCESSOR(input_edit, old_end_byte, INT2NUM, NUM2INT)
-DATA_ACCESSOR(input_edit, new_end_byte, INT2NUM, NUM2INT)
-DATA_ACCESSOR(input_edit, start_point, new_point_by_val, value_to_point)
-DATA_ACCESSOR(input_edit, old_end_point, new_point_by_val, value_to_point)
-DATA_ACCESSOR(input_edit, new_end_point, new_point_by_val, value_to_point)
+DATA_DEFINE_ACCESSOR(input_edit, start_byte, INT2NUM, NUM2INT)
+DATA_DEFINE_ACCESSOR(input_edit, old_end_byte, INT2NUM, NUM2INT)
+DATA_DEFINE_ACCESSOR(input_edit, new_end_byte, INT2NUM, NUM2INT)
+DATA_DEFINE_ACCESSOR(input_edit, start_point, new_point_by_val, value_to_point)
+DATA_DEFINE_ACCESSOR(input_edit, old_end_point, new_point_by_val, value_to_point)
+DATA_DEFINE_ACCESSOR(input_edit, new_end_point, new_point_by_val, value_to_point)
 
 static VALUE input_edit_inspect(VALUE self) {
   input_edit_t *input_edit = unwrap(self);
@@ -30,12 +30,12 @@ void init_input_edit(void) {
   rb_define_alloc_func(cInputEdit, input_edit_allocate);
 
   /* Class methods */
-  DEFINE_ACCESSOR(cInputEdit, input_edit, start_byte)
-  DEFINE_ACCESSOR(cInputEdit, input_edit, old_end_byte)
-  DEFINE_ACCESSOR(cInputEdit, input_edit, new_end_byte)
-  DEFINE_ACCESSOR(cInputEdit, input_edit, start_point)
-  DEFINE_ACCESSOR(cInputEdit, input_edit, old_end_point)
-  DEFINE_ACCESSOR(cInputEdit, input_edit, new_end_point)
+  DECLARE_ACCESSOR(cInputEdit, input_edit, start_byte)
+  DECLARE_ACCESSOR(cInputEdit, input_edit, old_end_byte)
+  DECLARE_ACCESSOR(cInputEdit, input_edit, new_end_byte)
+  DECLARE_ACCESSOR(cInputEdit, input_edit, start_point)
+  DECLARE_ACCESSOR(cInputEdit, input_edit, old_end_point)
+  DECLARE_ACCESSOR(cInputEdit, input_edit, new_end_point)
 
   rb_define_method(cInputEdit, "inspect", input_edit_inspect, 0);
   rb_define_method(cInputEdit, "to_s", input_edit_inspect, 0);

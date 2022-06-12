@@ -5,10 +5,10 @@ extern VALUE mTreeSitter;
 VALUE cRange;
 
 DATA_WRAP(Range, range)
-DATA_ACCESSOR(range, start_point, new_point_by_val, value_to_point)
-DATA_ACCESSOR(range, end_point, new_point_by_val, value_to_point)
-DATA_ACCESSOR(range, start_byte, INT2NUM, NUM2INT)
-DATA_ACCESSOR(range, end_byte, INT2NUM, NUM2INT)
+DATA_DEFINE_ACCESSOR(range, start_point, new_point_by_val, value_to_point)
+DATA_DEFINE_ACCESSOR(range, end_point, new_point_by_val, value_to_point)
+DATA_DEFINE_ACCESSOR(range, start_byte, INT2NUM, NUM2INT)
+DATA_DEFINE_ACCESSOR(range, end_byte, INT2NUM, NUM2INT)
 
 static VALUE range_inspect(VALUE self) {
   range_t *range = unwrap(self);
@@ -25,10 +25,10 @@ void init_range(void) {
   rb_define_alloc_func(cRange, range_allocate);
 
   /* Class methods */
-  DEFINE_ACCESSOR(cRange, range, start_point)
-  DEFINE_ACCESSOR(cRange, range, end_point)
-  DEFINE_ACCESSOR(cRange, range, start_byte)
-  DEFINE_ACCESSOR(cRange, range, end_byte)
+  DECLARE_ACCESSOR(cRange, range, start_point)
+  DECLARE_ACCESSOR(cRange, range, end_point)
+  DECLARE_ACCESSOR(cRange, range, start_byte)
+  DECLARE_ACCESSOR(cRange, range, end_byte)
 
   rb_define_method(cRange, "inspect", range_inspect, 0);
   rb_define_method(cRange, "to_s", range_inspect, 0);

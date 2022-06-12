@@ -106,7 +106,7 @@ static VALUE input_inspect(VALUE self) {
   return rb_sprintf("{payload=%+" PRIsVALUE "}", unwrap(self)->payload);
 }
 
-GETTER(input, payload)
+DEFINE_GETTER(input, payload)
 
 static VALUE input_set_payload(VALUE self, VALUE payload) {
   input_payload_set(unwrap(self), payload);
@@ -119,7 +119,7 @@ void init_input(void) {
   rb_define_alloc_func(cInput, input_allocate);
 
   /* Class methods */
-  DEFINE_ACCESSOR(cInput, input, payload)
+  DECLARE_ACCESSOR(cInput, input, payload)
   rb_define_method(cInput, "initialize", input_initialize, -1);
   rb_define_method(cInput, "inspect", input_inspect, 0);
   rb_define_method(cInput, "to_s", input_inspect, 0);

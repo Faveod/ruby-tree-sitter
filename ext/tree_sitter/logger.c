@@ -187,8 +187,8 @@ DATA_FAST_FORWARD_FNV(logger, write, payload)
 DATA_FAST_FORWARD_FNV(logger, puts, payload)
 DATA_FAST_FORWARD_FNV(logger, printf, payload)
 
-ACCESSOR(logger, format)
-GETTER(logger, payload)
+DEFINE_ACCESSOR(logger, format)
+DEFINE_GETTER(logger, payload)
 
 static VALUE logger_set_payload(VALUE self, VALUE payload) {
   logger_payload_set(unwrap(self), payload);
@@ -202,8 +202,8 @@ void init_logger(void) {
 
   /* Class methods */
   rb_define_method(cLogger, "initialize", logger_initialize, -1);
-  DEFINE_ACCESSOR(cLogger, logger, format)
-  DEFINE_ACCESSOR(cLogger, logger, payload)
+  DECLARE_ACCESSOR(cLogger, logger, format)
+  DECLARE_ACCESSOR(cLogger, logger, payload)
   rb_define_method(cLogger, "write", logger_write, -1);
   rb_define_method(cLogger, "puts", logger_puts, -1);
   rb_define_method(cLogger, "printf", logger_printf, -1);

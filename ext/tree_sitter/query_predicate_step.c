@@ -44,9 +44,9 @@ static VALUE query_predicate_step_inspect(VALUE self) {
                     step->data.type);
 }
 
-DATA_ACCESSOR(query_predicate_step, type, new_query_predicate_step_type,
+DATA_DEFINE_ACCESSOR(query_predicate_step, type, new_query_predicate_step_type,
               value_to_query_predicate_step_type)
-DATA_ACCESSOR(query_predicate_step, value_id, INT2NUM, NUM2INT)
+DATA_DEFINE_ACCESSOR(query_predicate_step, value_id, INT2NUM, NUM2INT)
 
 void init_query_predicate_step(void) {
   cQueryPredicateStep =
@@ -60,8 +60,8 @@ void init_query_predicate_step(void) {
   rb_define_const(cQueryPredicateStep, "STRING", ID2SYM(rb_intern(string)));
 
   /* Class methods */
-  DEFINE_ACCESSOR(cQueryPredicateStep, query_predicate_step, type)
-  DEFINE_ACCESSOR(cQueryPredicateStep, query_predicate_step, value_id)
+  DECLARE_ACCESSOR(cQueryPredicateStep, query_predicate_step, type)
+  DECLARE_ACCESSOR(cQueryPredicateStep, query_predicate_step, value_id)
 
   rb_define_method(cQueryPredicateStep, "inspect", query_predicate_step_inspect,
                    0);

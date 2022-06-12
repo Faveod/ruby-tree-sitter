@@ -91,7 +91,7 @@ void init_query_cursor(void) {
   rb_define_alloc_func(cQueryCursor, query_cursor_allocate);
 
   /* Class methods */
-  DEFINE_ACCESSOR(cQueryCursor, query_cursor, match_limit)
+  DECLARE_ACCESSOR(cQueryCursor, query_cursor, match_limit)
   rb_define_method(cQueryCursor, "exec", query_cursor_exec, 2);
   rb_define_method(cQueryCursor, "exceed_match_limit?",
                    query_cursor_did_exceed_match_limit, 0);

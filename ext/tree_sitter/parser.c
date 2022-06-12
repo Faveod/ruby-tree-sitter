@@ -141,11 +141,11 @@ void init_parser(void) {
   rb_define_alloc_func(cParser, parser_allocate);
 
   /* Class methods */
-  DEFINE_ACCESSOR(cParser, parser, language)
-  DEFINE_ACCESSOR(cParser, parser, included_ranges)
-  DEFINE_ACCESSOR(cParser, parser, timeout_micros)
-  DEFINE_ACCESSOR(cParser, parser, logger)
-  DEFINE_ACCESSOR(cParser, parser, cancellation_flag)
+  DECLARE_ACCESSOR(cParser, parser, language)
+  DECLARE_ACCESSOR(cParser, parser, included_ranges)
+  DECLARE_ACCESSOR(cParser, parser, timeout_micros)
+  DECLARE_ACCESSOR(cParser, parser, logger)
+  DECLARE_ACCESSOR(cParser, parser, cancellation_flag)
   rb_define_method(cParser, "parse", parser_parse, 2);
   rb_define_method(cParser, "parse_string", parser_parse_string, 2);
   rb_define_method(cParser, "parse_string_encoding",

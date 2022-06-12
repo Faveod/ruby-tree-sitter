@@ -5,9 +5,9 @@ extern VALUE mTreeSitter;
 VALUE cQueryMatch;
 
 DATA_WRAP(QueryMatch, query_match)
-DATA_GETTER(query_match, id, INT2NUM)
-DATA_GETTER(query_match, pattern_index, INT2FIX)
-DATA_GETTER(query_match, capture_count, INT2FIX)
+DATA_DEFINE_GETTER(query_match, id, INT2NUM)
+DATA_DEFINE_GETTER(query_match, pattern_index, INT2FIX)
+DATA_DEFINE_GETTER(query_match, capture_count, INT2FIX)
 
 static VALUE query_match_get_captures(VALUE self) {
   query_match_t *query_match = unwrap(self);
@@ -28,8 +28,8 @@ void init_query_match(void) {
   rb_define_alloc_func(cQueryMatch, query_match_allocate);
 
   /* Class methods */
-  DEFINE_GETTER(cQueryMatch, query_match, id)
-  DEFINE_GETTER(cQueryMatch, query_match, pattern_index)
-  DEFINE_GETTER(cQueryMatch, query_match, capture_count)
-  DEFINE_GETTER(cQueryMatch, query_match, captures)
+  DECLARE_GETTER(cQueryMatch, query_match, id)
+  DECLARE_GETTER(cQueryMatch, query_match, pattern_index)
+  DECLARE_GETTER(cQueryMatch, query_match, capture_count)
+  DECLARE_GETTER(cQueryMatch, query_match, captures)
 }
