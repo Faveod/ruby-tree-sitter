@@ -9,9 +9,7 @@ DATA_WRAP(TreeCursor, tree_cursor)
 static VALUE tree_cursor_initialize(VALUE self, VALUE node) {
   TSNode n = value_to_node(self);
   tree_cursor_t *ptr = unwrap(self);
-
   ptr->data = ts_tree_cursor_new(n);
-
   return self;
 }
 
@@ -58,9 +56,7 @@ static VALUE tree_cursor_goto_first_child_for_point(VALUE self, VALUE point) {
 static VALUE tree_cursor_copy(VALUE self) {
   VALUE res = tree_cursor_allocate(cTreeCursor);
   tree_cursor_t *ptr = unwrap(res);
-
   ptr->data = ts_tree_cursor_copy(&SELF);
-
   return res;
 }
 
