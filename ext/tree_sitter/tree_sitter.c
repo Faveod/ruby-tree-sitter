@@ -8,16 +8,16 @@ void Init_tree_sitter() {
   init_encoding();
   init_input();
   init_input_edit();
-  init_logger();
   init_language();
+  init_logger();
   init_parser();
   init_point();
   init_quantifier();
   init_query();
   init_query_cursor();
+  init_query_error();
   init_query_match();
   init_query_predicate_step();
-  init_query_error();
   init_range();
   init_symbol_type();
   init_tree();
