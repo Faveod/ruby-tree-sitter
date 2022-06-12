@@ -80,6 +80,8 @@
     return type;                                                               \
   }
 
+#define SELF unwrap(self)->data
+
 #define DATA_NEW(klass, struct, type)                                          \
   VALUE new_##type(const struct *ptr) {                                        \
     VALUE res = type##_allocate(klass);                                        \
