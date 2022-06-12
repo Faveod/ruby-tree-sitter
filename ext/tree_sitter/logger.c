@@ -202,4 +202,5 @@ void init_logger(void) {
   rb_define_method(cLogger, "puts", logger_puts, -1);
   rb_define_method(cLogger, "printf", logger_printf, -1);
   rb_define_method(cLogger, "inspect", logger_inspect, 0);
+  rb_define_method(cLogger, "to_s", logger_inspect, 0);
 }
