@@ -6,9 +6,7 @@ VALUE cQuery;
 
 TSQuery *value_to_query(VALUE self) {
   TSQuery *query;
-
   Data_Get_Struct(self, TSQuery, query);
-
   return query;
 }
 
@@ -34,34 +32,26 @@ static VALUE query_initialize(VALUE self, VALUE language, VALUE source) {
 }
 
 static VALUE query_pattern_count(VALUE self) {
-  TSQuery *query = value_to_query(self);
-
-  return INT2NUM(ts_query_pattern_count(query));
+  return INT2NUM(ts_query_pattern_count(value_to_query(self)));
 }
 
 static VALUE query_capture_count(VALUE self) {
-  TSQuery *query = value_to_query(self);
-
-  return INT2NUM(ts_query_capture_count(query));
+  return INT2NUM(ts_query_capture_count(value_to_query(self)));
 }
 
 static VALUE query_string_count(VALUE self) {
-  TSQuery *query = value_to_query(self);
-
-  return INT2NUM(ts_query_string_count(query));
+  return INT2NUM(ts_query_string_count(value_to_query(self)));
 }
 
 static VALUE query_start_byte_for_pattern(VALUE self, VALUE byte) {
-  TSQuery *query = value_to_query(self);
-
-  return INT2NUM(ts_query_start_byte_for_pattern(query, NUM2INT(byte)));
+  return INT2NUM(
+      ts_query_start_byte_for_pattern(value_to_query(self), NUM2INT(byte)));
 }
 
 static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
-  TSQuery *query = value_to_query(self);
   uint32_t length;
-  const TSQueryPredicateStep *steps =
-      ts_query_predicates_for_pattern(query, NUM2INT(pattern_index), &length);
+  const TSQueryPredicateStep *steps = ts_query_predicates_for_pattern(
+      value_to_query(self), NUM2INT(pattern_index), &length);
 
   VALUE res = rb_ary_new_capa(length);
 
@@ -73,52 +63,39 @@ static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
 }
 
 static VALUE query_pattern_guaranteed_at_step(VALUE self, VALUE byte_offset) {
-  TSQuery *query = value_to_query(self);
-
-  return INT2NUM(
-      ts_query_is_pattern_guaranteed_at_step(query, NUM2INT(byte_offset)));
+  return INT2NUM(ts_query_is_pattern_guaranteed_at_step(value_to_query(self),
+                                                        NUM2INT(byte_offset)));
 }
 
 static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
-  TSQuery *query = value_to_query(self);
   uint32_t length;
-  const char *name = ts_query_capture_name_for_id(query, NUM2INT(id), &length);
-
+  const char *name =
+      ts_query_capture_name_for_id(value_to_query(self), NUM2INT(id), &length);
   return rb_str_new(name, length);
 }
 
 static VALUE query_capture_quantifier_for_id(VALUE self, VALUE id,
                                              VALUE capture_id) {
-  TSQuery *query = value_to_query(self);
-
-  return INT2NUM(ts_query_capture_quantifier_for_id(query, NUM2INT(id),
-                                                    NUM2INT(capture_id)));
+  return INT2NUM(ts_query_capture_quantifier_for_id(
+      value_to_query(self), NUM2INT(id), NUM2INT(capture_id)));
 }
 
 static VALUE query_string_value_for_id(VALUE self, VALUE id) {
-  TSQuery *query = value_to_query(self);
   uint32_t length;
   const char *string =
-      ts_query_string_value_for_id(query, NUM2INT(id), &length);
-
+      ts_query_string_value_for_id(value_to_query(self), NUM2INT(id), &length);
   return rb_str_new(string, length);
 }
 
 static VALUE query_disable_capture(VALUE self, VALUE capture) {
-  TSQuery *query = value_to_query(self);
   const char *cap = StringValuePtr(capture);
   uint32_t length = (uint32_t)RSTRING_LEN(capture);
-
-  ts_query_disable_capture(query, cap, length);
-
+  ts_query_disable_capture(value_to_query(self), cap, length);
   return Qnil;
 }
 
 static VALUE query_disable_pattern(VALUE self, VALUE pattern) {
-  TSQuery *query = value_to_query(self);
-
-  ts_query_disable_pattern(query, NUM2INT(pattern));
-
+  ts_query_disable_pattern(value_to_query(self), NUM2INT(pattern));
   return Qnil;
 }
 
