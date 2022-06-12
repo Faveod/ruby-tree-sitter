@@ -186,7 +186,12 @@ DATA_FAST_FORWARD_FNV(logger, puts, payload)
 DATA_FAST_FORWARD_FNV(logger, printf, payload)
 
 ACCESSOR(logger, format)
-ACCESSOR(logger, payload)
+GETTER(logger, payload)
+
+static VALUE logger_set_payload(VALUE self, VALUE payload) {
+  logger_payload_set(unwrap(self), payload);
+  return Qnil;
+}
 
 void init_logger(void) {
   cLogger = rb_define_class_under(mTreeSitter, "Logger", rb_cObject);
