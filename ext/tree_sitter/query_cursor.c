@@ -6,9 +6,7 @@ VALUE cQueryCursor;
 
 TSQueryCursor *value_to_query_cursor(VALUE self) {
   TSQueryCursor *cursor;
-
   Data_Get_Struct(self, TSQueryCursor, cursor);
-
   return cursor;
 }
 
@@ -18,61 +16,45 @@ static void query_cursor_free(TSQueryCursor *cursor) {
 
 static VALUE query_cursor_allocate(VALUE klass) {
   TSQueryCursor *cursor = ts_query_cursor_new();
-
   return Data_Wrap_Struct(klass, NULL, query_cursor_free, cursor);
 }
 
 static VALUE query_cursor_exec(VALUE self, VALUE query, VALUE node) {
-  TSQueryCursor *cursor = value_to_query_cursor(self);
-  TSQuery *q = value_to_query(query);
-  TSNode n = value_to_node(node);
-
-  ts_query_cursor_exec(cursor, q, n);
-
+  ts_query_cursor_exec(value_to_query_cursor(self), value_to_query(query),
+                       value_to_node(node));
   return Qnil;
 }
 
 static VALUE query_cursor_did_exceed_match_limit(VALUE self) {
-  TSQueryCursor *cursor = value_to_query_cursor(self);
-  return ts_query_cursor_did_exceed_match_limit(cursor) ? Qtrue : Qfalse;
+  return ts_query_cursor_did_exceed_match_limit(value_to_query_cursor(self))
+             ? Qtrue
+             : Qfalse;
 }
 
 static VALUE query_cursor_get_match_limit(VALUE self) {
-  TSQueryCursor *cursor = value_to_query_cursor(self);
-  return INT2NUM(ts_query_cursor_match_limit(cursor));
+  return INT2NUM(ts_query_cursor_match_limit(value_to_query_cursor(self)));
 }
 
 static VALUE query_cursor_set_match_limit(VALUE self, VALUE limit) {
-  TSQueryCursor *cursor = value_to_query_cursor(self);
-
-  ts_query_cursor_set_match_limit(cursor, NUM2INT(limit));
-
+  ts_query_cursor_set_match_limit(value_to_query_cursor(self), NUM2INT(limit));
   return Qnil;
 }
 
 static VALUE query_cursor_set_byte_range(VALUE self, VALUE from, VALUE to) {
-  TSQueryCursor *cursor = value_to_query_cursor(self);
-
-  ts_query_cursor_set_byte_range(cursor, NUM2INT(from), NUM2INT(to));
-
+  ts_query_cursor_set_byte_range(value_to_query_cursor(self), NUM2INT(from),
+                                 NUM2INT(to));
   return Qnil;
 }
 
 static VALUE query_cursor_set_point_range(VALUE self, VALUE from, VALUE to) {
-  TSQueryCursor *cursor = value_to_query_cursor(self);
-  TSPoint f = value_to_point(from);
-  TSPoint t = value_to_point(to);
-
-  ts_query_cursor_set_point_range(cursor, f, t);
-
+  ts_query_cursor_set_point_range(value_to_query_cursor(self),
+                                  value_to_point(from), value_to_point(to));
   return Qnil;
 }
 
 static VALUE query_cursor_next_match(VALUE self) {
-  TSQueryCursor *cursor = value_to_query_cursor(self);
   TSQueryMatch *match = NULL;
-
-  if (ts_query_cursor_next_match(cursor, match)) {
+  if (ts_query_cursor_next_match(value_to_query_cursor(self), match)) {
     return new_query_match(match);
   } else {
     return Qnil;
@@ -80,10 +62,7 @@ static VALUE query_cursor_next_match(VALUE self) {
 }
 
 static VALUE query_cursor_remove_match(VALUE self, VALUE id) {
-  TSQueryCursor *cursor = value_to_query_cursor(self);
-
-  ts_query_cursor_remove_match(cursor, NUM2INT(id));
-
+  ts_query_cursor_remove_match(value_to_query_cursor(self), NUM2INT(id));
   return Qnil;
 }
 
@@ -93,16 +72,13 @@ static VALUE query_cursor_remove_match(VALUE self, VALUE id) {
 // array of two values and returning them, intuitively speaking, seem very
 // inefficient.
 static VALUE query_cursor_next_capture(VALUE self) {
-  TSQueryCursor *cursor = value_to_query_cursor(self);
   TSQueryMatch *match = NULL;
   uint32_t index;
-
-  if (ts_query_cursor_next_capture(cursor, match, &index)) {
+  if (ts_query_cursor_next_capture(value_to_query_cursor(self), match,
+                                   &index)) {
     VALUE res = rb_ary_new_capa(2);
-
     rb_ary_push(res, new_query_match(match));
     rb_ary_push(res, INT2NUM(index));
-
     return res;
   } else {
     return Qnil;
