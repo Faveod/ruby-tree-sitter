@@ -17,51 +17,49 @@ static VALUE tree_cursor_initialize(VALUE self, VALUE node) {
 
 static VALUE tree_cursor_reset(VALUE self, VALUE node) {
   TSNode n = value_to_node(self);
-  ts_tree_cursor_reset(&unwrap(self)->data, n);
+  ts_tree_cursor_reset(&SELF, n);
   return Qnil;
 }
 
 static VALUE tree_cursor_current_node(VALUE self) {
-  TSNode node = ts_tree_cursor_current_node(&unwrap(self)->data);
+  TSNode node = ts_tree_cursor_current_node(&SELF);
   return new_node(&node);
 }
 
 static VALUE tree_cursor_current_field_name(VALUE self) {
-  return rb_str_new_cstr(
-      ts_tree_cursor_current_field_name(&unwrap(self)->data));
+  return rb_str_new_cstr(ts_tree_cursor_current_field_name(&SELF));
 }
 
 static VALUE tree_cursor_current_field_id(VALUE self) {
-  return INT2NUM(ts_tree_cursor_current_field_id(&unwrap(self)->data));
+  return INT2NUM(ts_tree_cursor_current_field_id(&SELF));
 }
 
 static VALUE tree_cursor_goto_parent(VALUE self) {
-  return ts_tree_cursor_goto_parent(&unwrap(self)->data) ? Qtrue : Qfalse;
+  return ts_tree_cursor_goto_parent(&SELF) ? Qtrue : Qfalse;
 }
 
 static VALUE tree_cursor_goto_next_sibling(VALUE self) {
-  return ts_tree_cursor_goto_next_sibling(&unwrap(self)->data) ? Qtrue : Qfalse;
+  return ts_tree_cursor_goto_next_sibling(&SELF) ? Qtrue : Qfalse;
 }
 
 static VALUE tree_cursor_goto_first_child(VALUE self) {
-  return ts_tree_cursor_goto_first_child(&unwrap(self)->data) ? Qtrue : Qfalse;
+  return ts_tree_cursor_goto_first_child(&SELF) ? Qtrue : Qfalse;
 }
 
 static VALUE tree_cursor_goto_first_child_for_byte(VALUE self, VALUE byte) {
-  return LL2NUM(ts_tree_cursor_goto_first_child_for_byte(&unwrap(self)->data,
-                                                         NUM2INT(byte)));
+  return LL2NUM(ts_tree_cursor_goto_first_child_for_byte(&SELF, NUM2INT(byte)));
 }
 
 static VALUE tree_cursor_goto_first_child_for_point(VALUE self, VALUE point) {
-  return LL2NUM(ts_tree_cursor_goto_first_child_for_point(
-      &unwrap(self)->data, value_to_point(point)));
+  return LL2NUM(
+      ts_tree_cursor_goto_first_child_for_point(&SELF, value_to_point(point)));
 }
 
 static VALUE tree_cursor_copy(VALUE self) {
   VALUE res = tree_cursor_allocate(cTreeCursor);
   tree_cursor_t *ptr = unwrap(res);
 
-  ptr->data = ts_tree_cursor_copy(&unwrap(self)->data);
+  ptr->data = ts_tree_cursor_copy(&SELF);
 
   return res;
 }

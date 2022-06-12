@@ -138,7 +138,7 @@ VALUE new_logger(const TSLogger *ptr) {
 
 VALUE new_logger_by_val(TSLogger val) { return new_logger(&val); }
 
-TSLogger value_to_logger(VALUE self) { return unwrap(self)->data; }
+TSLogger value_to_logger(VALUE self) { return SELF; }
 
 static void logger_initialize_stderr(logger_t *logger) {
   VALUE stderr = rb_gv_get("$stderr");

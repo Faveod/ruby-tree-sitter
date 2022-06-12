@@ -76,7 +76,7 @@ static VALUE input_allocate(VALUE klass) {
   return TypedData_Make_Struct(klass, input_t, &input_data_type, input);
 }
 
-TSInput value_to_input(VALUE self) { return unwrap(self)->data; }
+TSInput value_to_input(VALUE self) { return SELF; }
 
 VALUE new_input(const TSInput *ptr) {
   if (ptr != NULL) {
