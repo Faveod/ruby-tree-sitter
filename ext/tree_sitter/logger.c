@@ -82,13 +82,16 @@ static size_t logger_memsize(const void *ptr) {
 static void logger_mark(void *ptr) {
   logger_t *logger = (logger_t *)ptr;
   rb_gc_mark_movable(logger->payload);
-  rb_gc_mark_movable(logger->format);
+  // we don't want format to move because its reference will be
+  // consumed by the parser.
+  //
+  // No funny things please.
+  rb_gc_mark(logger->format);
 }
 
 static void logger_compact(void *ptr) {
   logger_t *logger = (logger_t *)ptr;
   logger->payload = rb_gc_location(logger->payload);
-  logger->format = rb_gc_location(logger->format);
 }
 
 const rb_data_type_t logger_data_type = {
@@ -133,7 +136,9 @@ VALUE new_logger(const TSLogger *ptr) {
   }
 }
 
-TSLogger *value_to_logger(VALUE self) { return &(unwrap(self))->data; }
+VALUE new_logger_by_val(TSLogger val) { return new_logger(&val); }
+
+TSLogger value_to_logger(VALUE self) { return unwrap(self)->data; }
 
 static void logger_initialize_stderr(logger_t *logger) {
   VALUE stderr = rb_gv_get("$stderr");

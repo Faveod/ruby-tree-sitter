@@ -9,11 +9,11 @@
 #include <tree_sitter/api.h>
 
 // VALUE to TS* converters
-TSInput *value_to_input(VALUE);
+TSInput value_to_input(VALUE);
 TSInputEncoding value_to_encoding(VALUE);
 TSInputEdit value_to_input_edit(VALUE);
 TSLanguage *value_to_language(VALUE);
-TSLogger *value_to_logger(VALUE);
+TSLogger value_to_logger(VALUE);
 TSNode value_to_node(VALUE);
 TSPoint value_to_point(VALUE);
 TSQuantifier value_to_quantifier(VALUE);
@@ -32,6 +32,7 @@ TSTreeCursor value_to_tree_cursor(VALUE);
 VALUE new_input(const TSInput *);
 VALUE new_language(const TSLanguage *);
 VALUE new_logger(const TSLogger *);
+VALUE new_logger_by_val(TSLogger);
 VALUE new_node_by_val(TSNode);
 VALUE new_node(const TSNode *);
 VALUE new_query_capture(const TSQueryCapture *);
