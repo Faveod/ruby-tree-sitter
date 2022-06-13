@@ -8,11 +8,6 @@ DATA_PTR_WRAP(Tree, tree)
 
 static VALUE tree_copy(VALUE self) { return new_tree(ts_tree_copy(SELF)); }
 
-static VALUE tree_delete(VALUE self) {
-  ts_tree_delete(SELF);
-  return Qnil;
-}
-
 static VALUE tree_root_node(VALUE self) {
   return new_node_by_val(ts_tree_root_node(SELF));
 }
@@ -57,7 +52,6 @@ void init_tree(void) {
 
   /* Class methods */
   rb_define_method(cTree, "copy", tree_copy, 0);
-  rb_define_method(cTree, "delete", tree_delete, 0);
   rb_define_method(cTree, "root_node", tree_root_node, 0);
   rb_define_method(cTree, "language", tree_language, 0);
   rb_define_method(cTree, "edit", tree_edit, 1);

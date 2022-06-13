@@ -21,6 +21,3 @@ assert_eq(array.type, 'array')
 assert_eq(number.type, 'number')
 
 puts "Syntax tree: #{root.to_s}"
-
-tree.delete # we have to do this because it's a quirky one
-            # parser on the other hand gets freed automatically

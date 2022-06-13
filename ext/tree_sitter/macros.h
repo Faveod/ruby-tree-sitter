@@ -42,7 +42,7 @@
 
 #define DATA_PTR_WRAP(base, type)                                              \
   DATA_TYPE(TS##base *, type)                                                  \
-  DATA_FREE(type)                                                              \
+  DATA_FREE_PTR(type)                                                          \
   DATA_MEMSIZE(type)                                                           \
   DATA_DECLARE_DATA_TYPE(type)                                                 \
   DATA_ALLOCATE(type)                                                          \
@@ -57,6 +57,15 @@
 
 #define DATA_FREE(type)                                                        \
   static void type##_free(void *ptr) { xfree(ptr); }
+
+#define DATA_FREE_PTR(type)                                                    \
+  static void type##_free(void *ptr) {                                         \
+    type##_t *type = (type##_t *)ptr;                                          \
+    if (type->data != NULL) {                                                  \
+      ts_##type##_delete(type->data);                                          \
+    }                                                                          \
+    xfree(ptr);                                                                \
+  }
 
 #define DATA_MEMSIZE(type)                                                     \
   static size_t type##_memsize(const void *ptr) {                              \

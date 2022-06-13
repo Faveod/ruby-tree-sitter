@@ -67,7 +67,3 @@ tree_ruby = parser.parse_string(nil, program)
 root_ruby = tree_ruby.root_node
 
 puts "\n\n#{root_ruby}\n\n"
-
-tree_erb.delete
-tree_html.delete
-tree_ruby.delete
