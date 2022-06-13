@@ -84,6 +84,9 @@
 
 #define DATA_NEW(klass, struct, type)                                          \
   VALUE new_##type(const struct *ptr) {                                        \
+    if (ptr == NULL) {                                                         \
+      return Qnil;                                                             \
+    }                                                                          \
     VALUE res = type##_allocate(klass);                                        \
     type##_t *type = unwrap(res);                                              \
     type->data = *ptr;                                                         \
