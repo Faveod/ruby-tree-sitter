@@ -40,6 +40,16 @@
   DATA_NEW(c##base, TS##base, type)                                            \
   DATA_FROM_VALUE(TS##base, type)
 
+#define DATA_PTR_WRAP(base, type)                                              \
+  DATA_TYPE(TS##base *, type)                                                  \
+  DATA_FREE(type)                                                              \
+  DATA_MEMSIZE(type)                                                           \
+  DATA_DECLARE_DATA_TYPE(type)                                                 \
+  DATA_ALLOCATE(type)                                                          \
+  DATA_UNWRAP(type)                                                            \
+  DATA_PTR_NEW(c##base, TS##base, type)                                        \
+  DATA_FROM_VALUE(TS##base *, type)
+
 #define DATA_TYPE(klass, type)                                                 \
   typedef struct {                                                             \
     klass data;                                                                \
@@ -102,6 +112,17 @@
 #define DATA_FROM_VALUE(struct, type)                                          \
   struct value_to_##type(VALUE self) {                                         \
     return (unwrap(self))->data;                                               \
+  }
+
+#define DATA_PTR_NEW(klass, struct, type)                                      \
+  VALUE new_##type(struct *ptr) {                                              \
+    if (ptr == NULL) {                                                         \
+      return Qnil;                                                             \
+    }                                                                          \
+    VALUE res = type##_allocate(klass);                                        \
+    type##_t *type = unwrap(res);                                              \
+    type->data = ptr;                                                          \
+    return res;                                                                \
   }
 
 #define DATA_DEFINE_GETTER(type, field, cast)                                  \
