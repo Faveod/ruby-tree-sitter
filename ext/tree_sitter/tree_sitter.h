@@ -43,7 +43,7 @@ VALUE new_query_match(const TSQueryMatch *);
 VALUE new_query_predicate_step(const TSQueryPredicateStep *);
 VALUE new_range(const TSRange *);
 VALUE new_symbol_type(TSSymbolType);
-VALUE new_tree(const TSTree *);
+VALUE new_tree(TSTree *);
 
 // All init_* functions are called from Init_tree_sitter
 void init_encoding(void);
@@ -51,6 +51,7 @@ void init_input(void);
 void init_input_edit(void);
 void init_language(void);
 void init_logger(void);
+void init_node(void);
 void init_parser(void);
 void init_point(void);
 void init_quantifier(void);

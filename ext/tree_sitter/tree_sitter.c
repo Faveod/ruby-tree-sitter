@@ -10,6 +10,7 @@ void Init_tree_sitter() {
   init_input_edit();
   init_language();
   init_logger();
+  init_node();
   init_parser();
   init_point();
   init_quantifier();

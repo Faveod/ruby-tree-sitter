@@ -4,44 +4,7 @@ extern VALUE mTreeSitter;
 
 VALUE cTree;
 
-typedef struct {
-  TSTree *data;
-} tree_t;
-
-static void tree_free(void *ptr) { xfree(ptr); }
-
-static size_t tree_memsize(const void *ptr) {
-  tree_t *type = (tree_t *)ptr;
-  return sizeof(type);
-}
-
-const rb_data_type_t tree_data_type = {
-    .wrap_struct_name = "tree",
-    .function =
-        {
-            .dmark = NULL,
-            .dfree = tree_free,
-            .dsize = tree_memsize,
-            .dcompact = NULL,
-        },
-    .flags = RUBY_TYPED_FREE_IMMEDIATELY,
-};
-
-DATA_UNWRAP(tree)
-
-static VALUE tree_allocate(VALUE klass) {
-  tree_t *tree;
-  VALUE res = TypedData_Make_Struct(klass, tree_t, &tree_data_type, tree);
-  return res;
-}
-
-TSTree *value_to_tree(VALUE self) { return unwrap(self)->data; }
-
-VALUE new_tree(TSTree *tree) {
-  VALUE res = tree_allocate(cTree);
-  unwrap(res)->data = tree;
-  return res;
-}
+DATA_PTR_WRAP(Tree, tree)
 
 static VALUE tree_copy(VALUE self) { return new_tree(ts_tree_copy(SELF)); }
 
