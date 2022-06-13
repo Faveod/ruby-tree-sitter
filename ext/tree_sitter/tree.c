@@ -5,60 +5,69 @@ extern VALUE mTreeSitter;
 
 VALUE cTree;
 
-/*
-** TSTree is special. You cannot construct it with ts_tree_new for example, so
-** we can't just * assign a free method to its Ruby wrapper.
-**
-** However, it has a ts_tree_delete! So we're going to include it because it's
-** int he public * API, but not as a normal Ruby method `delete` instead of a
-** Ruby Object free hook.
-*/
+typedef struct {
+  TSTree *data;
+} tree_t;
 
-TSTree *value_to_tree(VALUE self) {
-  TSTree *tree = NULL;
-  if (!NIL_P(self)) {
-    Data_Get_Struct(self, TSTree, tree);
-  }
-  return tree;
+static void tree_free(void *ptr) { xfree(ptr); }
+
+static size_t tree_memsize(const void *ptr) {
+  tree_t *type = (tree_t *)ptr;
+  return sizeof(type);
 }
 
-VALUE new_tree(const TSTree *tree) {
-  return Data_Wrap_Struct(cTree, NULL, NULL, (void *)tree);
+const rb_data_type_t tree_data_type = {
+    .wrap_struct_name = "tree",
+    .function =
+        {
+            .dmark = NULL,
+            .dfree = tree_free,
+            .dsize = tree_memsize,
+            .dcompact = NULL,
+        },
+    .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
+DATA_UNWRAP(tree)
+
+static VALUE tree_allocate(VALUE klass) {
+  tree_t *tree;
+  VALUE res = TypedData_Make_Struct(klass, tree_t, &tree_data_type, tree);
+  return res;
 }
 
-static VALUE tree_copy(VALUE self) {
-  TSTree *tree = value_to_tree(self);
-  return new_tree(ts_tree_copy(tree));
+TSTree *value_to_tree(VALUE self) { return unwrap(self)->data; }
+
+VALUE new_tree(TSTree *tree) {
+  VALUE res = tree_allocate(cTree);
+  unwrap(res)->data = tree;
+  return res;
 }
+
+static VALUE tree_copy(VALUE self) { return new_tree(ts_tree_copy(SELF)); }
 
 static VALUE tree_delete(VALUE self) {
-  TSTree *tree = value_to_tree(self);
-  ts_tree_delete(tree);
+  ts_tree_delete(SELF);
   return Qnil;
 }
 
 static VALUE tree_root_node(VALUE self) {
-  TSTree *tree = value_to_tree(self);
-  TSNode root = ts_tree_root_node(tree);
-  return new_node(&root);
+  return new_node_by_val(ts_tree_root_node(SELF));
 }
 
 static VALUE tree_language(VALUE self) {
-  TSTree *tree = value_to_tree(self);
-  const TSLanguage *language = ts_tree_language(tree);
-  return new_language(language);
+  return new_language(ts_tree_language(SELF));
 }
 
 static VALUE tree_edit(VALUE self, VALUE edit) {
-  TSTree *tree = value_to_tree(self);
   TSInputEdit in = value_to_input_edit(edit);
-  ts_tree_edit(tree, &in);
+  ts_tree_edit(SELF, &in);
   return Qnil;
 }
 
 static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
-  TSTree *old = value_to_tree(old_tree);
-  TSTree *new = value_to_tree(new_tree);
+  TSTree *old = unwrap(old_tree)->data;
+  TSTree *new = unwrap(new_tree)->data;
   uint32_t length;
   TSRange *ranges = ts_tree_get_changed_ranges(old, new, &length);
   VALUE res = rb_ary_new_capa(length);
@@ -74,10 +83,9 @@ static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
 
 static VALUE tree_print_dot_graph(VALUE self, VALUE file) {
   Check_Type(file, T_STRING);
-  TSTree *parser = value_to_tree(self);
   char *path = StringValueCStr(file);
   FILE *fd = fopen(path, "w+");
-  ts_tree_print_dot_graph(parser, fd);
+  ts_tree_print_dot_graph(SELF, fd);
   fclose(fd);
   return Qnil;
 }
