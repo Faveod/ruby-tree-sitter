@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+bundle exec rake test
+
+TS_VERSION=`ruby -e "require './lib/tree_sitter/version' ; puts TreeSitter::VERSION"`
+echo "Releasing tree_sitter-v$TS_VERSION"
+
+gem build tree_sitter.gemspec
+
+while true; do
+    read -p "Publish to Rubygems? " yn
+    case $yn in
+        [Yy]* )
+             gem push tree_sitter-$TS_VERSION.gem
+             echo "Creating git tag"
+             git tag "v$TS_VERSION"
+             git push origin "v$TS_VERSION"
+             break;;
+        [Nn]* ) break;;
+        * ) echo "y or n?";;
+    esac
+done
