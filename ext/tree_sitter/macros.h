@@ -99,6 +99,11 @@
     return res;                                                                \
   }
 
+#define DATA_FROM_VALUE(struct, type)                                          \
+  struct value_to_##type(VALUE self) {                                         \
+    return (unwrap(self))->data;                                               \
+  }
+
 #define DATA_DEFINE_GETTER(type, field, cast)                                  \
   static VALUE type##_get_##field(VALUE self) {                                \
     return cast((unwrap(self))->data.field);                                   \
@@ -114,11 +119,6 @@
 #define DATA_DEFINE_ACCESSOR(type, field, cast_get, cast_set)                  \
   DATA_DEFINE_GETTER(type, field, cast_get)                                    \
   DATA_DEFINE_SETTER(type, field, cast_set)
-
-#define DATA_FROM_VALUE(struct, type)                                          \
-  struct value_to_##type(VALUE self) {                                         \
-    return (unwrap(self))->data;                                               \
-  }
 
 #define DATA_FAST_FORWARD_FNV(type, fn, field)                                 \
   static VALUE type##_##fn(int argc, VALUE *argv, VALUE self) {                \
