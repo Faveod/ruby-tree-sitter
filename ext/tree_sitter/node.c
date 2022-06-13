@@ -65,7 +65,16 @@ static VALUE node_parent(VALUE self) {
 }
 
 static VALUE node_child(VALUE self, VALUE index) {
-  return new_node_by_val(ts_node_child(SELF, NUM2INT(index)));
+  TSNode node = SELF;
+  uint32_t count = ts_node_child_count(node);
+  uint32_t idx = NUM2INT(index);
+
+  if (idx < count) {
+    return new_node_by_val(ts_node_child(node, idx));
+  } else {
+    rb_raise(rb_eRuntimeError,
+             "Out of index: node.child(%d); node.child_count=%d", idx, count);
+  }
 }
 
 static VALUE node_field_name_for_child(VALUE self, VALUE index) {
