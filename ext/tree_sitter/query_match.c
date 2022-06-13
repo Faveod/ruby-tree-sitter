@@ -22,6 +22,13 @@ static VALUE query_match_get_captures(VALUE self) {
   return res;
 }
 
+static VALUE query_match_inspect(VALUE self) {
+  TSQueryMatch query_match = SELF;
+  return rb_sprintf("{id=%d, pattern_inex=%d, capture_count=%d}",
+                    query_match.id, query_match.pattern_index,
+                    query_match.capture_count);
+}
+
 void init_query_match(void) {
   cQueryMatch = rb_define_class_under(mTreeSitter, "QueryMatch", rb_cObject);
 
@@ -32,4 +39,6 @@ void init_query_match(void) {
   DECLARE_GETTER(cQueryMatch, query_match, pattern_index)
   DECLARE_GETTER(cQueryMatch, query_match, capture_count)
   DECLARE_GETTER(cQueryMatch, query_match, captures)
+  rb_define_method(cQueryMatch, "inspect", query_match_inspect, 0);
+  rb_define_method(cQueryMatch, "to_s", query_match_inspect, 0);
 }
