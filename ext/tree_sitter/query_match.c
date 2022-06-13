@@ -12,7 +12,7 @@ DATA_DEFINE_GETTER(query_match, capture_count, INT2FIX)
 static VALUE query_match_get_captures(VALUE self) {
   query_match_t *query_match = unwrap(self);
 
-  int length = NUM2INT(query_match->data.capture_count);
+  uint16_t length = query_match->data.capture_count;
   VALUE res = rb_ary_new_capa(length);
   const TSQueryCapture *captures = query_match->data.captures;
   for (int i = 0; i < length; i++) {
