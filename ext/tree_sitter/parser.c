@@ -101,15 +101,33 @@ static VALUE parser_set_logger(VALUE self, VALUE logger) {
 }
 
 static VALUE parser_parse(VALUE self, VALUE old_tree, VALUE input) {
-  return new_tree(
-      ts_parser_parse(SELF, value_to_tree(old_tree), value_to_input(input)));
+  TSTree *tree = NULL;
+  if (!NIL_P(old_tree)) {
+    tree = value_to_tree(old_tree);
+  }
+
+  TSTree *ret = ts_parser_parse(SELF, tree, value_to_input(input));
+  if (ret == NULL) {
+    return Qnil;
+  } else {
+    return new_tree(ret);
+  }
 }
 
 static VALUE parser_parse_string(VALUE self, VALUE old_tree, VALUE string) {
   const char *str = StringValuePtr(string);
   uint32_t len = (uint32_t)RSTRING_LEN(string);
-  return new_tree(
-      ts_parser_parse_string(SELF, value_to_tree(old_tree), str, len));
+  TSTree *tree = NULL;
+  if (!NIL_P(old_tree)) {
+    tree = value_to_tree(old_tree);
+  }
+
+  TSTree *ret = ts_parser_parse_string(SELF, tree, str, len);
+  if (ret == NULL) {
+    return Qnil;
+  } else {
+    return new_tree(ret);
+  }
 }
 
 static VALUE parser_parse_string_encoding(VALUE self, VALUE old_tree,
