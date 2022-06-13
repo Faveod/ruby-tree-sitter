@@ -4,25 +4,27 @@ extern VALUE mTreeSitter;
 
 VALUE cQueryCursor;
 
-TSQueryCursor *value_to_query_cursor(VALUE self) {
-  TSQueryCursor *cursor;
-  Data_Get_Struct(self, TSQueryCursor, cursor);
-  return cursor;
-}
-
-static void query_cursor_free(TSQueryCursor *cursor) {
-  ts_query_cursor_delete(cursor);
-}
-
+DATA_TYPE(TSQueryCursor *, query_cursor)
+DATA_FREE_PTR(query_cursor)
+DATA_MEMSIZE(query_cursor)
+DATA_DECLARE_DATA_TYPE(query_cursor)
 static VALUE query_cursor_allocate(VALUE klass) {
-  TSQueryCursor *cursor = ts_query_cursor_new();
-  return Data_Wrap_Struct(klass, NULL, query_cursor_free, cursor);
+  query_cursor_t *query_cursor;
+  VALUE res = TypedData_Make_Struct(klass, query_cursor_t,
+                                    &query_cursor_data_type, query_cursor);
+  query_cursor->data = ts_query_cursor_new();
+  return res;
 }
+DATA_UNWRAP(query_cursor)
+DATA_PTR_NEW(cQueryCursor, TSQueryCursor, query_cursor)
+DATA_FROM_VALUE(TSQueryCursor *, query_cursor)
 
 static VALUE query_cursor_exec(VALUE self, VALUE query, VALUE node) {
-  ts_query_cursor_exec(value_to_query_cursor(self), value_to_query(query),
+  VALUE res = query_cursor_allocate(cQueryCursor);
+  query_cursor_t *query_cursor = unwrap(res);
+  ts_query_cursor_exec(query_cursor->data, value_to_query(query),
                        value_to_node(node));
-  return Qnil;
+  return res;
 }
 
 static VALUE query_cursor_did_exceed_match_limit(VALUE self) {
@@ -53,9 +55,9 @@ static VALUE query_cursor_set_point_range(VALUE self, VALUE from, VALUE to) {
 }
 
 static VALUE query_cursor_next_match(VALUE self) {
-  TSQueryMatch *match = NULL;
-  if (ts_query_cursor_next_match(value_to_query_cursor(self), match)) {
-    return new_query_match(match);
+  TSQueryMatch match;
+  if (ts_query_cursor_next_match(value_to_query_cursor(self), &match)) {
+    return new_query_match(&match);
   } else {
     return Qnil;
   }
@@ -92,7 +94,7 @@ void init_query_cursor(void) {
 
   /* Class methods */
   DECLARE_ACCESSOR(cQueryCursor, query_cursor, match_limit)
-  rb_define_method(cQueryCursor, "exec", query_cursor_exec, 2);
+  rb_define_module_function(cQueryCursor, "exec", query_cursor_exec, 2);
   rb_define_method(cQueryCursor, "exceed_match_limit?",
                    query_cursor_did_exceed_match_limit, 0);
   rb_define_method(cQueryCursor, "byte_range=", query_cursor_set_byte_range, 2);
