@@ -1,5 +1,4 @@
 #include "tree_sitter.h"
-#include <sys/_types/_u_int32_t.h>
 
 extern VALUE mTreeSitter;
 
