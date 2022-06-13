@@ -168,7 +168,6 @@ void init_node(void) {
   rb_define_method(cNode, "start_point", node_start_point, 0);
   rb_define_method(cNode, "end_byte", node_end_byte, 0);
   rb_define_method(cNode, "end_point", node_end_point, 0);
-  rb_define_method(cNode, "string", node_string, 0);
   rb_define_method(cNode, "to_s", node_string, 0);
   rb_define_method(cNode, "null?", node_is_null, 0);
   rb_define_method(cNode, "named?", node_is_named, 0);
@@ -199,6 +198,8 @@ void init_node(void) {
                    node_named_descendant_for_byte_range, 2);
   rb_define_method(cNode, "named_descendant_for_point_range",
                    node_named_descendant_for_point_range, 2);
-  rb_define_method(cNode, "edit", node_edit, 1);
   rb_define_method(cNode, "eq?", node_eq, 1);
+  rb_define_method(cNode, "edit", node_edit, 1);
+  rb_define_method(cNode, "to_s", node_string, 0);
+  rb_define_method(cNode, "to_str", node_string, 0);
 }
