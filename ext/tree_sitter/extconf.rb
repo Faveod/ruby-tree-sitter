@@ -6,6 +6,11 @@ $CFLAGS << " -O0"
 $CFLAGS << " -std=c99"
 $CFLAGS << " -Wall"
 
+if ENV['SANITIZE']
+  $CFLAGS = ' -fsanitize=address -fno-omit-frame-pointer'
+  $LDFLAGS << ' -fsanitize=address -dynamic-libasan'
+end
+
 header = find_header('tree_sitter/api.h',
                      # Usual paths
                      '/opt/include',
