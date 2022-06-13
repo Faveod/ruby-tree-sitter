@@ -29,8 +29,8 @@ static const char *logger_log_type_str(TSLogType log_type) {
 static void logger_log_printf(void *ptr, TSLogType log_type,
                               const char *message) {
   logger_t *logger = (logger_t *)ptr;
-  VALUE type = rb_str_new_cstr(logger_log_type_str(log_type));
-  VALUE msg = rb_str_new_cstr(message);
+  VALUE type = safe_str(logger_log_type_str(log_type));
+  VALUE msg = safe_str(message);
   rb_funcall(logger->payload, rb_intern("printf"), 3, logger->format, type,
              msg);
 }

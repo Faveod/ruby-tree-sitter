@@ -71,7 +71,7 @@ static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
   uint32_t length;
   const char *name =
       ts_query_capture_name_for_id(value_to_query(self), NUM2INT(id), &length);
-  return rb_str_new(name, length);
+  return safe_str2(name, length);
 }
 
 static VALUE query_capture_quantifier_for_id(VALUE self, VALUE id,
@@ -84,7 +84,7 @@ static VALUE query_string_value_for_id(VALUE self, VALUE id) {
   uint32_t length;
   const char *string =
       ts_query_string_value_for_id(value_to_query(self), NUM2INT(id), &length);
-  return rb_str_new(string, length);
+  return safe_str2(string, length);
 }
 
 static VALUE query_disable_capture(VALUE self, VALUE capture) {

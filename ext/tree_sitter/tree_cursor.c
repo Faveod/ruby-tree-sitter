@@ -25,7 +25,7 @@ static VALUE tree_cursor_current_node(VALUE self) {
 }
 
 static VALUE tree_cursor_current_field_name(VALUE self) {
-  return rb_str_new_cstr(ts_tree_cursor_current_field_name(&SELF));
+  return safe_str(ts_tree_cursor_current_field_name(&SELF));
 }
 
 static VALUE tree_cursor_current_field_id(VALUE self) {

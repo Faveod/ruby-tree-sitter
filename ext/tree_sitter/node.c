@@ -6,9 +6,7 @@ VALUE cNode;
 
 DATA_WRAP(Node, node)
 
-static VALUE node_type(VALUE self) {
-  return rb_str_new_cstr(ts_node_type(SELF));
-}
+static VALUE node_type(VALUE self) { return safe_str(ts_node_type(SELF)); }
 
 static VALUE node_symbol(VALUE self) { return INT2NUM(ts_node_symbol(SELF)); }
 
@@ -31,7 +29,7 @@ static VALUE node_end_point(VALUE self) {
 
 static VALUE node_string(VALUE self) {
   char *str = ts_node_string(SELF);
-  VALUE res = rb_utf8_str_new_cstr(str);
+  VALUE res = safe_str(str);
   free(str);
   return res;
 }
@@ -78,12 +76,7 @@ static VALUE node_child(VALUE self, VALUE index) {
 }
 
 static VALUE node_field_name_for_child(VALUE self, VALUE index) {
-  const char *name = ts_node_field_name_for_child(SELF, NUM2INT(index));
-  if (name == NULL) {
-    return Qnil;
-  } else {
-    return rb_str_new_cstr(name);
-  }
+  return safe_str(ts_node_field_name_for_child(SELF, NUM2INT(index)));
 }
 
 static VALUE node_child_count(VALUE self) {

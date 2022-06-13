@@ -26,7 +26,7 @@ static VALUE language_symbol_count(VALUE self) {
 
 static VALUE language_symbol_name(VALUE self, VALUE symbol) {
   TSLanguage *language = value_to_language(self);
-  return rb_str_new_cstr(ts_language_symbol_name(language, NUM2INT(symbol)));
+  return safe_str(ts_language_symbol_name(language, NUM2INT(symbol)));
 }
 
 static VALUE language_symbol_for_name(VALUE self, VALUE string,
@@ -45,8 +45,7 @@ static VALUE language_field_count(VALUE self) {
 
 static VALUE language_field_name_for_id(VALUE self, VALUE field_id) {
   TSLanguage *language = value_to_language(self);
-  return rb_str_new_cstr(
-      ts_language_field_name_for_id(language, NUM2INT(field_id)));
+  return safe_str(ts_language_field_name_for_id(language, NUM2INT(field_id)));
 }
 
 static VALUE language_field_id_for_name(VALUE self, VALUE name) {
