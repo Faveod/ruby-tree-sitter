@@ -30,7 +30,10 @@ static VALUE node_end_point(VALUE self) {
 }
 
 static VALUE node_string(VALUE self) {
-  return rb_str_new_cstr(ts_node_string(SELF));
+  char *str = ts_node_string(SELF);
+  VALUE res = rb_utf8_str_new_cstr(str);
+  free(str);
+  return res;
 }
 
 static VALUE node_is_null(VALUE self) {
