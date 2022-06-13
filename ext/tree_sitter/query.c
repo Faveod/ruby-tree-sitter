@@ -4,16 +4,9 @@ extern VALUE mTreeSitter;
 
 VALUE cQuery;
 
-TSQuery *value_to_query(VALUE self) {
-  TSQuery *query;
-  Data_Get_Struct(self, TSQuery, query);
-  return query;
-}
-
-void query_free(TSQuery *query) { ts_query_delete(query); }
+DATA_PTR_WRAP(Query, query);
 
 static VALUE query_initialize(VALUE self, VALUE language, VALUE source) {
-  TSQuery *ptr = value_to_query(self);
   TSLanguage *lang = value_to_language(language);
   const char *src = StringValuePtr(source);
   uint32_t len = (uint32_t)RSTRING_LEN(source);
@@ -25,8 +18,9 @@ static VALUE query_initialize(VALUE self, VALUE language, VALUE source) {
   if (res == NULL || error_offset > 0) {
     rb_raise(rb_eRuntimeError, "Could not create query: TSQueryError%s",
              query_error_name(error_type));
+  } else {
+    SELF = res;
   }
-  ptr = res;
 
   return self;
 }
@@ -101,6 +95,8 @@ static VALUE query_disable_pattern(VALUE self, VALUE pattern) {
 
 void init_query(void) {
   cQuery = rb_define_class_under(mTreeSitter, "Query", rb_cObject);
+
+  rb_define_alloc_func(cQuery, query_allocate);
 
   /* Class methods */
   rb_define_method(cQuery, "initialize", query_initialize, 2);
