@@ -8,6 +8,24 @@
 #include <stdio.h>
 #include <tree_sitter/api.h>
 
+static inline VALUE safe_str(const char *str) {
+  if (str == NULL) {
+    return Qnil;
+  } else {
+    return rb_utf8_str_new_cstr(str);
+  }
+}
+
+static inline VALUE safe_str2(const char *str, uint32_t len) {
+  if (str == NULL) {
+    return Qnil;
+  } else if (len == 0) {
+    return rb_utf8_str_new_cstr("");
+  } else {
+    return rb_utf8_str_new(str, len);
+  }
+}
+
 // VALUE to TS* converters
 
 TSInput value_to_input(VALUE);
