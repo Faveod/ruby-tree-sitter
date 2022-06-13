@@ -202,4 +202,5 @@ void init_node(void) {
   rb_define_method(cNode, "edit", node_edit, 1);
   rb_define_method(cNode, "to_s", node_string, 0);
   rb_define_method(cNode, "to_str", node_string, 0);
+  rb_define_method(cNode, "inspect", node_string, 0);
 }
