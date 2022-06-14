@@ -16,7 +16,7 @@ puts 1 * 2
 RUBY
 
 patterns = [
-  '(binary (integer) (integer))',
+  '(binary)',
   '(binary (integer) @left (integer) @right)',
   '(method name: (identifier) @name) @definition.function'
 ]
@@ -46,10 +46,7 @@ patterns.each do |p|
   puts '  captures:'
   while cap = cursor.next_capture
     idx, match = cap
-    puts "    #{match.capture_count} captured @#{idx}"
-    puts '    ['
-    puts match.captures.map { |c| "      #{c}" }.join("\n")
-    puts '    ]'
+    puts "    @#{idx} = #{match.captures[idx]}"
   end
   puts ''
 end
