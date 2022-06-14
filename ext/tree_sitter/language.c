@@ -94,6 +94,16 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
              StringValueCStr(name), StringValueCStr(path));
   }
 
+  uint32_t version = ts_language_version(lang);
+  if (version < TREE_SITTER_MIN_COMPATIBLE_LANGUAGE_VERSION) {
+    rb_raise(rb_eRuntimeError,
+             "Language %s (v%d) from `%s' is old.\nMinimum supported ABI: "
+             "v%d.\nCurrent ABI: v%d.",
+             StringValueCStr(name), version, StringValueCStr(path),
+             TREE_SITTER_MIN_COMPATIBLE_LANGUAGE_VERSION,
+             TREE_SITTER_LANGUAGE_VERSION);
+  }
+
   return new_language(lang);
 }
 
