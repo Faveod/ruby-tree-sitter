@@ -15,6 +15,7 @@ void Init_tree_sitter() {
   init_point();
   init_quantifier();
   init_query();
+  init_query_capture();
   init_query_cursor();
   init_query_error();
   init_query_match();

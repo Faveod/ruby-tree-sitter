@@ -74,6 +74,7 @@ void init_parser(void);
 void init_point(void);
 void init_quantifier(void);
 void init_query(void);
+void init_query_capture(void);
 void init_query_cursor(void);
 void init_query_error(void);
 void init_query_match(void);
