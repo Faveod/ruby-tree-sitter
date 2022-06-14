@@ -28,35 +28,32 @@ static VALUE query_cursor_exec(VALUE self, VALUE query, VALUE node) {
 }
 
 static VALUE query_cursor_did_exceed_match_limit(VALUE self) {
-  return ts_query_cursor_did_exceed_match_limit(value_to_query_cursor(self))
-             ? Qtrue
-             : Qfalse;
+  return ts_query_cursor_did_exceed_match_limit(SELF) ? Qtrue : Qfalse;
 }
 
 static VALUE query_cursor_get_match_limit(VALUE self) {
-  return INT2NUM(ts_query_cursor_match_limit(value_to_query_cursor(self)));
+  return INT2NUM(ts_query_cursor_match_limit(SELF));
 }
 
 static VALUE query_cursor_set_match_limit(VALUE self, VALUE limit) {
-  ts_query_cursor_set_match_limit(value_to_query_cursor(self), NUM2INT(limit));
+  ts_query_cursor_set_match_limit(SELF, NUM2INT(limit));
   return Qnil;
 }
 
 static VALUE query_cursor_set_byte_range(VALUE self, VALUE from, VALUE to) {
-  ts_query_cursor_set_byte_range(value_to_query_cursor(self), NUM2INT(from),
-                                 NUM2INT(to));
+  ts_query_cursor_set_byte_range(SELF, NUM2INT(from), NUM2INT(to));
   return Qnil;
 }
 
 static VALUE query_cursor_set_point_range(VALUE self, VALUE from, VALUE to) {
-  ts_query_cursor_set_point_range(value_to_query_cursor(self),
-                                  value_to_point(from), value_to_point(to));
+  ts_query_cursor_set_point_range(SELF, value_to_point(from),
+                                  value_to_point(to));
   return Qnil;
 }
 
 static VALUE query_cursor_next_match(VALUE self) {
   TSQueryMatch match;
-  if (ts_query_cursor_next_match(value_to_query_cursor(self), &match)) {
+  if (ts_query_cursor_next_match(SELF, &match)) {
     return new_query_match(&match);
   } else {
     return Qnil;
@@ -64,7 +61,7 @@ static VALUE query_cursor_next_match(VALUE self) {
 }
 
 static VALUE query_cursor_remove_match(VALUE self, VALUE id) {
-  ts_query_cursor_remove_match(value_to_query_cursor(self), NUM2INT(id));
+  ts_query_cursor_remove_match(SELF, NUM2INT(id));
   return Qnil;
 }
 
@@ -76,11 +73,10 @@ static VALUE query_cursor_remove_match(VALUE self, VALUE id) {
 static VALUE query_cursor_next_capture(VALUE self) {
   TSQueryMatch *match = NULL;
   uint32_t index;
-  if (ts_query_cursor_next_capture(value_to_query_cursor(self), match,
-                                   &index)) {
+  if (ts_query_cursor_next_capture(SELF, match, &index)) {
     VALUE res = rb_ary_new_capa(2);
-    rb_ary_push(res, new_query_match(match));
     rb_ary_push(res, INT2NUM(index));
+    rb_ary_push(res, new_query_match(match));
     return res;
   } else {
     return Qnil;
