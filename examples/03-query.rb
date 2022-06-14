@@ -1,5 +1,9 @@
 require 'tree_sitter'
 
+def section
+    puts '-' * 79
+end
+
 ruby = TreeSitter::Language.load('ruby', '/Users/firas/projects/github/tree-sitter-ruby/libtree-sitter-ruby.dylib')
 
 parser = TreeSitter::Parser.new
@@ -16,7 +20,9 @@ puts 1 * 2
 RUBY
 
 patterns = [
-  '(binary)',
+  '(binary (_)+ @children)',
+  '(binary (_) @left (_) @right)',
+  '(binary (_) (_))',
   '(binary (integer) @left (integer) @right)',
   '(method name: (identifier) @name) @definition.function'
 ]
@@ -25,6 +31,7 @@ puts "Parsing Ruby program:\n\n#{program}\n\n"
 tree = parser.parse_string(nil, program)
 root = tree.root_node
 puts "#{root}\n\n"
+section
 
 patterns.each do |p|
   puts "Searching for pattern: #{p}\n"
@@ -35,7 +42,7 @@ patterns.each do |p|
   cursor = TreeSitter::QueryCursor.exec(query, root)
   puts '  matches:'
   while match = cursor.next_match
-    puts "    #{match.capture_count} matched"
+    puts "    #{match.capture_count} captured"
     puts '    ['
     puts match.captures.map { |c| "      #{c}" }.join("\n")
     puts '    ]'
@@ -46,7 +53,9 @@ patterns.each do |p|
   puts '  captures:'
   while cap = cursor.next_capture
     idx, match = cap
-    puts "    @#{idx} = #{match.captures[idx]}"
+    quantifier = TreeSitter::quantifier_name(query.capture_quantifier_for_id(0, idx));
+    puts "    @#{idx} -> #{quantifier} -> #{query.capture_name_for_id(idx)}"
   end
   puts ''
+  puts section
 end
