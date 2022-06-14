@@ -22,7 +22,7 @@ const char *input_read(void *payload, uint32_t byte_index, TSPoint position,
   }
 
   VALUE size = rb_funcall(read, rb_intern("bytesize"), 0);
-  *bytes_read = NUM2INT(size);
+  *bytes_read = NUM2UINT(size);
   input->last_result = rb_funcall(read, rb_intern("to_str"), 0);
 
   return StringValueCStr(input->last_result);
