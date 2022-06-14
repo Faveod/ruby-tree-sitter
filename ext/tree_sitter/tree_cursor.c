@@ -18,15 +18,14 @@ DATA_NEW(cTreeCursor, TSTreeCursor, tree_cursor)
 DATA_FROM_VALUE(TSTreeCursor, tree_cursor)
 
 static VALUE tree_cursor_initialize(VALUE self, VALUE node) {
-  TSNode n = value_to_node(self);
+  TSNode n = value_to_node(node);
   tree_cursor_t *ptr = unwrap(self);
   ptr->data = ts_tree_cursor_new(n);
   return self;
 }
 
 static VALUE tree_cursor_reset(VALUE self, VALUE node) {
-  TSNode n = value_to_node(self);
-  ts_tree_cursor_reset(&SELF, n);
+  ts_tree_cursor_reset(&SELF, value_to_node(node));
   return Qnil;
 }
 
@@ -56,7 +55,13 @@ static VALUE tree_cursor_goto_first_child(VALUE self) {
 }
 
 static VALUE tree_cursor_goto_first_child_for_byte(VALUE self, VALUE byte) {
-  return LL2NUM(ts_tree_cursor_goto_first_child_for_byte(&SELF, NUM2UINT(byte)));
+  uint32_t index = NUM2UINT(byte);
+
+  if (index < 0) {
+    rb_raise(rb_eIndexError, "Byte %d is negative", index);
+  }
+
+  return LL2NUM(ts_tree_cursor_goto_first_child_for_byte(&SELF, index));
 }
 
 static VALUE tree_cursor_goto_first_child_for_point(VALUE self, VALUE point) {
