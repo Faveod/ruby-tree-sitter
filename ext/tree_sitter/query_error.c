@@ -8,7 +8,7 @@ TSQueryError value_to_query_error(VALUE query_error) {
   return NUM2INT(query_error);
 }
 
-const char *query_error_name(TSQueryError error) {
+const char *query_error_str(TSQueryError error) {
   switch (error) {
   case TSQueryErrorNone:
     return "None";

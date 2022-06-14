@@ -17,7 +17,7 @@ static VALUE query_initialize(VALUE self, VALUE language, VALUE source) {
 
   if (res == NULL || error_offset > 0) {
     rb_raise(rb_eRuntimeError, "Could not create query: TSQueryError%s",
-             query_error_name(error_type));
+             query_error_str(error_type));
   } else {
     SELF = res;
   }

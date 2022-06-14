@@ -85,8 +85,8 @@ void init_tree(void);
 void init_tree_cursor(void);
 
 // Other helpers
-const char *quantifier_name(TSQuantifier);
-const char *query_error_name(TSQueryError);
+const char *quantifier_str(TSQuantifier);
+const char *query_error_str(TSQueryError);
 
 // This is a special entry-point for the extension
 void Init_tree_sitter(void);

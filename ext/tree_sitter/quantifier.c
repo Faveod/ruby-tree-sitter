@@ -8,7 +8,7 @@ TSQuantifier value_to_quantifier(VALUE quantifier) {
   return NUM2INT(quantifier);
 }
 
-const char *quantifier_name(TSQuantifier error) {
+const char *quantifier_str(TSQuantifier error) {
   switch (error) {
   case TSQuantifierZero:
     return "Zero";
