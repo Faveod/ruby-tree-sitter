@@ -5,7 +5,7 @@ extern VALUE mTreeSitter;
 VALUE mQueryError;
 
 TSQueryError value_to_query_error(VALUE query_error) {
-  return NUM2INT(query_error);
+  return NUM2UINT(query_error);
 }
 
 const char *query_error_str(TSQueryError error) {
@@ -31,11 +31,11 @@ const char *query_error_str(TSQueryError error) {
 
 void init_query_error(void) {
   mQueryError = rb_define_module_under(mTreeSitter, "QueryError");
-  rb_define_const(mQueryError, "NONE", INT2NUM(0));
-  rb_define_const(mQueryError, "Syntax", INT2NUM(1));
-  rb_define_const(mQueryError, "NodeType", INT2NUM(2));
-  rb_define_const(mQueryError, "Field", INT2NUM(3));
-  rb_define_const(mQueryError, "Capture", INT2NUM(4));
-  rb_define_const(mQueryError, "Structure", INT2NUM(5));
-  rb_define_const(mQueryError, "Language", INT2NUM(6));
+  rb_define_const(mQueryError, "NONE", UINT2NUM(0));
+  rb_define_const(mQueryError, "Syntax", UINT2NUM(1));
+  rb_define_const(mQueryError, "NodeType", UINT2NUM(2));
+  rb_define_const(mQueryError, "Field", UINT2NUM(3));
+  rb_define_const(mQueryError, "Capture", UINT2NUM(4));
+  rb_define_const(mQueryError, "Structure", UINT2NUM(5));
+  rb_define_const(mQueryError, "Language", UINT2NUM(6));
 }

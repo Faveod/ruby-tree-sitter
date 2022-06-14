@@ -45,8 +45,8 @@ static VALUE query_predicate_step_inspect(VALUE self) {
 }
 
 DATA_DEFINE_ACCESSOR(query_predicate_step, type, new_query_predicate_step_type,
-              value_to_query_predicate_step_type)
-DATA_DEFINE_ACCESSOR(query_predicate_step, value_id, INT2NUM, NUM2INT)
+                     value_to_query_predicate_step_type)
+DATA_DEFINE_ACCESSOR(query_predicate_step, value_id, UINT2NUM, NUM2UINT)
 
 void init_query_predicate_step(void) {
   cQueryPredicateStep =

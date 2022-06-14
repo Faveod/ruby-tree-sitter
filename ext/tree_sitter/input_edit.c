@@ -5,9 +5,9 @@ extern VALUE mTreeSitter;
 VALUE cInputEdit;
 
 DATA_WRAP(InputEdit, input_edit)
-DATA_DEFINE_ACCESSOR(input_edit, start_byte, INT2NUM, NUM2INT)
-DATA_DEFINE_ACCESSOR(input_edit, old_end_byte, INT2NUM, NUM2INT)
-DATA_DEFINE_ACCESSOR(input_edit, new_end_byte, INT2NUM, NUM2INT)
+DATA_DEFINE_ACCESSOR(input_edit, start_byte, UINT2NUM, NUM2UINT)
+DATA_DEFINE_ACCESSOR(input_edit, old_end_byte, UINT2NUM, NUM2UINT)
+DATA_DEFINE_ACCESSOR(input_edit, new_end_byte, UINT2NUM, NUM2UINT)
 DATA_DEFINE_ACCESSOR(input_edit, start_point, new_point_by_val, value_to_point)
 DATA_DEFINE_ACCESSOR(input_edit, old_end_point, new_point_by_val, value_to_point)
 DATA_DEFINE_ACCESSOR(input_edit, new_end_point, new_point_by_val, value_to_point)

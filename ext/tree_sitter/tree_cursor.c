@@ -29,7 +29,7 @@ static VALUE tree_cursor_current_field_name(VALUE self) {
 }
 
 static VALUE tree_cursor_current_field_id(VALUE self) {
-  return INT2NUM(ts_tree_cursor_current_field_id(&SELF));
+  return UINT2NUM(ts_tree_cursor_current_field_id(&SELF));
 }
 
 static VALUE tree_cursor_goto_parent(VALUE self) {
@@ -45,7 +45,7 @@ static VALUE tree_cursor_goto_first_child(VALUE self) {
 }
 
 static VALUE tree_cursor_goto_first_child_for_byte(VALUE self, VALUE byte) {
-  return LL2NUM(ts_tree_cursor_goto_first_child_for_byte(&SELF, NUM2INT(byte)));
+  return LL2NUM(ts_tree_cursor_goto_first_child_for_byte(&SELF, NUM2UINT(byte)));
 }
 
 static VALUE tree_cursor_goto_first_child_for_point(VALUE self, VALUE point) {

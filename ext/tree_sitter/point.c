@@ -5,8 +5,8 @@ extern VALUE mTreeSitter;
 VALUE cPoint;
 
 DATA_WRAP(Point, point)
-DATA_DEFINE_ACCESSOR(point, row, INT2NUM, NUM2INT)
-DATA_DEFINE_ACCESSOR(point, column, INT2NUM, NUM2INT)
+DATA_DEFINE_ACCESSOR(point, row, UINT2NUM, NUM2UINT)
+DATA_DEFINE_ACCESSOR(point, column, UINT2NUM, NUM2UINT)
 
 static VALUE point_inspect(VALUE self) {
   point_t *point = unwrap(self);

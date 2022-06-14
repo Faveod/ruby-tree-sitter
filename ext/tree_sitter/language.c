@@ -27,11 +27,11 @@ VALUE new_language(const TSLanguage *language) {
 }
 
 static VALUE language_symbol_count(VALUE self) {
-  return INT2NUM(ts_language_symbol_count(SELF));
+  return UINT2NUM(ts_language_symbol_count(SELF));
 }
 
 static VALUE language_symbol_name(VALUE self, VALUE symbol) {
-  return safe_str(ts_language_symbol_name(SELF, NUM2INT(symbol)));
+  return safe_str(ts_language_symbol_name(SELF, NUM2UINT(symbol)));
 }
 
 static VALUE language_symbol_for_name(VALUE self, VALUE string,
@@ -39,30 +39,30 @@ static VALUE language_symbol_for_name(VALUE self, VALUE string,
   char *str = StringValuePtr(string);
   uint32_t length = (uint32_t)RSTRING_LEN(string);
   bool named = RTEST(is_named);
-  return INT2NUM(ts_language_symbol_for_name(SELF, str, length, named));
+  return UINT2NUM(ts_language_symbol_for_name(SELF, str, length, named));
 }
 
 static VALUE language_field_count(VALUE self) {
-  return INT2NUM(ts_language_field_count(SELF));
+  return UINT2NUM(ts_language_field_count(SELF));
 }
 
 static VALUE language_field_name_for_id(VALUE self, VALUE field_id) {
-  return safe_str(ts_language_field_name_for_id(SELF, NUM2INT(field_id)));
+  return safe_str(ts_language_field_name_for_id(SELF, NUM2UINT(field_id)));
 }
 
 static VALUE language_field_id_for_name(VALUE self, VALUE name) {
   TSLanguage *language = SELF;
   const char *str = StringValuePtr(name);
   uint32_t length = (uint32_t)RSTRING_LEN(name);
-  return INT2NUM(ts_language_field_id_for_name(language, str, length));
+  return UINT2NUM(ts_language_field_id_for_name(language, str, length));
 }
 
 static VALUE language_symbol_type(VALUE self, VALUE symbol) {
-  return new_symbol_type(ts_language_symbol_type(SELF, NUM2INT(symbol)));
+  return new_symbol_type(ts_language_symbol_type(SELF, NUM2UINT(symbol)));
 }
 
 static VALUE language_version(VALUE self) {
-  return INT2NUM(ts_language_version(SELF));
+  return UINT2NUM(ts_language_version(SELF));
 }
 
 static VALUE language_load(VALUE self, VALUE name, VALUE path) {

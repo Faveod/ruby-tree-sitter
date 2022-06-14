@@ -26,15 +26,15 @@ static VALUE query_initialize(VALUE self, VALUE language, VALUE source) {
 }
 
 static VALUE query_pattern_count(VALUE self) {
-  return INT2NUM(ts_query_pattern_count(SELF));
+  return UINT2NUM(ts_query_pattern_count(SELF));
 }
 
 static VALUE query_capture_count(VALUE self) {
-  return INT2NUM(ts_query_capture_count(SELF));
+  return UINT2NUM(ts_query_capture_count(SELF));
 }
 
 static VALUE query_string_count(VALUE self) {
-  return INT2NUM(ts_query_string_count(SELF));
+  return UINT2NUM(ts_query_string_count(SELF));
 }
 
 static VALUE query_start_byte_for_pattern(VALUE self, VALUE pattern_index) {
@@ -48,7 +48,7 @@ static VALUE query_start_byte_for_pattern(VALUE self, VALUE pattern_index) {
     rb_raise(rb_eIndexError, "Index %d out of range (len = %d)", index, range);
   }
 
-  return INT2NUM(ts_query_start_byte_for_pattern(SELF, index));
+  return UINT2NUM(ts_query_start_byte_for_pattern(SELF, index));
 }
 
 static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
@@ -81,7 +81,7 @@ static VALUE query_pattern_guaranteed_at_step(VALUE self, VALUE byte_offset) {
     rb_raise(rb_eIndexError, "Byte index %d is negative", index);
   }
 
-  return INT2NUM(ts_query_is_pattern_guaranteed_at_step(SELF, index));
+  return UINT2NUM(ts_query_is_pattern_guaranteed_at_step(SELF, index));
 }
 
 static VALUE query_capture_name_for_id(VALUE self, VALUE id) {

@@ -7,8 +7,8 @@ VALUE cRange;
 DATA_WRAP(Range, range)
 DATA_DEFINE_ACCESSOR(range, start_point, new_point_by_val, value_to_point)
 DATA_DEFINE_ACCESSOR(range, end_point, new_point_by_val, value_to_point)
-DATA_DEFINE_ACCESSOR(range, start_byte, INT2NUM, NUM2INT)
-DATA_DEFINE_ACCESSOR(range, end_byte, INT2NUM, NUM2INT)
+DATA_DEFINE_ACCESSOR(range, start_byte, UINT2NUM, NUM2UINT)
+DATA_DEFINE_ACCESSOR(range, end_byte, UINT2NUM, NUM2UINT)
 
 static VALUE range_inspect(VALUE self) {
   range_t *range = unwrap(self);

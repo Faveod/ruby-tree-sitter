@@ -8,10 +8,10 @@ DATA_WRAP(Node, node)
 
 static VALUE node_type(VALUE self) { return safe_str(ts_node_type(SELF)); }
 
-static VALUE node_symbol(VALUE self) { return INT2NUM(ts_node_symbol(SELF)); }
+static VALUE node_symbol(VALUE self) { return UINT2NUM(ts_node_symbol(SELF)); }
 
 static VALUE node_start_byte(VALUE self) {
-  return INT2NUM(ts_node_start_byte(SELF));
+  return UINT2NUM(ts_node_start_byte(SELF));
 }
 
 static VALUE node_start_point(VALUE self) {
@@ -19,7 +19,7 @@ static VALUE node_start_point(VALUE self) {
 }
 
 static VALUE node_end_byte(VALUE self) {
-  return INT2NUM(ts_node_end_byte(SELF));
+  return UINT2NUM(ts_node_end_byte(SELF));
 }
 
 static VALUE node_end_point(VALUE self) {
@@ -78,19 +78,19 @@ static VALUE node_child(VALUE self, VALUE idx) {
 }
 
 static VALUE node_field_name_for_child(VALUE self, VALUE index) {
-  return safe_str(ts_node_field_name_for_child(SELF, NUM2INT(index)));
+  return safe_str(ts_node_field_name_for_child(SELF, NUM2UINT(index)));
 }
 
 static VALUE node_child_count(VALUE self) {
-  return INT2NUM(ts_node_child_count(SELF));
+  return UINT2NUM(ts_node_child_count(SELF));
 }
 
 static VALUE node_named_child(VALUE self, VALUE index) {
-  return new_node_by_val(ts_node_named_child(SELF, NUM2INT(index)));
+  return new_node_by_val(ts_node_named_child(SELF, NUM2UINT(index)));
 }
 
 static VALUE node_named_child_count(VALUE self) {
-  return INT2NUM(ts_node_named_child_count(SELF));
+  return UINT2NUM(ts_node_named_child_count(SELF));
 }
 
 static VALUE node_child_by_field_name(VALUE self, VALUE field_name) {
@@ -100,7 +100,7 @@ static VALUE node_child_by_field_name(VALUE self, VALUE field_name) {
 }
 
 static VALUE node_child_by_field_id(VALUE self, VALUE field_id) {
-  return new_node_by_val(ts_node_child_by_field_id(SELF, NUM2INT(field_id)));
+  return new_node_by_val(ts_node_child_by_field_id(SELF, NUM2UINT(field_id)));
 }
 
 static VALUE node_next_sibling(VALUE self) {
@@ -120,17 +120,17 @@ static VALUE node_prev_named_sibling(VALUE self) {
 }
 
 static VALUE node_first_child_for_byte(VALUE self, VALUE byte) {
-  return new_node_by_val(ts_node_first_child_for_byte(SELF, NUM2INT(byte)));
+  return new_node_by_val(ts_node_first_child_for_byte(SELF, NUM2UINT(byte)));
 }
 
 static VALUE node_first_named_child_for_byte(VALUE self, VALUE byte) {
   return new_node_by_val(
-      ts_node_first_named_child_for_byte(SELF, NUM2INT(byte)));
+      ts_node_first_named_child_for_byte(SELF, NUM2UINT(byte)));
 }
 
 static VALUE node_descendant_for_byte_range(VALUE self, VALUE from, VALUE to) {
   return new_node_by_val(
-      ts_node_descendant_for_byte_range(SELF, NUM2INT(from), NUM2INT(to)));
+      ts_node_descendant_for_byte_range(SELF, NUM2UINT(from), NUM2UINT(to)));
 }
 
 static VALUE node_descendant_for_point_range(VALUE self, VALUE from, VALUE to) {
@@ -141,7 +141,7 @@ static VALUE node_descendant_for_point_range(VALUE self, VALUE from, VALUE to) {
 static VALUE node_named_descendant_for_byte_range(VALUE self, VALUE from,
                                                   VALUE to) {
   return new_node_by_val(ts_node_named_descendant_for_byte_range(
-      SELF, NUM2INT(from), NUM2INT(to)));
+      SELF, NUM2UINT(from), NUM2UINT(to)));
 }
 
 static VALUE node_named_descendant_for_point_range(VALUE self, VALUE from,

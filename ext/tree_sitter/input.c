@@ -14,7 +14,7 @@ const char *input_read(void *payload, uint32_t byte_index, TSPoint position,
                        uint32_t *bytes_read) {
   input_t *input = (input_t *)payload;
   VALUE read = rb_funcall(input->payload, rb_intern("read"), 2,
-                          INT2NUM(byte_index), new_point(&position));
+                          UINT2NUM(byte_index), new_point(&position));
   if (NIL_P(read)) {
     *bytes_read = 0;
     input->last_result = Qnil;

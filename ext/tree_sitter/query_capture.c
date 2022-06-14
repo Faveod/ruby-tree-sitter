@@ -5,7 +5,7 @@ extern VALUE mTreeSitter;
 VALUE cQueryCapture;
 
 DATA_WRAP(QueryCapture, query_capture)
-DATA_DEFINE_GETTER(query_capture, index, INT2NUM)
+DATA_DEFINE_GETTER(query_capture, index, UINT2NUM)
 DATA_DEFINE_GETTER(query_capture, node, new_node_by_val)
 
 static VALUE query_capture_inspect(VALUE self) {

@@ -32,16 +32,16 @@ static VALUE query_cursor_did_exceed_match_limit(VALUE self) {
 }
 
 static VALUE query_cursor_get_match_limit(VALUE self) {
-  return INT2NUM(ts_query_cursor_match_limit(SELF));
+  return UINT2NUM(ts_query_cursor_match_limit(SELF));
 }
 
 static VALUE query_cursor_set_match_limit(VALUE self, VALUE limit) {
-  ts_query_cursor_set_match_limit(SELF, NUM2INT(limit));
+  ts_query_cursor_set_match_limit(SELF, NUM2UINT(limit));
   return Qnil;
 }
 
 static VALUE query_cursor_set_byte_range(VALUE self, VALUE from, VALUE to) {
-  ts_query_cursor_set_byte_range(SELF, NUM2INT(from), NUM2INT(to));
+  ts_query_cursor_set_byte_range(SELF, NUM2UINT(from), NUM2UINT(to));
   return Qnil;
 }
 
@@ -61,7 +61,7 @@ static VALUE query_cursor_next_match(VALUE self) {
 }
 
 static VALUE query_cursor_remove_match(VALUE self, VALUE id) {
-  ts_query_cursor_remove_match(SELF, NUM2INT(id));
+  ts_query_cursor_remove_match(SELF, NUM2UINT(id));
   return Qnil;
 }
 
@@ -75,7 +75,7 @@ static VALUE query_cursor_next_capture(VALUE self) {
   uint32_t index;
   if (ts_query_cursor_next_capture(SELF, &match, &index)) {
     VALUE res = rb_ary_new_capa(2);
-    rb_ary_push(res, INT2NUM(index));
+    rb_ary_push(res, UINT2NUM(index));
     rb_ary_push(res, new_query_match(&match));
     return res;
   } else {
