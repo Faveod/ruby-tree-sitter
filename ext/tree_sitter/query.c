@@ -49,7 +49,7 @@ static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
   VALUE res = rb_ary_new_capa(length);
 
   for (uint32_t i = 0; i < length; i++) {
-    rb_ary_push(res, new_query_predicate_step(&steps[i])); // must free
+    rb_ary_push(res, new_query_predicate_step(&steps[i]));
   }
 
   return res;
