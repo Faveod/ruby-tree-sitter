@@ -42,26 +42,16 @@ static VALUE query_start_byte_for_pattern(VALUE self, VALUE pattern_index) {
   uint32_t index = NUM2UINT(pattern_index);
   uint32_t range = ts_query_pattern_count(query);
 
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Byte index %d is negative", index);
-  } else if (index >= range) {
+  if (index >= range) {
     rb_raise(rb_eIndexError, "Index %d out of range (len = %d)", index, range);
+  } else {
+    return UINT2NUM(ts_query_start_byte_for_pattern(SELF, index));
   }
-
-  return UINT2NUM(ts_query_start_byte_for_pattern(SELF, index));
 }
 
 static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
   const TSQuery *query = SELF;
   uint32_t index = NUM2UINT(pattern_index);
-  uint32_t range = ts_query_pattern_count(query);
-
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Index %d is negative (len = %d)", index, range);
-  } else if (index >= range) {
-    rb_raise(rb_eIndexError, "Index %d out of range (len = %d)", index, range);
-  }
-
   uint32_t length;
   const TSQueryPredicateStep *steps =
       ts_query_predicates_for_pattern(query, index, &length);
@@ -75,13 +65,7 @@ static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
 }
 
 static VALUE query_pattern_guaranteed_at_step(VALUE self, VALUE byte_offset) {
-  uint32_t index = NUM2UINT(byte_offset);
-
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Byte index %d is negative", index);
-  }
-
-  return UINT2NUM(ts_query_is_pattern_guaranteed_at_step(SELF, index));
+  return UINT2NUM(ts_query_is_pattern_guaranteed_at_step(SELF, NUM2UINT(byte_offset)));
 }
 
 static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
@@ -89,15 +73,13 @@ static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
   uint32_t index = NUM2UINT(id);
   uint32_t range = ts_query_capture_count(query);
 
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Index %d is negative (len = %d)", index, range);
-  } else if (index >= range) {
+  if (index >= range) {
     rb_raise(rb_eIndexError, "Index %d out of range (len = %d)", index, range);
+  } else {
+    uint32_t length;
+    const char *name = ts_query_capture_name_for_id(query, index, &length);
+    return safe_str2(name, length);
   }
-
-  uint32_t length;
-  const char *name = ts_query_capture_name_for_id(query, index, &length);
-  return safe_str2(name, length);
 }
 
 static VALUE query_capture_quantifier_for_id(VALUE self, VALUE id,
@@ -107,17 +89,12 @@ static VALUE query_capture_quantifier_for_id(VALUE self, VALUE id,
   uint32_t index = NUM2UINT(capture_id);
   uint32_t range = ts_query_capture_count(query);
 
-  if (pattern < 0) {
-    rb_raise(rb_eIndexError, "Pattern ID %d is negative", pattern);
-  } else if (index < 0) {
-    rb_raise(rb_eIndexError, "Capture ID %d is negative (len = %d)", index,
-             range);
-  } else if (index >= range) {
+  if (index >= range) {
     rb_raise(rb_eIndexError, "Capture ID %d out of range (len = %d)", index,
              range);
+  } else {
+    return UINT2NUM(ts_query_capture_quantifier_for_id(query, pattern, index));
   }
-
-  return UINT2NUM(ts_query_capture_quantifier_for_id(query, pattern, index));
 }
 
 static VALUE query_string_value_for_id(VALUE self, VALUE id) {
@@ -125,15 +102,13 @@ static VALUE query_string_value_for_id(VALUE self, VALUE id) {
   uint32_t index = NUM2UINT(id);
   uint32_t range = ts_query_string_count(query);
 
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Index %d is negative (len = %d)", index, range);
-  } else if (index >= range) {
+  if (index >= range) {
     rb_raise(rb_eIndexError, "Index %d out of range (len = %d)", index, range);
+  } else {
+    uint32_t length;
+    const char *string = ts_query_string_value_for_id(query, index, &length);
+    return safe_str2(string, length);
   }
-
-  uint32_t length;
-  const char *string = ts_query_string_value_for_id(query, index, &length);
-  return safe_str2(string, length);
 }
 
 static VALUE query_disable_capture(VALUE self, VALUE capture) {
@@ -148,14 +123,12 @@ static VALUE query_disable_pattern(VALUE self, VALUE pattern) {
   uint32_t index = NUM2UINT(pattern);
   uint32_t range = ts_query_pattern_count(query);
 
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Index %d is negative (len = %d)", index, range);
-  } else if (index >= range) {
+  if (index >= range) {
     rb_raise(rb_eIndexError, "Index %d out of range (len = %d)", index, range);
+  } else {
+    ts_query_disable_pattern(query, index);
+    return Qnil;
   }
-
-  ts_query_disable_pattern(query, index);
-  return Qnil;
 }
 
 void init_query(void) {

@@ -66,9 +66,7 @@ static VALUE node_child(VALUE self, VALUE idx) {
   uint32_t index = NUM2UINT(idx);
   uint32_t range = ts_node_child_count(node);
 
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Index %d is negative", index);
-  } else if (index < range) {
+  if (index < range) {
     return new_node_by_val(ts_node_child(node, index));
   } else {
     rb_raise(rb_eIndexError, "Index %d is out of range (lend = %d)", index,
@@ -81,9 +79,7 @@ static VALUE node_field_name_for_child(VALUE self, VALUE idx) {
   uint32_t index = NUM2UINT(idx);
   uint32_t range = ts_node_child_count(node);
 
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Index %d is negative", index);
-  } else if (index < range) {
+  if (index < range) {
     return safe_str(ts_node_field_name_for_child(node, index));
   } else {
     rb_raise(rb_eIndexError, "Index %d is out of range (lend = %d)", index,
@@ -100,9 +96,7 @@ static VALUE node_named_child(VALUE self, VALUE idx) {
   uint32_t index = NUM2UINT(idx);
   uint32_t range = ts_node_named_child_count(node);
 
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Index %d is negative", index);
-  } else if (index < range) {
+  if (index < range) {
     return new_node_by_val(ts_node_named_child(node, index));
   } else {
     rb_raise(rb_eIndexError, "Index %d is out of range (lend = %d)", index,
@@ -121,13 +115,7 @@ static VALUE node_child_by_field_name(VALUE self, VALUE field_name) {
 }
 
 static VALUE node_child_by_field_id(VALUE self, VALUE field_id) {
-  uint32_t index = NUM2UINT(field_id);
-
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Index %d is negative", index);
-  }
-
-  return new_node_by_val(ts_node_child_by_field_id(SELF, index));
+  return new_node_by_val(ts_node_child_by_field_id(SELF, NUM2UINT(field_id)));
 }
 
 static VALUE node_next_sibling(VALUE self) {
@@ -147,38 +135,22 @@ static VALUE node_prev_named_sibling(VALUE self) {
 }
 
 static VALUE node_first_child_for_byte(VALUE self, VALUE byte) {
-  uint32_t index = NUM2UINT(byte);
-
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Byte %d is negative", index);
-  }
-
-  return new_node_by_val(ts_node_first_child_for_byte(SELF, index));
+  return new_node_by_val(ts_node_first_child_for_byte(SELF, NUM2UINT(byte)));
 }
 
 static VALUE node_first_named_child_for_byte(VALUE self, VALUE byte) {
-  uint32_t index = NUM2UINT(byte);
-
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Byte %d is negative", index);
-  }
-
-  return new_node_by_val(ts_node_first_named_child_for_byte(SELF, index));
+  return new_node_by_val(ts_node_first_named_child_for_byte(SELF, NUM2UINT(byte)));
 }
 
 static VALUE node_descendant_for_byte_range(VALUE self, VALUE from, VALUE to) {
   uint32_t from_b = NUM2UINT(from);
   uint32_t to_b = NUM2UINT(to);
 
-  if (from_b < 0) {
-    rb_raise(rb_eIndexError, "From (byte) %d is negative", from_b);
-  } else if (to_b < 0) {
-    rb_raise(rb_eIndexError, "To (byte) %d is negative", to_b);
-  } else if (from_b < to_b) {
+  if (from_b < to_b) {
     rb_raise(rb_eIndexError, "From < To: %d < %d", from_b, to_b);
+  } else {
+    return new_node_by_val(ts_node_descendant_for_byte_range(SELF, from_b, to_b));
   }
-
-  return new_node_by_val(ts_node_descendant_for_byte_range(SELF, from_b, to_b));
 }
 
 static VALUE node_descendant_for_point_range(VALUE self, VALUE from, VALUE to) {
@@ -191,16 +163,12 @@ static VALUE node_named_descendant_for_byte_range(VALUE self, VALUE from,
   uint32_t from_b = NUM2UINT(from);
   uint32_t to_b = NUM2UINT(to);
 
-  if (from_b < 0) {
-    rb_raise(rb_eIndexError, "From (byte) %d is negative", from_b);
-  } else if (to_b < 0) {
-    rb_raise(rb_eIndexError, "To (byte) %d is negative", to_b);
-  } else if (from_b < to_b) {
+  if (from_b < to_b) {
     rb_raise(rb_eIndexError, "From < To: %d < %d", from_b, to_b);
+  } else {
+    return new_node_by_val(
+        ts_node_named_descendant_for_byte_range(SELF, from_b, to_b));
   }
-
-  return new_node_by_val(
-      ts_node_named_descendant_for_byte_range(SELF, from_b, to_b));
 }
 
 static VALUE node_named_descendant_for_point_range(VALUE self, VALUE from,
