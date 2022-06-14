@@ -4,7 +4,18 @@ extern VALUE mTreeSitter;
 
 VALUE cTreeCursor;
 
-DATA_WRAP(TreeCursor, tree_cursor)
+DATA_TYPE(TSTreeCursor, tree_cursor)
+static void tree_cursor_free(void *ptr) {
+  tree_cursor_t *type = (tree_cursor_t *)ptr;
+  ts_tree_cursor_delete(&type->data);
+  xfree(ptr);
+}
+DATA_MEMSIZE(tree_cursor)
+DATA_DECLARE_DATA_TYPE(tree_cursor)
+DATA_ALLOCATE(tree_cursor)
+DATA_UNWRAP(tree_cursor)
+DATA_NEW(cTreeCursor, TSTreeCursor, tree_cursor)
+DATA_FROM_VALUE(TSTreeCursor, tree_cursor)
 
 static VALUE tree_cursor_initialize(VALUE self, VALUE node) {
   TSNode n = value_to_node(self);
