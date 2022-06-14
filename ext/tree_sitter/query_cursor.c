@@ -71,12 +71,12 @@ static VALUE query_cursor_remove_match(VALUE self, VALUE id) {
 // array of two values and returning them, intuitively speaking, seem very
 // inefficient.
 static VALUE query_cursor_next_capture(VALUE self) {
-  TSQueryMatch *match = NULL;
+  TSQueryMatch match;
   uint32_t index;
-  if (ts_query_cursor_next_capture(SELF, match, &index)) {
+  if (ts_query_cursor_next_capture(SELF, &match, &index)) {
     VALUE res = rb_ary_new_capa(2);
     rb_ary_push(res, INT2NUM(index));
-    rb_ary_push(res, new_query_match(match));
+    rb_ary_push(res, new_query_match(&match));
     return res;
   } else {
     return Qnil;
