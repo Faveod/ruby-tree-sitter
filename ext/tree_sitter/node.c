@@ -62,16 +62,18 @@ static VALUE node_parent(VALUE self) {
   return new_node_by_val(ts_node_parent(SELF));
 }
 
-static VALUE node_child(VALUE self, VALUE index) {
+static VALUE node_child(VALUE self, VALUE idx) {
   TSNode node = SELF;
-  uint32_t count = ts_node_child_count(node);
-  uint32_t idx = NUM2INT(index);
+  uint32_t index = NUM2UINT(idx);
+  uint32_t range = ts_node_child_count(node);
 
-  if (idx < count) {
-    return new_node_by_val(ts_node_child(node, idx));
+  if (index < 0) {
+    rb_raise(rb_eIndexError, "Index %d is negative", index);
+  } else if (index < range) {
+    return new_node_by_val(ts_node_child(node, index));
   } else {
-    rb_raise(rb_eRuntimeError,
-             "Out of index: node.child(%d); node.child_count=%d", idx, count);
+    rb_raise(rb_eIndexError, "Index %d is out of range (lend = %d)", index,
+             range);
   }
 }
 
