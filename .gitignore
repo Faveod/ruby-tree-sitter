@@ -1,4 +1,6 @@
 *.bundle
 *.gemfile
+*.lock
+lib/*
 pkg/*
 tmp/*
