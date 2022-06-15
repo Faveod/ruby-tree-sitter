@@ -4,6 +4,7 @@ RbConfig::MAKEFILE_CONFIG['CC'] = ENV['CC'] if ENV['CC']
 
 $CFLAGS << " -O0"
 $CFLAGS << " -std=c99"
+$CFLAGS << " -fPIC"
 $CFLAGS << " -Wall"
 
 if ENV['SANITIZE']
