@@ -115,6 +115,10 @@ static VALUE parser_parse(VALUE self, VALUE old_tree, VALUE input) {
 }
 
 static VALUE parser_parse_string(VALUE self, VALUE old_tree, VALUE string) {
+  if (NIL_P(string)) {
+    return Qnil;
+  }
+
   const char *str = StringValuePtr(string);
   uint32_t len = (uint32_t)RSTRING_LEN(string);
   TSTree *tree = NULL;
@@ -132,6 +136,10 @@ static VALUE parser_parse_string(VALUE self, VALUE old_tree, VALUE string) {
 
 static VALUE parser_parse_string_encoding(VALUE self, VALUE old_tree,
                                           VALUE string, VALUE encoding) {
+  if (NIL_P(string)) {
+    return Qnil;
+  }
+
   const char *str = StringValuePtr(string);
   uint32_t len = (uint32_t)RSTRING_LEN(string);
   return new_tree(ts_parser_parse_string_encoding(
