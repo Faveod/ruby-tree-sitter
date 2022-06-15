@@ -2,3 +2,6 @@
 
 require 'minitest/autorun'
 require 'minitest/color'
+require 'tree_sitter'
+
+require_relative '../examples/helpers'
