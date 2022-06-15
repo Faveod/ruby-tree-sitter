@@ -31,6 +31,11 @@ describe 'loading a language' do
 end
 
 describe 'parse_string' do
+
+  before do
+    parser.reset
+  end
+
   it 'must parse nil' do
     res = parser.parse_string(nil, nil)
     assert_nil res
@@ -53,6 +58,10 @@ describe 'parse_string' do
 end
 
 describe 'parse_string_encoding' do
+  before do
+    parser.reset
+  end
+
   it 'must parse nil' do
     res = parser.parse_string_encoding(nil, nil, :utf8)
     assert_nil res
