@@ -1,7 +1,12 @@
-#! /usr/bin/env sh
+
+# !/usr/bin/env sh
 
 set -e
 set -x
+case "$OSTYPE" in
+  darwin*)  export ext=dylib ;;
+  *)        export ext=so    ;;
+esac
 
 LOCAL=tree-sitter-parsers
 GET=tree-sitter-$1
@@ -9,6 +14,25 @@ GET=tree-sitter-$1
 mkdir -p $LOCAL
 cd $LOCAL
 
-[ ! -d $1 ] && git clone https://github.com/tree-sitter/$GET $1
-cd $1
-make
+if [ ! -d $1 ]
+then
+    git clone https://github.com/tree-sitter/$GET $1
+fi
+
+cd "$1/src"
+for i in *.c; do
+    [ -f "$i" ] || break
+    cc -std=c99 -fPIC -c $i
+done
+for i in *.cc; do
+    [ -f "$i" ] || break
+    c++ -fPIC -c $i
+done
+
+if [[ -n $(echo *.cc) ]]; then
+    export comp=c++
+else
+    export comp=cc
+fi
+
+$comp -shared *.o -o ../libtree-sitter-$1.$ext
