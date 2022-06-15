@@ -32,7 +32,7 @@ jobs:
           bundle install
       - name: compile
         run: |
-          bundle exec rake compile
+          rake compile
       - name: test
         run: |
-          bundle exec rake test
+          rake test
