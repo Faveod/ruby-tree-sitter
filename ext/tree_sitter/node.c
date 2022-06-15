@@ -201,7 +201,6 @@ void init_node(void) {
   rb_define_method(cNode, "start_point", node_start_point, 0);
   rb_define_method(cNode, "end_byte", node_end_byte, 0);
   rb_define_method(cNode, "end_point", node_end_point, 0);
-  rb_define_method(cNode, "to_s", node_string, 0);
   rb_define_method(cNode, "null?", node_is_null, 0);
   rb_define_method(cNode, "named?", node_is_named, 0);
   rb_define_method(cNode, "missing?", node_is_missing, 0);
