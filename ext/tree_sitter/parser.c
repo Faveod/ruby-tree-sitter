@@ -167,12 +167,17 @@ static VALUE parser_reset(VALUE self) {
 }
 
 static VALUE parser_print_dot_graphs(VALUE self, VALUE file) {
-  Check_Type(file, T_STRING);
-  char *path = StringValueCStr(file);
-  int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC,
-                0644); // 0644 = all read + user write
-  ts_parser_print_dot_graphs(SELF, fd);
-  close(fd);
+  if (NIL_P(file)) {
+    ts_parser_print_dot_graphs(SELF, -1);
+  } else if (rb_integer_type_p(file) && NUM2INT(file) < 0) {
+    ts_parser_print_dot_graphs(SELF, NUM2INT(file));
+  } else {
+    Check_Type(file, T_STRING);
+    char *path = StringValueCStr(file);
+    int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC,
+                  0644); // 0644 = all read + user write
+    ts_parser_print_dot_graphs(SELF, fd);
+  }
   return Qnil;
 }
 
