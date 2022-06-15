@@ -1,5 +1,13 @@
 # Notes
 
+## Missing features
+
+1. TSInput:
+   It's implemented, alongside `ts_parser_pasrse`, and the latter will call a
+   read function (with the appropriate signature) inside the passed object, but
+   we haven't implemented anything yet that is usefule.  We need to have it in
+   the test suite when done.
+
 ## Sanitizing
 
 To enable compilation with ASAN do:
