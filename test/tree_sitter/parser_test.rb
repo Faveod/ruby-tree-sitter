@@ -24,6 +24,10 @@ program_16 = program.encode('utf-16')
 margorp_16 = margorp.encode('utf-16')
 
 describe 'loading a language' do
+  before do
+    parser.reset
+  end
+
   it 'must set/get the same language' do
     parser.language = ruby
     assert_equal ruby, parser.language
@@ -31,7 +35,6 @@ describe 'loading a language' do
 end
 
 describe 'parse_string' do
-
   before do
     parser.reset
   end
@@ -88,10 +91,25 @@ describe 'parse_string_encoding' do
   end
 end
 
+describe 'print_dot_graphs' do
+  before do
+    parser.reset
+  end
+
+  it 'must save its debug info to a file' do
+    dot = File.expand_path('tmp/debug-dot.gv', FileUtils.getwd)
+    parser.print_dot_graphs(dot)
+    parser.parse_string(nil, program)
+
+    assert File.exist?(dot), 'dot file must be exist'
+    assert File.file?(dot), 'dot file must be a file'
+    refute_equal 0, File.size(dot)
+  end
+end
+
 # TODO: included_ranges for parsing partial documents.
 # TODO: timeout_micros.
 # TODO: cancellation_flag.
-# TODO: print_dot_graphs.
 
 # TODO: parsing with non-nil tree.
 
