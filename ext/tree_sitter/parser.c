@@ -142,8 +142,19 @@ static VALUE parser_parse_string_encoding(VALUE self, VALUE old_tree,
 
   const char *str = StringValuePtr(string);
   uint32_t len = (uint32_t)RSTRING_LEN(string);
-  return new_tree(ts_parser_parse_string_encoding(
-      SELF, value_to_tree(old_tree), str, len, value_to_encoding(encoding)));
+  TSTree *tree = NULL;
+  if (!NIL_P(old_tree)) {
+    tree = value_to_tree(old_tree);
+  }
+
+  TSTree *ret = ts_parser_parse_string_encoding(SELF, tree, str, len,
+                                                value_to_encoding(encoding));
+
+  if (ret == NULL) {
+    return Qnil;
+  } else {
+    return new_tree(ret);
+  }
 }
 
 static VALUE parser_reset(VALUE self) {
