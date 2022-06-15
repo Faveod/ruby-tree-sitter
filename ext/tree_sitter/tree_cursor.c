@@ -55,13 +55,7 @@ static VALUE tree_cursor_goto_first_child(VALUE self) {
 }
 
 static VALUE tree_cursor_goto_first_child_for_byte(VALUE self, VALUE byte) {
-  uint32_t index = NUM2UINT(byte);
-
-  if (index < 0) {
-    rb_raise(rb_eIndexError, "Byte %d is negative", index);
-  }
-
-  return LL2NUM(ts_tree_cursor_goto_first_child_for_byte(&SELF, index));
+  return LL2NUM(ts_tree_cursor_goto_first_child_for_byte(&SELF, NUM2UINT(byte)));
 }
 
 static VALUE tree_cursor_goto_first_child_for_point(VALUE self, VALUE point) {
