@@ -91,7 +91,6 @@ end
 # TODO: included_ranges for parsing partial documents.
 # TODO: timeout_micros.
 # TODO: cancellation_flag.
-# TODO: logger.
 # TODO: print_dot_graphs.
 
 # TODO: parsing with non-nil tree.
