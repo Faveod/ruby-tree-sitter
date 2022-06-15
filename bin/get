@@ -3,9 +3,19 @@
 
 set -e
 set -x
+export LDFLAGS='-lstdc++'
+
 case "$OSTYPE" in
-  darwin*)  export ext=dylib ;;
-  *)        export ext=so    ;;
+  darwin*)
+      export ext=dylib
+      export ccomp=cc
+      export cppcomp=c++
+      ;;
+  *)
+      export ext=so
+      export ccomp=gcc
+      export cppcomp=g++
+      ;;
 esac
 
 LOCAL=tree-sitter-parsers
@@ -19,20 +29,24 @@ then
     git clone https://github.com/tree-sitter/$GET $1
 fi
 
-cd "$1/src"
+cd $1/src
+for i in *.o; do
+    [ -f "$i" ] || break
+    rm $i
+done
 for i in *.c; do
     [ -f "$i" ] || break
-    cc -std=c99 -fPIC -c $i
+    $ccomp -std=c99 -fPIC -c $i
 done
 for i in *.cc; do
     [ -f "$i" ] || break
-    c++ -fPIC -c $i
+    $cppcomp -fPIC -c $i
 done
 
 if [[ -n $(echo *.cc) ]]; then
-    export comp=c++
+    export comp=$ccomp
 else
-    export comp=cc
+    export comp=$cppcomp
 fi
 
-$comp -shared *.o -o ../libtree-sitter-$1.$ext
+$comp $LDFLAGS -shared *.o -o ../libtree-sitter-$1.$ext
