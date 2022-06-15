@@ -27,12 +27,18 @@ jobs:
         run: |
           cd tree-sitter
           sudo make install
+      - name: deps for ubuntu
+        if: ${{ matrix.os == 'ubuntu' }}
+        run: |
+          sudo apt update -y
+          sudo apt install build-essential
+          sudo ldconfig -v
       - name: bundle install
         run: |
           bundle install
       - name: compile
         run: |
-          rake compile
+          bundle exec rake compile
       - name: test
         run: |
-          rake test
+          bundle exec rake test
