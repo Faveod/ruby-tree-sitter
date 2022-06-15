@@ -18,14 +18,14 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
       - name: clone tree-sitter
         run: |
-          git clone https://github.com/tree-sitter/tree-sitter local-tree-sitter
+          git clone https://github.com/tree-sitter/tree-sitter
       - name: build tree-sitter
         run: |
-          cd local-tree-sitter
+          cd tree-sitter
           make
       - name: install tree-sitter
         run: |
-          cd local-tree-sitter
+          cd tree-sitter
           sudo make install
       - name: bundle install
         run: |
