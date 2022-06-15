@@ -101,6 +101,10 @@ static VALUE parser_set_logger(VALUE self, VALUE logger) {
 }
 
 static VALUE parser_parse(VALUE self, VALUE old_tree, VALUE input) {
+  if (NIL_P(input)) {
+    return Qnil;
+  }
+
   TSTree *tree = NULL;
   if (!NIL_P(old_tree)) {
     tree = value_to_tree(old_tree);
