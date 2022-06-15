@@ -16,14 +16,12 @@ DATA_DECLARE_DATA_TYPE(language)
 DATA_ALLOCATE(language)
 DATA_UNWRAP(language)
 
-TSLanguage *value_to_language(VALUE self) {
-  TSLanguage *language;
-  Data_Get_Struct(self, TSLanguage, language);
-  return language;
-}
+TSLanguage *value_to_language(VALUE self) { return SELF; }
 
 VALUE new_language(const TSLanguage *language) {
-  return Data_Wrap_Struct(cLanguage, NULL, NULL, (void *)language);
+  VALUE res = language_allocate(cLanguage);
+  unwrap(res)->data = (TSLanguage *)language;
+  return res;
 }
 
 static VALUE language_symbol_count(VALUE self) {
@@ -107,6 +105,12 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
   return new_language(lang);
 }
 
+static VALUE language_equal(VALUE self, VALUE other) {
+  TSLanguage *this = SELF;
+  TSLanguage *that = unwrap(other)->data;
+  return this == that ? Qtrue : Qfalse;
+}
+
 void init_language(void) {
   cLanguage = rb_define_class_under(mTreeSitter, "Language", rb_cObject);
 
@@ -124,4 +128,5 @@ void init_language(void) {
   rb_define_method(cLanguage, "symbol_type", language_symbol_type, 1);
   rb_define_method(cLanguage, "version", language_version, 0);
   rb_define_module_function(cLanguage, "load", language_load, 2);
+  rb_define_method(cLanguage, "==", language_equal, 1);
 }
