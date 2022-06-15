@@ -139,7 +139,8 @@ static VALUE node_first_child_for_byte(VALUE self, VALUE byte) {
 }
 
 static VALUE node_first_named_child_for_byte(VALUE self, VALUE byte) {
-  return new_node_by_val(ts_node_first_named_child_for_byte(SELF, NUM2UINT(byte)));
+  return new_node_by_val(
+      ts_node_first_named_child_for_byte(SELF, NUM2UINT(byte)));
 }
 
 static VALUE node_descendant_for_byte_range(VALUE self, VALUE from, VALUE to) {
@@ -149,7 +150,8 @@ static VALUE node_descendant_for_byte_range(VALUE self, VALUE from, VALUE to) {
   if (from_b < to_b) {
     rb_raise(rb_eIndexError, "From < To: %d < %d", from_b, to_b);
   } else {
-    return new_node_by_val(ts_node_descendant_for_byte_range(SELF, from_b, to_b));
+    return new_node_by_val(
+        ts_node_descendant_for_byte_range(SELF, from_b, to_b));
   }
 }
 
@@ -234,4 +236,5 @@ void init_node(void) {
   rb_define_method(cNode, "to_s", node_string, 0);
   rb_define_method(cNode, "to_str", node_string, 0);
   rb_define_method(cNode, "inspect", node_string, 0);
+  rb_define_method(cNode, "==", node_eq, 1);
 }
