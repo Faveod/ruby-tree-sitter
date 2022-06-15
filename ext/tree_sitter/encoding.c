@@ -10,7 +10,7 @@ const char *utf16 = "utf16";
 TSInputEncoding value_to_encoding(VALUE encoding) {
   VALUE enc = SYM2ID(encoding);
   /* VALUE u8 = rb_const_get_at(mEncoding, rb_intern(utf8)); */
-  VALUE u16 = rb_const_get_at(mEncoding, rb_intern(utf16));
+  VALUE u16 = SYM2ID(rb_const_get_at(mEncoding, rb_intern("UTF16")));
 
   // NOTE: should we emit a warning instead of defaulting to UTF8?
   if (enc == u16) {
