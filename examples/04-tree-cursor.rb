@@ -1,6 +1,6 @@
-require 'tree_sitter'
+require_relative 'helpers'
 
-javascript = TreeSitter::Language.load('javascript', '/Users/firas/projects/github/tree-sitter-javascript/libtree-sitter-javascript.dylib')
+javascript = lang('javascript')
 
 parser = TreeSitter::Parser.new
 parser.language = javascript

@@ -1,11 +1,7 @@
-require 'tree_sitter'
-
-def assert_eq(a, b)
-  puts "#{a} #{a == b ? '==' : '!='} #{b}"
-end
+require_relative 'helpers'
 
 parser = TreeSitter::Parser.new
-language = TreeSitter::Language.load('json', '/Users/firas/projects/github/tree-sitter-json/libtree-sitter-json.dylib')
+language = lang('json')
 
 src = "[1, null]"
 

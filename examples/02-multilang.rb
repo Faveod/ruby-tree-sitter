@@ -1,12 +1,8 @@
-require 'tree_sitter'
+require_relative 'helpers'
 
-def assert_eq(a, b)
-  puts "#{a} #{a == b ? '==' : '!='} #{b}"
-end
-
-template = TreeSitter::Language.load('embedded_template', '/Users/firas/projects/github/tree-sitter-embedded-template/libtree-sitter-embedded-template.dylib')
-html = TreeSitter::Language.load('html', '/Users/firas/projects/github/tree-sitter-html/libtree-sitter-html.dylib')
-ruby = TreeSitter::Language.load('ruby', '/Users/firas/projects/github/tree-sitter-ruby/libtree-sitter-ruby.dylib')
+template = lang('embedded-template')
+html = lang('html')
+ruby = lang('ruby')
 
 program = <<~ERB
 <ul>

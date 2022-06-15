@@ -1,10 +1,6 @@
-require 'tree_sitter'
+require_relative 'helpers'
 
-def section
-    puts '-' * 79
-end
-
-ruby = TreeSitter::Language.load('ruby', '/Users/firas/projects/github/tree-sitter-ruby/libtree-sitter-ruby.dylib')
+ruby = lang('ruby')
 
 parser = TreeSitter::Parser.new
 parser.language = ruby
@@ -17,13 +13,17 @@ end
 puts mul(1, 2)
 puts 1 * 2
 
+never_gonna = [1, 2]
+give_you_up = [3, 4]
+
+let_you_down = never_gonna + give_you_up
+
 RUBY
 
 patterns = [
-  '(binary (_)+ @children)',
-  '(binary (_) @left (_) @right)',
-  '(binary (_) (_))',
-  '(binary (integer) @left (integer) @right)',
+  # '(binary (_) @left (_) @right)',
+  # '(binary (_) (_))',
+  # '(binary (integer) @left (integer) @right)',
   '(method name: (identifier) @name) @definition.function'
 ]
 
@@ -53,7 +53,7 @@ patterns.each do |p|
   puts '  captures:'
   while cap = cursor.next_capture
     idx, match = cap
-    quantifier = TreeSitter::quantifier_name(query.capture_quantifier_for_id(0, idx));
+    quantifier = TreeSitter.quantifier_name(query.capture_quantifier_for_id(0, idx))
     puts "    @#{idx} -> #{quantifier} -> #{query.capture_name_for_id(idx)}"
   end
   puts ''
