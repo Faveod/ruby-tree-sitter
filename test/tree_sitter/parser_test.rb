@@ -2,8 +2,12 @@
 
 require_relative '../test_helper.rb'
 
-describe 'Sending images to a device' do
-  it 'shoulf pass' do
-    assert_equal(42, 42)
+ruby = lang('ruby')
+parser = TreeSitter::Parser.new
+
+describe 'loading a language' do
+  it 'must set/get the same language' do
+    parser.language = ruby
+    assert_equal ruby, parser.language
   end
 end
