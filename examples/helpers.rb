@@ -4,7 +4,7 @@ require 'tree_sitter'
 def ext
   case Gem::Platform.local.os
   in /darwin/ then 'dylib'
-  else             '.so'
+  else             'so'
   end
 end
 
