@@ -168,7 +168,7 @@ static VALUE logger_initialize(int argc, VALUE *argv, VALUE self) {
 
   logger->format = format;
 
-  if (argv == 0) {
+  if (argc == 0) {
     logger_initialize_stderr(logger);
   } else {
     logger_payload_set(logger, payload);
