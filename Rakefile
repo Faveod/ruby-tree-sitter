@@ -37,6 +37,7 @@ end
 task :console do
   require 'pry'
   require 'tree_sitter'
+  require_relative 'examples/helpers.rb'
 
   def reload!
     files = $LOADED_FEATURES.select { |feat| feat =~ /\/tree_sitter\// }
