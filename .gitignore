@@ -4,3 +4,5 @@
 lib/*
 pkg/*
 tmp/*
+
+tree-sitter-parsers

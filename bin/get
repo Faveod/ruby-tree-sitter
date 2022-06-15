@@ -1,0 +1,14 @@
+#! /usr/bin/env sh
+
+set -e
+set -x
+
+LOCAL=tree-sitter-parsers
+GET=tree-sitter-$1
+
+mkdir -p $LOCAL
+cd $LOCAL
+
+[ ! -d $1 ] && git clone https://github.com/tree-sitter/$GET $1
+cd $1
+make
