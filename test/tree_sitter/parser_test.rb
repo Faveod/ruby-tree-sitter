@@ -87,6 +87,13 @@ describe 'parse_string_encoding' do
     end
   end
 end
+
+# TODO: included_ranges for parsing partial documents.
+# TODO: timeout_micros.
+# TODO: cancellation_flag.
+# TODO: logger.
+# TODO: print_dot_graphs.
+
 # TODO: parsing with non-nil tree.
 
 # TODO: parsing Input streams.  We're currently just hading the callback from
