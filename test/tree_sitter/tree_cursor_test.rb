@@ -78,4 +78,6 @@ describe 'TreeCursor should work properly' do
   end
 
   it 'must return a distinct copy on copy' do
+    refute_equal @cursor, @cursor.copy
+  end
 end
