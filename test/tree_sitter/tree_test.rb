@@ -22,3 +22,10 @@ describe 'copy' do
     refute_equal tree, copy
   end
 end
+
+describe 'root_node' do
+  it 'must be of type TreeSitter::Node' do
+    root = tree.root_node
+    assert_instance_of TreeSitter::Node, root
+  end
+end
