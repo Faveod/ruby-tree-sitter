@@ -10,4 +10,8 @@ describe 'language' do
   it 'must return symbol count' do
     assert ruby.symbol_count.positive?
   end
+
+  it 'must return symbol name' do
+    assert_equal 'end', ruby.symbol_name(0)
+  end
 end
