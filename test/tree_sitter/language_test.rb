@@ -49,4 +49,9 @@ describe 'language' do
   it 'must return field symbol type' do
     assert_equal TreeSitter::SymbolType::AUXILIARY, ruby.symbol_type(0)
   end
+
+  it 'must be of correct version' do
+    assert ruby.version <= TreeSitter::LANGUAGE_VERSION \
+           && ruby.version >= TreeSitter::MIN_COMPATIBLE_LANGUAGE_VERSION
+  end
 end
