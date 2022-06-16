@@ -110,4 +110,16 @@ describe 'query_cursor' do
     refute_nil @cursor.next_capture
     assert @cursor.exceed_match_limit?
   end
+
+  it 'must work with byte range' do
+    child = root.child(0).child(0)
+    @cursor.set_byte_range(child.start_byte, child.end_byte)
+    assert_nil @cursor.next_capture
+  end
+
+  it 'must work with point range' do
+    child = root.child(0).child(0)
+    @cursor.set_point_range(child.start_point, child.end_point)
+    assert_nil @cursor.next_capture
+  end
 end
