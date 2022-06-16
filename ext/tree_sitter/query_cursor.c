@@ -93,9 +93,10 @@ void init_query_cursor(void) {
   rb_define_module_function(cQueryCursor, "exec", query_cursor_exec, 2);
   rb_define_method(cQueryCursor, "exceed_match_limit?",
                    query_cursor_did_exceed_match_limit, 0);
-  rb_define_method(cQueryCursor, "byte_range=", query_cursor_set_byte_range, 2);
-  rb_define_method(cQueryCursor, "point_range=", query_cursor_set_point_range,
+  rb_define_method(cQueryCursor, "set_byte_range", query_cursor_set_byte_range,
                    2);
+  rb_define_method(cQueryCursor, "set_point_range",
+                   query_cursor_set_point_range, 2);
   rb_define_method(cQueryCursor, "next_match", query_cursor_next_match, 0);
   rb_define_method(cQueryCursor, "remove_match", query_cursor_remove_match, 1);
   rb_define_method(cQueryCursor, "next_capture", query_cursor_next_capture, 0);
