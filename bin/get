@@ -48,9 +48,9 @@ for i in $CPPFILES; do
 done
 
 if [[ -n $CPPFILES ]]; then
-    COMP=$CXX
-else
     COMP=$CC
+else
+    COMP=$CXX
 fi
 
 $COMP $LDFLAGS -shared *.o -o $OUT
