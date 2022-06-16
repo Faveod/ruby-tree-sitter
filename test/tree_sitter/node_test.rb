@@ -166,3 +166,17 @@ describe 'field_name' do
     assert_equal 'name', @child.field_name_for_child(1)
   end
 end
+
+describe 'siblings' do
+  before do
+    @child = root.child(0).child(0)
+  end
+
+  it 'must return proper next/previous siblings' do
+    assert_equal @child, @child.next_sibling.prev_sibling
+  end
+
+  it 'must return proper next/previous named siblings' do
+    assert_equal @child.parent.child(1), @child.next_named_sibling
+  end
+end
