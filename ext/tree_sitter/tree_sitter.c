@@ -5,6 +5,11 @@ VALUE mTreeSitter;
 void Init_tree_sitter() {
   mTreeSitter = rb_define_module("TreeSitter");
 
+  rb_define_const(mTreeSitter, "LANGUAGE_VERSION",
+                  INT2NUM(TREE_SITTER_LANGUAGE_VERSION));
+  rb_define_const(mTreeSitter, "MIN_COMPATIBLE_LANGUAGE_VERSION",
+                  TREE_SITTER_MIN_COMPATIBLE_LANGUAGE_VERSION);
+
   init_encoding();
   init_input();
   init_input_edit();
