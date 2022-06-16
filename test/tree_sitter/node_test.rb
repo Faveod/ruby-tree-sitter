@@ -116,3 +116,17 @@ describe 'predicates' do
     refute root.error?
   end
 end
+
+describe 'parent' do
+  # NOTE: never call parent on root. It will segfault.
+  #
+  # tree-sitter does not provide a way to check if a node has a parent.
+
+  it 'must never be nil' do
+    refute_nil root.child(0).parent
+  end
+
+  it 'must be root for its children' do
+    assert_equal root, root.child(0).parent
+  end
+end
