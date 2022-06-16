@@ -33,4 +33,8 @@ describe 'language' do
   it 'must return symbol id for string name' do
     assert ruby.symbol_for_name(root.type, root.named?).positive?
   end
+
+  it 'must return field count' do
+    assert ruby.field_count.positive?
+  end
 end
