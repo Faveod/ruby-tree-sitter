@@ -147,8 +147,8 @@ static VALUE node_descendant_for_byte_range(VALUE self, VALUE from, VALUE to) {
   uint32_t from_b = NUM2UINT(from);
   uint32_t to_b = NUM2UINT(to);
 
-  if (from_b < to_b) {
-    rb_raise(rb_eIndexError, "From < To: %d < %d", from_b, to_b);
+  if (from_b > to_b) {
+    rb_raise(rb_eIndexError, "From > To: %d > %d", from_b, to_b);
   } else {
     return new_node_by_val(
         ts_node_descendant_for_byte_range(SELF, from_b, to_b));
@@ -165,8 +165,8 @@ static VALUE node_named_descendant_for_byte_range(VALUE self, VALUE from,
   uint32_t from_b = NUM2UINT(from);
   uint32_t to_b = NUM2UINT(to);
 
-  if (from_b < to_b) {
-    rb_raise(rb_eIndexError, "From < To: %d < %d", from_b, to_b);
+  if (from_b > to_b) {
+    rb_raise(rb_eIndexError, "From > To: %d > %d", from_b, to_b);
   } else {
     return new_node_by_val(
         ts_node_named_descendant_for_byte_range(SELF, from_b, to_b));
