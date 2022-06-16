@@ -65,7 +65,8 @@ static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
 }
 
 static VALUE query_pattern_guaranteed_at_step(VALUE self, VALUE byte_offset) {
-  return UINT2NUM(ts_query_is_pattern_guaranteed_at_step(SELF, NUM2UINT(byte_offset)));
+  return UINT2NUM(
+      ts_query_is_pattern_guaranteed_at_step(SELF, NUM2UINT(byte_offset)));
 }
 
 static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
