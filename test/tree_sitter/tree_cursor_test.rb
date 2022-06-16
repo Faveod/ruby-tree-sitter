@@ -62,4 +62,20 @@ describe 'TreeCursor should work properly' do
     assert_instance_of Integer, @cursor.current_field_id
   end
 
+  it 'must return proper child for given byte' do
+    @cursor.goto_first_child_for_byte(0)
+    assert_equal root.child(0), @cursor.current_node
+  end
+
+  it 'must return proper child for given point' do
+    @cursor.goto_first_child_for_point(root.start_point)
+    assert_equal root.child(0), @cursor.current_node
+  end
+
+  it 'must return proper child for given point' do
+    @cursor.goto_first_child_for_point(root.start_point)
+    assert_equal root.child(0), @cursor.current_node
+  end
+
+  it 'must return a distinct copy on copy' do
 end
