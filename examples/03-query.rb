@@ -6,17 +6,17 @@ parser = TreeSitter::Parser.new
 parser.language = ruby
 
 program = <<~RUBY
-def mul a, b
-    return a * b
-end
+  def mul a, b
+      return a * b
+  end
 
-puts mul(1, 2)
-puts 1 * 2
+  puts mul(1, 2)
+  puts 1 * 2
 
-never_gonna = [1, 2]
-give_you_up = [3, 4]
+  never_gonna = [1, 2]
+  give_you_up = [3, 4]
 
-let_you_down = never_gonna + give_you_up
+  let_you_down = never_gonna + give_you_up
 
 RUBY
 

@@ -6,7 +6,7 @@ parser = TreeSitter::Parser.new
 parser.language = javascript
 
 program = <<~JAVASCRIPT
-console.log(`Hello ${1 + 2 * 3}`)
+  console.log(`Hello ${1 + 2 * 3}`)
 JAVASCRIPT
 
 puts "Parsing JS program:\n\n#{program}\n\n"

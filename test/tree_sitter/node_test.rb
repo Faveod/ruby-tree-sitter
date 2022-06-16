@@ -207,7 +207,6 @@ describe 'child' do
       @child.named_descendant_for_point_range(@child.start_point, p1)
     end
   end
-
 end
 
 describe 'field_name' do

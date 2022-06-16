@@ -5,11 +5,11 @@ html = lang('html')
 ruby = lang('ruby')
 
 program = <<~ERB
-<ul>
-  <% people.each do |person| %>
-    <li><%= person.name %></li>
-  <% end %>
-</ul>
+  <ul>
+    <% people.each do |person| %>
+      <li><%= person.name %></li>
+    <% end %>
+  </ul>
 ERB
 
 puts "Parsing:\n\n#{program}\n"
@@ -48,7 +48,7 @@ end
 
 puts "HTML:\n#{ranges_html}\nRuby:\n#{ranges_ruby}\n\n"
 
-puts "Parsing HTML ..."
+puts 'Parsing HTML ...'
 parser.language = html
 parser.included_ranges = ranges_html
 tree_html = parser.parse_string(nil, program)
@@ -56,7 +56,7 @@ root_html = tree_html.root_node
 
 puts "\n\n#{root_html}\n\n"
 
-puts "Parsing Ruby ..."
+puts 'Parsing Ruby ...'
 parser.language = ruby
 parser.included_ranges = ranges_ruby
 tree_ruby = parser.parse_string(nil, program)

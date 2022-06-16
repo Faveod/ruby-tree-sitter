@@ -27,16 +27,15 @@ library = find_library('tree-sitter',   # libtree-sitter
                        '/usr/lib',
                        '/usr/local/lib')
 
-
 if !header || !library
-    crash(<<~EOL)
-      Missing header: #{header ? 'no' : 'yes'}, library: #{library ? 'no' : 'yes'}.
-      Install the library or try one of the following options to extconf.rb:
+  crash(<<~EOL)
+    Missing header: #{header ? 'no' : 'yes'}, library: #{library ? 'no' : 'yes'}.
+    Install the library or try one of the following options to extconf.rb:
 
-        --with-tree-sitter-dir=/path/to/tree-sitter
-        --with-tree-sitter-lib=/path/to/tree-sitter/lib
-        --with-tree-sitter-include=/path/to/tree-sitter/include
-    EOL
+      --with-tree-sitter-dir=/path/to/tree-sitter
+      --with-tree-sitter-lib=/path/to/tree-sitter/lib
+      --with-tree-sitter-include=/path/to/tree-sitter/include
+  EOL
 end
 
 dir_config('tree-sitter')

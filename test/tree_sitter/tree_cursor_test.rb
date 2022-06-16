@@ -21,7 +21,7 @@ describe 'TreeCursor should work properly' do
   before do
     @cursor = TreeSitter::TreeCursor.new(root)
   end
-  
+
   it 'must return root node when created' do
     assert_equal root, @cursor.current_node
   end

@@ -29,5 +29,5 @@ def assert_eq(a, b)
 end
 
 def section
-    puts '-' * 79
+  puts '-' * 79
 end

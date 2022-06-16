@@ -94,7 +94,7 @@ describe 'pattern/capture/string' do
     query.disable_pattern(0)
     assert_equal 1, query.pattern_count
   end
-  #TODO: pattern guaranteed at step
+  # TODO: pattern guaranteed at step
 end
 
 describe 'query_cursor' do
