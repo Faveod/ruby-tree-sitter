@@ -54,7 +54,7 @@ describe 'end_byte' do
 end
 
 describe 'start_point' do
-  it 'must be an instance of Point' do
+  it 'must be an instance of point' do
     assert_instance_of TreeSitter::Point, root.start_point
   end
 
@@ -64,5 +64,19 @@ describe 'start_point' do
 
   it 'must be at column 0' do
     assert_equal 0, root.start_point.row
+  end
+end
+
+describe 'end_point' do
+  it 'must be an instance of point' do
+    assert_instance_of TreeSitter::Point, root.end_point
+  end
+
+  it 'must not be at row 0' do
+    refute_equal 0, root.end_point.row
+  end
+
+  it 'must not be at column 0' do
+    refute_equal 0, root.end_point.row
   end
 end
