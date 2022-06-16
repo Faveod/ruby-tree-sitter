@@ -41,4 +41,8 @@ describe 'language' do
   it 'must return field name for id' do
     assert_equal 'alias', ruby.field_name_for_id(1)
   end
+
+  it 'must return field name for id' do
+    assert_equal 1, ruby.field_id_for_name('alias')
+  end
 end
