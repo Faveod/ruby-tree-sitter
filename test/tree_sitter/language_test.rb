@@ -37,4 +37,8 @@ describe 'language' do
   it 'must return field count' do
     assert ruby.field_count.positive?
   end
+
+  it 'must return field name for id' do
+    assert_equal 'alias', ruby.field_name_for_id(1)
+  end
 end
