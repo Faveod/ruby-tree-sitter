@@ -69,7 +69,7 @@ static VALUE node_child(VALUE self, VALUE idx) {
   if (index < range) {
     return new_node_by_val(ts_node_child(node, index));
   } else {
-    rb_raise(rb_eIndexError, "Index %d is out of range (lend = %d)", index,
+    rb_raise(rb_eIndexError, "Index %d is out of range (len = %d)", index,
              range);
   }
 }
@@ -82,7 +82,7 @@ static VALUE node_field_name_for_child(VALUE self, VALUE idx) {
   if (index < range) {
     return safe_str(ts_node_field_name_for_child(node, index));
   } else {
-    rb_raise(rb_eIndexError, "Index %d is out of range (lend = %d)", index,
+    rb_raise(rb_eIndexError, "Index %d is out of range (len = %d)", index,
              range);
   }
 }
@@ -99,7 +99,7 @@ static VALUE node_named_child(VALUE self, VALUE idx) {
   if (index < range) {
     return new_node_by_val(ts_node_named_child(node, index));
   } else {
-    rb_raise(rb_eIndexError, "Index %d is out of range (lend = %d)", index,
+    rb_raise(rb_eIndexError, "Index %d is out of range (len = %d)", index,
              range);
   }
 }
