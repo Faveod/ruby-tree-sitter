@@ -108,3 +108,11 @@ gem install tree_sitter-x.x.x.gem
 ## Examples
 
 See `examples` directory.
+
+## Development
+
+If you want to hack on this gem, you only have to work with `rake compile` and
+`rake clean`.
+
+It's advised to run `rake clean && rake compile` everytime you modify `C` code.
+I've run into trouble several times by not doing so.
