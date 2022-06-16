@@ -90,3 +90,29 @@ describe 'string' do
     refute root.to_s.empty?
   end
 end
+
+describe 'predicates' do
+  it 'must not be null' do
+    refute_nil root.null?
+  end
+
+  it 'must be named' do
+    assert root.named?
+  end
+
+  it 'must not be missing' do
+    refute root.missing?
+  end
+
+  it 'must not be extra' do
+    refute root.extra?
+  end
+
+  it 'must not have any changes' do
+    refute root.changes?
+  end
+
+  it 'must not have no errors' do
+    refute root.error?
+  end
+end
