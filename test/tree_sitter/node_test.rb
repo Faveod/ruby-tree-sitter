@@ -156,3 +156,13 @@ describe 'child' do
     assert_equal @child.child(1), @child.child_by_field_id(ruby.field_id_for_name('name'))
   end
 end
+
+describe 'field_name' do
+  before do
+    @child = root.child(0)
+  end
+
+  it 'must return proper field name' do
+    assert_equal 'name', @child.field_name_for_child(1)
+  end
+end
