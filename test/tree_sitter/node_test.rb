@@ -80,3 +80,13 @@ describe 'end_point' do
     refute_equal 0, root.end_point.row
   end
 end
+
+describe 'string' do
+  it 'must be an instance of string' do
+    assert_instance_of String, root.to_s
+  end
+
+  it 'must be non-empty' do
+    refute root.to_s.empty?
+  end
+end
