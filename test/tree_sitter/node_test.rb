@@ -32,3 +32,13 @@ describe 'symbol' do
     assert_instance_of Integer, root.symbol
   end
 end
+
+describe 'start_byte' do
+  it 'must be an Integer' do
+    assert_instance_of Integer, root.start_byte
+  end
+
+  it 'must be an 0' do
+    assert_equal 0, root.start_byte
+  end
+end
