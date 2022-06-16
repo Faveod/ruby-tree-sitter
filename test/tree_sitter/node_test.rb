@@ -42,3 +42,13 @@ describe 'start_byte' do
     assert_equal 0, root.start_byte
   end
 end
+
+describe 'end_byte' do
+  it 'must be an Integer' do
+    assert_instance_of Integer, root.end_byte
+  end
+
+  it 'must not be 0' do
+    refute_equal 0, root.end_byte
+  end
+end
