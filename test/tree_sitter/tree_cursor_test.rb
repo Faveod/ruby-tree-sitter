@@ -50,4 +50,16 @@ describe 'TreeCursor should work properly' do
     @cursor.reset(root)
     assert_equal root, @cursor.current_node
   end
+
+  it 'must return a String when current_field_name is called on a named child, or nil otherwise' do
+    assert_nil @cursor.current_field_name
+
+    @cursor.goto_first_child
+    @cursor.goto_first_child
+    @cursor.goto_next_sibling
+
+    assert_equal 'name', @cursor.current_field_name
+    assert_instance_of Integer, @cursor.current_field_id
+  end
+
 end
