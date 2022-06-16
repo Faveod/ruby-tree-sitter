@@ -29,3 +29,9 @@ describe 'root_node' do
     assert_instance_of TreeSitter::Node, root
   end
 end
+
+describe 'language' do
+  it 'must be identical to parser language' do
+    assert_equal parser.language, tree.language
+  end
+end
