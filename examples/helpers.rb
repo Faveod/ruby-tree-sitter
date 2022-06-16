@@ -13,8 +13,13 @@ def lang name, dir = nil
   lib = if dir then dir
         else
           parsers = "tree-sitter-parsers/#{name}"
-          system("bin/get #{name}") unless File.exist?(parsers)
-          File.expand_path("#{parsers}/libtree-sitter-#{name}.#{ext}", FileUtils.getwd)
+          dylib = "#{parsers}/libtree-sitter-#{name}.#{ext}"
+          if !File.exist?(dylib)
+            if system("bin/get #{name}").nil?
+              raise "could not load #{name} from #{dylib}"
+            end
+          end
+          File.expand_path(dylib, FileUtils.getwd)
         end
   TreeSitter::Language.load(symbol, lib)
 end
