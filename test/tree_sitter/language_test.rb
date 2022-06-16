@@ -45,4 +45,8 @@ describe 'language' do
   it 'must return field name for id' do
     assert_equal 1, ruby.field_id_for_name('alias')
   end
+
+  it 'must return field symbol type' do
+    assert_equal TreeSitter::SymbolType::AUXILIARY, ruby.symbol_type(0)
+  end
 end
