@@ -122,4 +122,10 @@ describe 'query_cursor' do
     @cursor.set_point_range(child.start_point, child.end_point)
     assert_nil @cursor.next_capture
   end
+
+  it 'must work with next/remove' do
+    assert_equal 0, @cursor.next_match.id
+    @cursor.remove_match(1)
+    assert_nil @cursor.next_match
+  end
 end
