@@ -130,3 +130,29 @@ describe 'parent' do
     assert_equal root, root.child(0).parent
   end
 end
+
+describe 'child' do
+  before do
+    @child = root.child(0)
+  end
+
+  it 'must return proper children count' do
+    assert_equal 1, root.child_count
+  end
+
+  it 'must return proper name child count' do
+    assert_equal 5, @child.named_child_count
+  end
+
+  it 'must return proper name child' do
+    assert_equal @child.child(1), @child.named_child(0)
+  end
+
+  it 'must return proper child by field name' do
+    assert_equal @child.child(1), @child.child_by_field_name('name')
+  end
+
+  it 'must return proper child by field id' do
+    assert_equal @child.child(1), @child.child_by_field_id(ruby.field_id_for_name('name'))
+  end
+end
