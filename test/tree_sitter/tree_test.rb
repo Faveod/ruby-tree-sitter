@@ -35,3 +35,14 @@ describe 'language' do
     assert_equal parser.language, tree.language
   end
 end
+
+describe 'print_dot_graph' do
+  it 'must save to disk' do
+    dot = File.expand_path('tmp/tree-dot.gv', FileUtils.getwd)
+    tree.print_dot_graph(dot)
+
+    assert File.exist?(dot), 'dot file must be exist'
+    assert File.file?(dot), 'dot file must be a file'
+    refute_equal 0, File.size(dot)
+  end
+end
