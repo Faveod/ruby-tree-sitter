@@ -55,7 +55,8 @@ static VALUE tree_cursor_goto_first_child(VALUE self) {
 }
 
 static VALUE tree_cursor_goto_first_child_for_byte(VALUE self, VALUE byte) {
-  return LL2NUM(ts_tree_cursor_goto_first_child_for_byte(&SELF, NUM2UINT(byte)));
+  return LL2NUM(
+      ts_tree_cursor_goto_first_child_for_byte(&SELF, NUM2UINT(byte)));
 }
 
 static VALUE tree_cursor_goto_first_child_for_point(VALUE self, VALUE point) {
