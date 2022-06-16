@@ -124,8 +124,14 @@ describe 'canecalation_flags' do
   end
 end
 
+describe 'timeout_micros' do
+  it 'must get/set timeout_micros' do
+    parser.timeout_micros = 1
+    assert_equal 1, parser.timeout_micros
+  end
+end
+
 # TODO: included_ranges for parsing partial documents.
-# TODO: timeout_micros.
 
 # TODO: parsing with non-nil tree.
 
