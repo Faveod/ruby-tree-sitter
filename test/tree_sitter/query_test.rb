@@ -71,4 +71,13 @@ describe 'pattern/capture/string' do
     assert_instance_of Array, preds_2
     assert_equal 4, preds_2.size
   end
+
+  it 'must return string names for capture id' do
+    query = TreeSitter::Query.new(ruby, predicate)
+    query.predicates_for_pattern(0).each do |step|
+      if TreeSitter::QueryPredicateStep::CAPTURE == step.type
+        assert_equal 'args', query.capture_name_for_id(step.value_id)
+      end
+    end
+  end
 end
