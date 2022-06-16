@@ -82,4 +82,18 @@ describe 'pattern/capture/string' do
       end
     end
   end
+
+  it 'must disable captures but keep it in count' do
+    query = TreeSitter::Query.new(ruby, capture)
+    query.disable_capture('@args')
+    assert_equal 1, query.capture_count
+  end
+
+  it 'must disable captures but keep it in count' do
+    query = TreeSitter::Query.new(ruby, capture)
+    query.disable_pattern(0)
+    assert_equal 1, query.pattern_count
+  end
+
+  #TODO: pattern guaranteed at step
 end
