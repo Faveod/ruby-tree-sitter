@@ -23,6 +23,19 @@ VALUE new_query_predicate_step_type(TSQueryPredicateStepType type) {
   }
 }
 
+static const char *query_predicate_type_string(TSQueryPredicateStepType type) {
+  switch (type) {
+  case TSQueryPredicateStepTypeDone:
+    return done;
+  case TSQueryPredicateStepTypeCapture:
+    return capture;
+  case TSQueryPredicateStepTypeString:
+    return string;
+  default:
+    return "???";
+  }
+}
+
 TSQueryPredicateStepType value_to_query_predicate_step_type(VALUE step_type) {
   VALUE type = SYM2ID(step_type);
   VALUE c = rb_const_get_at(cQueryPredicateStep, rb_intern(capture));
@@ -40,8 +53,8 @@ TSQueryPredicateStepType value_to_query_predicate_step_type(VALUE step_type) {
 
 static VALUE query_predicate_step_inspect(VALUE self) {
   query_predicate_step_t *step = unwrap(self);
-  return rb_sprintf("{value_id=%i, type=%i}", step->data.value_id,
-                    step->data.type);
+  return rb_sprintf("{value_id=%i, type=%s}", step->data.value_id,
+                    query_predicate_type_string(step->data.type));
 }
 
 DATA_DEFINE_ACCESSOR(query_predicate_step, type, new_query_predicate_step_type,
