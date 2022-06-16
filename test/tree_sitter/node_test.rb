@@ -155,6 +155,59 @@ describe 'child' do
   it 'must return proper child by field id' do
     assert_equal @child.child(1), @child.child_by_field_id(ruby.field_id_for_name('name'))
   end
+
+  it 'must return proper child for byte' do
+    child = @child.child(0)
+    assert_equal child, @child.first_child_for_byte(child.start_byte)
+  end
+
+  it 'must return proper named child for byte' do
+    child = @child.child(1)
+    assert_equal child, @child.first_named_child_for_byte(child.start_byte)
+  end
+
+  it 'must return proper descendant for byte range' do
+    child = @child.child(1)
+    assert_equal child, @child.descendant_for_byte_range(child.start_byte, child.end_byte)
+  end
+
+  it 'must return proper descendant for point range' do
+    child = @child.child(1)
+    assert_equal child, @child.descendant_for_point_range(child.start_point, child.end_point)
+  end
+
+  it 'must return proper named descendant for byte range' do
+    child = @child.child(1)
+    assert_equal child, @child.named_descendant_for_byte_range(child.start_byte, child.end_byte)
+  end
+
+  it 'must return proper named descendant for point range' do
+    child = @child.child(1)
+    assert_equal child, @child.named_descendant_for_point_range(child.start_point, child.end_point)
+  end
+
+  it 'must raise an exception for wrong ranges' do
+    child = @child.child(0)
+    assert_raises IndexError do
+      @child.descendant_for_byte_range(child.end_byte, child.start_byte)
+    end
+    assert_raises IndexError do
+      @child.named_descendant_for_byte_range(child.end_byte, child.start_byte)
+    end
+    assert_raises IndexError do
+      p1 = TreeSitter::Point.new
+      p1.row = @child.end_point.row
+      p1.column = @child.end_point.column + 1
+      @child.named_descendant_for_point_range(@child.start_point, p1)
+    end
+    assert_raises IndexError do
+      p1 = TreeSitter::Point.new
+      p1.row = @child.end_point.row
+      p1.column = @child.end_point.column + 1
+      @child.named_descendant_for_point_range(@child.start_point, p1)
+    end
+  end
+
 end
 
 describe 'field_name' do
