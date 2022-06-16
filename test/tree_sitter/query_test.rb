@@ -21,6 +21,7 @@ puts root
 
 pattern = '(method_parameters)'
 capture = '(method_parameters (_)+ @args)'
+predicate = '(method_parameters (_)+ @args (#match? @args "\w"))'
 combined = "#{pattern} #{capture}"
 # string = '(method_parameters (_)+ @args)'
 
@@ -52,5 +53,22 @@ describe 'pattern/capture/string' do
     query = TreeSitter::Query.new(ruby, combined)
     assert_equal 0, query.start_byte_for_pattern(0)
     assert_equal pattern.bytesize + 1, query.start_byte_for_pattern(1)
+  end
+
+  it 'must return an array of predicates for a pattern' do
+    query = TreeSitter::Query.new(ruby, combined)
+
+    preds_0 = query.predicates_for_pattern(0)
+    assert_instance_of Array, preds_0
+    assert_equal 0, preds_0.size
+
+    preds_1 = query.predicates_for_pattern(1)
+    assert_instance_of Array, preds_1
+    assert_equal 0, preds_1.size
+
+    query = TreeSitter::Query.new(ruby, predicate)
+    preds_2 = query.predicates_for_pattern(0)
+    assert_instance_of Array, preds_2
+    assert_equal 4, preds_2.size
   end
 end
