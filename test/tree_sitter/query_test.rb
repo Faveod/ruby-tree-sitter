@@ -94,6 +94,20 @@ describe 'pattern/capture/string' do
     query.disable_pattern(0)
     assert_equal 1, query.pattern_count
   end
-
   #TODO: pattern guaranteed at step
+end
+
+describe 'query_cursor' do
+  before do
+    @query = TreeSitter::Query.new(ruby, capture)
+    @cursor = TreeSitter::QueryCursor.exec(@query, root)
+  end
+
+  it 'must work with limits' do
+    @cursor.match_limit = 1
+    assert_equal 1, @cursor.match_limit
+    refute @cursor.exceed_match_limit?
+    refute_nil @cursor.next_capture
+    assert @cursor.exceed_match_limit?
+  end
 end
