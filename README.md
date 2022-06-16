@@ -95,7 +95,7 @@ bundle exec rake compile
 You can now jump into a REPL and start experimenting with Grenadier:
 
 ```console
-bundle exec rake 
+bundle exec rake console
 ```
 
 Or you can build the gem then install it:
