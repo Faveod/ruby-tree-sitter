@@ -3,23 +3,23 @@
 
 set -e
 set -x
-export LDFLAGS='-lstdc++'
 
 case "$OSTYPE" in
   darwin*)
-      export ext=dylib
-      export ccomp=cc
-      export cppcomp=c++
+      EXT=dylib
+      CC=cc
+      CXX=c++
       ;;
   *)
-      export ext=so
-      export ccomp=gcc
-      export cppcomp=g++
+      EXT=so
+      CC=gcc
+      CXX=g++
       ;;
 esac
 
 LOCAL=tree-sitter-parsers
 GET=tree-sitter-$1
+OUT="../libtree-sitter-$1.$EXT"
 
 mkdir -p $LOCAL
 cd $LOCAL
@@ -30,23 +30,23 @@ then
 fi
 
 cd $1/src
-for i in *.o; do
-    [ -f "$i" ] || break
-    rm $i
-done
+
+LDFLAGS='-lstdc++'
+CFLAGS='-I/usr/include -I/usr/local/include -I/opt/include -I/opt/local/include'
+
 for i in *.c; do
     [ -f "$i" ] || break
-    $ccomp -std=c99 -fPIC -c $i
+    $CC $CFLAGS -std=c99 -fPIC -c $i
 done
-for i in *.cc; do
+for i in *.{cc,cpp,cxx}; do
     [ -f "$i" ] || break
-    $cppcomp -fPIC -c $i
+    $CXX $CFLAGS -fPIC -c $i
 done
 
-if [[ -n $(echo *.cc) ]]; then
-    export comp=$ccomp
+if [[ -n *.{cc,cpp,cxx} ]]; then
+    COMP=$CXX
 else
-    export comp=$cppcomp
+    COMP=$CC
 fi
 
-$comp $LDFLAGS -shared *.o -o ../libtree-sitter-$1.$ext
+$COMP $LDFLAGS -shared *.o -o $OUT
