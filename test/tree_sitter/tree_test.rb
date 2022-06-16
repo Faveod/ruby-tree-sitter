@@ -46,3 +46,6 @@ describe 'print_dot_graph' do
     refute_equal 0, File.size(dot)
   end
 end
+
+# TODO: edit
+# TODO: changed_ranges
