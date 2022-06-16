@@ -26,3 +26,9 @@ describe 'type' do
     assert_equal 'program', root.type
   end
 end
+
+describe 'symbol' do
+  it 'must be an Integer' do
+    assert_instance_of Integer, root.symbol
+  end
+end
