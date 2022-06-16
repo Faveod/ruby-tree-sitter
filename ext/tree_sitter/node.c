@@ -156,8 +156,22 @@ static VALUE node_descendant_for_byte_range(VALUE self, VALUE from, VALUE to) {
 }
 
 static VALUE node_descendant_for_point_range(VALUE self, VALUE from, VALUE to) {
-  return new_node_by_val(ts_node_descendant_for_point_range(
-      SELF, value_to_point(from), value_to_point(to)));
+  TSNode node = SELF;
+  TSPoint start = ts_node_start_point(node);
+  TSPoint end = ts_node_end_point(node);
+  TSPoint f = value_to_point(from);
+  TSPoint t = value_to_point(to);
+
+  if ((f.row < start.row) || (t.row > end.row) ||
+      (f.row == start.row && (f.column < start.column)) ||
+      (t.row == end.row && (t.column > end.column))) {
+    rb_raise(rb_eIndexError,
+             "Invalid point range: [%+" PRIsVALUE ", %+" PRIsVALUE
+             "] is not in [%+" PRIsVALUE ", %+" PRIsVALUE "].",
+             from, to, new_point(&start), new_point(&end));
+  } else {
+    return new_node_by_val(ts_node_descendant_for_point_range(node, f, t));
+  }
 }
 
 static VALUE node_named_descendant_for_byte_range(VALUE self, VALUE from,
@@ -175,8 +189,23 @@ static VALUE node_named_descendant_for_byte_range(VALUE self, VALUE from,
 
 static VALUE node_named_descendant_for_point_range(VALUE self, VALUE from,
                                                    VALUE to) {
-  return new_node_by_val(ts_node_named_descendant_for_point_range(
-      SELF, value_to_point(from), value_to_point(to)));
+  TSNode node = SELF;
+  TSPoint start = ts_node_start_point(node);
+  TSPoint end = ts_node_end_point(node);
+  TSPoint f = value_to_point(from);
+  TSPoint t = value_to_point(to);
+
+  if ((f.row < start.row) || (t.row > end.row) ||
+      (f.row == start.row && (f.column < start.column)) ||
+      (t.row == end.row && (t.column > end.column))) {
+    rb_raise(rb_eIndexError,
+             "Invalid point range: [%+" PRIsVALUE ", %+" PRIsVALUE
+             "] is not in [%+" PRIsVALUE ", %+" PRIsVALUE "].",
+             from, to, new_point(&start), new_point(&end));
+  } else {
+    return new_node_by_val(
+        ts_node_named_descendant_for_point_range(node, f, t));
+  }
 }
 
 static VALUE node_edit(VALUE self, VALUE input_edit) {
