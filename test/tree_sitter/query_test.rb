@@ -47,4 +47,10 @@ describe 'pattern/capture/string' do
     assert_equal 1, query.capture_count
     assert_equal 0, query.string_count
   end
+
+  it 'must return an Integer for pattern start byte' do
+    query = TreeSitter::Query.new(ruby, combined)
+    assert_equal 0, query.start_byte_for_pattern(0)
+    assert_equal pattern.bytesize + 1, query.start_byte_for_pattern(1)
+  end
 end
