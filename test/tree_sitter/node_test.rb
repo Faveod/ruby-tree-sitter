@@ -52,3 +52,17 @@ describe 'end_byte' do
     refute_equal 0, root.end_byte
   end
 end
+
+describe 'start_point' do
+  it 'must be an instance of Point' do
+    assert_instance_of TreeSitter::Point, root.start_point
+  end
+
+  it 'must be at row 0' do
+    assert_equal 0, root.start_point.row
+  end
+
+  it 'must be at column 0' do
+    assert_equal 0, root.start_point.row
+  end
+end
