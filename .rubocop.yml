@@ -1,0 +1,6 @@
+AllCops:
+  TargetRubyVersion: "2.7"
+  Exclude:
+    - tree-sitter-parsers/**/*
+    - tmp/**/*
+  NewCops: enable
