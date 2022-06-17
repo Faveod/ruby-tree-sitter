@@ -13,8 +13,8 @@ allows us to better experiment, and easily port ideas from other projects.
 
 This design also implies that you need to be extra-careful when playing with the
 provided objects.  Some of them have their underlying `C` data-structure
-automatically freed when not used, so you might get yourself in undesirable
-situations if you don't pay attention to what you're doing.
+automatically freed, so you might get yourself in undesirable situations if you
+don't pay attention to what you're doing.
 
 We're only talking about `Tree`, `TreeCursor`, `Query`, and `QueryCursor`.  Just
 don't copy them left and right, and then expect them to work without
@@ -22,8 +22,8 @@ don't copy them left and right, and then expect them to work without
 have to work locally with them.
 
 That said, we do aim at providing an idiomatic `Ruby` interface.  It should also
-provide a _safer_ interface, where you don't have to worry about freeing when
-and how resources are freed.
+provide a _safer_ interface, where you don't have to worry about when and how
+resources are freed.
 
 ## Grenadier?
 
