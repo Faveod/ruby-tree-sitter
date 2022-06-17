@@ -38,7 +38,7 @@ for i in *.c; do
     [ -f "$i" ] || break
     $CC $CFLAGS -std=c99 -fPIC -c $i
 done
-for i in $CPPFILES; do
+for i in $CXXFILES; do
     [ -f "$i" ] || break
     $CXX $CFLAGS -fPIC -c $i
 done
