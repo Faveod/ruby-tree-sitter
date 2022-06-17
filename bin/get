@@ -35,11 +35,11 @@ CFLAGS='-I/usr/include -I/usr/local/include -I/opt/include -I/opt/local/include'
 CXXFILES=$(echo *.cc *.cpp *.cxx)
 
 for i in *.c; do
-    [ -f "$i" ] || break
+    [ -f "$i" ] || continue
     $CC $CFLAGS -std=c99 -fPIC -c $i
 done
 for i in $CXXFILES; do
-    [ -f "$i" ] || break
+    [ -f "$i" ] || continue
     $CXX $CFLAGS -fPIC -c $i
 done
 if test -n "$CXXFILES"; then
