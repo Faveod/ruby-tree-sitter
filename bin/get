@@ -48,9 +48,9 @@ for i in $CXXFILES; do
 done
 
 if test -n "$CXXFILES"; then
-    COMP=$CC
-else
     COMP=$CXX
+else
+    COMP=$CC
 fi
 
 $COMP $LDFLAGS -shared *.o -o $OUT
