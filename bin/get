@@ -32,10 +32,7 @@ cd $1/src
 
 LDFLAGS='-lstdc++'
 CFLAGS='-I/usr/include -I/usr/local/include -I/opt/include -I/opt/local/include'
-CCF=*.cc
-CPPF=*.cpp
-CXXF=*.cxx
-CPPFILES="$CCF $CPPF $CXXF"
+CXXFILES=$(echo *.cc *.cpp *.cxx)
 
 for i in *.c; do
     [ -f "$i" ] || break
@@ -45,8 +42,7 @@ for i in $CPPFILES; do
     [ -f "$i" ] || break
     $CXX $CFLAGS -fPIC -c $i
 done
-
-if [[ -n $CPPFILES ]]; then
+if test -n "$CXXFILES"; then
     COMP=$CC
 else
     COMP=$CXX
