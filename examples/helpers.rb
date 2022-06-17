@@ -8,19 +8,16 @@ def ext
   end
 end
 
-def lang name, dir = nil
+def self.lang name, lib = nil
   symbol = name.gsub(/-/, '_')
-  lib = if dir then dir
-        else
-          parsers = "tree-sitter-parsers/#{name}"
-          dylib = "#{parsers}/libtree-sitter-#{name}.#{ext}"
-          if !File.exist?(dylib)
-            if system("bin/get #{name}").nil?
-              raise "could not load #{name} from #{dylib}"
-            end
-          end
-          File.expand_path(dylib, FileUtils.getwd)
-        end
+  if lib.nil?
+    dylib = Pathname('tree-sitter-parsers') / name / "libtree-sitter-#{name}.#{ext}"
+    if !dylib.exist? && system("bin/get #{name}").nil?
+      raise "could not load #{name} from #{dylib}"
+    end
+
+    lib = File.expand_path(dylib, FileUtils.getwd)
+  end
   TreeSitter::Language.load(symbol, lib)
 end
 
