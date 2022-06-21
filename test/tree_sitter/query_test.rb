@@ -17,8 +17,6 @@ RUBY
 tree = parser.parse_string(nil, program)
 root = tree.root_node
 
-puts root
-
 pattern = '(method_parameters)'
 capture = '(method_parameters (_)+ @args)'
 predicate = '(method_parameters (_)+ @args (#match? @args "\w"))'
