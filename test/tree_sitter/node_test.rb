@@ -252,3 +252,36 @@ describe '[]' do
     assert_equal @child.named_child(0), @child['name']
   end
 end
+
+describe 'each' do
+  before do
+    @child = root.child(0)
+  end
+
+  it 'must iterate ove named children only' do
+    i = 0
+    @child.each do |k, v|
+      assert v.named?
+      assert_equal @child[k], v if k
+      i += 1
+    end
+    assert @child.named_child_count, i
+  end
+
+  it 'must iterate over named children when `each_named_child`' do
+    i = 0
+    @child.each_named_child do |c|
+      assert c.named?
+      i += 1
+    end
+    assert @child.named_child_count, i
+  end
+
+  it 'must iterate over all children when `each_child`' do
+    i = 0
+    @child.each_child do |_|
+      i += 1
+    end
+    assert_equal @child.child_count, i
+  end
+end

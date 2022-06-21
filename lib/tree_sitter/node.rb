@@ -20,5 +20,39 @@ module TreeSitter
       else raise 'Node#[] accepts Integer and returns named child at given index, or a (String | Symbol) and returns the child by given field name.'
       end
     end
+
+    # Iterate over a node's named children.
+    #
+    # @yieldparam name [NilClass | String] field name if it exists.
+    # @yieldparam child [Node] the child
+    def each
+      child_count.times.each do |i|
+        next if !child(i).named?
+
+        yield field_name_for_child(i), child(i)
+      end
+    end
+
+    # Iterate over a node's named children
+    #
+    # @yieldparam child [Node] the child
+    def each_named_child
+      return enum_for __method__ if !block_given?
+
+      (0...(named_child_count)).each do |i|
+        yield named_child(i)
+      end
+    end
+
+    # Iterate over a node's children
+    #
+    # @yieldparam child [Node] the child
+    def each_child
+      return enum_for __method__ if !block_given?
+
+      (0...(child_count)).each do |i|
+        yield child(i)
+      end
+    end
   end
 end
