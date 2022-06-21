@@ -4,3 +4,6 @@ AllCops:
     - tree-sitter-parsers/**/*
     - tmp/**/*
   NewCops: enable
+
+Style/IfUnlessModifier:
+  Enabled: false
