@@ -25,6 +25,8 @@ That said, we do aim at providing an idiomatic `Ruby` interface.  It should also
 provide a _safer_ interface, where you don't have to worry about when and how
 resources are freed.
 
+To See a full list of the ruby-specific APIs, see [here](lib/README.md).
+
 ## Grenadier?
 
 A _grenadier_ is a pomegrenate tree.  Pomegrenate fruits are ruby.  And they sit
