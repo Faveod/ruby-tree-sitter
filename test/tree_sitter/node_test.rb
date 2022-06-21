@@ -234,3 +234,21 @@ describe 'siblings' do
 end
 
 # TODO: edit
+
+# Tese are High-Level Ruby APIs that we designed.
+# They rely on the bindings.
+
+describe '[]' do
+  before do
+    @child = root.child(0)
+  end
+
+  it 'must return a named child by index when index is an Integer' do
+    assert_equal @child.named_child(0), @child[0]
+  end
+
+  it 'must return a child by field name when index is a (String | Symbol)' do
+    assert_equal @child.named_child(0), @child[:name]
+    assert_equal @child.named_child(0), @child['name']
+  end
+end

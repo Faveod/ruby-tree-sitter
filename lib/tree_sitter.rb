@@ -4,3 +4,4 @@ module TreeSitter
 end
 
 require 'tree_sitter/tree_sitter'
+require 'tree_sitter/node'
