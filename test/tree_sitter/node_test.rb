@@ -285,3 +285,13 @@ describe 'each' do
     assert_equal @child.child_count, i
   end
 end
+
+describe 'method_missing' do
+  before do
+    @child = root.child(0)
+  end
+
+  it 'should act like the [] method when we pass (String | Symbol)' do
+    assert_equal @child[:name], @child.name
+  end
+end

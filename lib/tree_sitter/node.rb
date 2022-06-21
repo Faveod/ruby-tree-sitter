@@ -21,6 +21,15 @@ module TreeSitter
       end
     end
 
+    # Allows access to child_by_field_name without using [].
+    def method_missing(method_name, *_args, &_block)
+      child_by_field_name(method_name.to_s)
+    end
+
+    def respond_to_missing?(*_args)
+      true
+    end
+
     # Iterate over a node's named children.
     #
     # @yieldparam name [NilClass | String] field name if it exists.
