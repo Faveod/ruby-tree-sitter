@@ -2,6 +2,14 @@
 
 This is not a comprehensive list, but a curated list of examples to showcase the ruby-specific API.
 
+## IMPORTANT
+
+As of today, there's a
+[bug](https://github.com/tree-sitter/tree-sitter/issues/1642) in `tree-sitter`
+that prevents correct access to a node's child `field_name` correctly.
+
+Keep that in mind while reading the next sections.
+
 ## Node
 
 For a give parse tree, that looks something like:
