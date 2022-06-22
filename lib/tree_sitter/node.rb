@@ -2,6 +2,8 @@
 
 module TreeSitter
   class Node
+    attr_reader :fields
+
     # Access node's named children
     #
     # @param idx [Integer | String | Symbol, #read]
@@ -23,7 +25,18 @@ module TreeSitter
 
     # Allows access to child_by_field_name without using [].
     def method_missing(method_name, *_args, &_block)
-      child_by_field_name(method_name.to_s)
+      if !@fields
+        @fields = Set.new
+        child_count.times do |i|
+          name = field_name_for_child(i)
+          @fields << name.to_sym if name
+        end
+      end
+      if @fields.include?(method_name)
+        child_by_field_name(method_name.to_s)
+      else
+        super
+      end
     end
 
     def respond_to_missing?(*_args)

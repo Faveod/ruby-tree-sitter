@@ -3,5 +3,7 @@
 module TreeSitter
 end
 
+require 'set'
+
 require 'tree_sitter/tree_sitter'
 require 'tree_sitter/node'
