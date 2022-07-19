@@ -4,6 +4,16 @@ module TreeSitter
   class Node
     attr_reader :fields
 
+    def init_fields
+      if !@fields
+        @fields = Set.new
+        child_count.times do |i|
+          name = field_name_for_child(i)
+          @fields << name.to_sym if name
+        end
+      end
+    end
+
     # Access node's named children
     #
     # @param idx [Integer | String | Symbol, #read]
@@ -25,13 +35,7 @@ module TreeSitter
 
     # Allows access to child_by_field_name without using [].
     def method_missing(method_name, *_args, &_block)
-      if !@fields
-        @fields = Set.new
-        child_count.times do |i|
-          name = field_name_for_child(i)
-          @fields << name.to_sym if name
-        end
-      end
+      init_fields
       if @fields.include?(method_name)
         child_by_field_name(method_name.to_s)
       else
@@ -56,7 +60,8 @@ module TreeSitter
       if _args[0] == :to_ary
         return false
       end
-      true
+      init_fields
+      _args.length == 1 && @fields.include?(_args[0])
     end
 
     # Iterate over a node's named children.
