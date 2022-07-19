@@ -43,7 +43,7 @@ module TreeSitter
       end
     end
 
-    def respond_to_missing?(*_args)
+    def respond_to_missing?(*args)
       # NOTE: `puts` calls `to_ary` when you defing a `method missing`, even if
       # you have `to_s` and `to_str` implemented.
       #
@@ -57,11 +57,11 @@ module TreeSitter
       # It turns ou that it's enough to tell the Ruby runtime that we don't
       # support `to_ary`, so it defaults to the expected behavior of calling
       # `to_s` on the object.
-      if _args[0] == :to_ary
+      if args[0] == :to_ary
         return false
       end
       init_fields
-      _args.length == 1 && @fields.include?(_args[0])
+      args.length == 1 && @fields.include?(args[0])
     end
 
     # Iterate over a node's named children.
