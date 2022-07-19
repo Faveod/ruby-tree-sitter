@@ -14,6 +14,8 @@ module TreeSitter
       end
     end
 
+    private :init_fields
+
     # Access node's named children
     #
     # @param idx [Integer | String | Symbol, #read]
