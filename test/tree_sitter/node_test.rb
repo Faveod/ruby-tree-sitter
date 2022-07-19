@@ -81,17 +81,6 @@ describe 'end_point' do
   end
 end
 
-# NOTE: this test and impl were created for the use of `Node` with `puts`
-describe 'to_ary' do
-  ary = root.to_ary
-
-  it 'should return an array of a single element' do
-    assert_equal Array, ary.class
-    assert_equal 1, ary.length
-    assert_equal root, ary[0]
-  end
-end
-
 describe 'string' do
   it 'must be an instance of string' do
     assert_instance_of String, root.to_s

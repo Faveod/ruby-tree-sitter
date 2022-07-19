@@ -16,4 +16,5 @@ assert_eq(root.type, 'document')
 assert_eq(array.type, 'array')
 assert_eq(number.type, 'number')
 
-puts "Syntax tree: #{root}"
+print 'Syntax tree: '
+puts root

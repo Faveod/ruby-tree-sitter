@@ -26,12 +26,6 @@ static VALUE node_end_point(VALUE self) {
   return new_point_by_val(ts_node_end_point(SELF));
 }
 
-static VALUE node_to_ary(VALUE self) {
-  VALUE res = rb_ary_new_capa(1);
-  rb_ary_push(res, self);
-  return res;
-}
-
 static VALUE node_string(VALUE self) {
   char *str = ts_node_string(SELF);
   VALUE res = safe_str(str);
@@ -267,7 +261,6 @@ void init_node(void) {
                    node_named_descendant_for_point_range, 2);
   rb_define_method(cNode, "eq?", node_eq, 1);
   rb_define_method(cNode, "edit", node_edit, 1);
-  rb_define_method(cNode, "to_ary", node_to_ary, 0);
   rb_define_method(cNode, "to_s", node_string, 0);
   rb_define_method(cNode, "to_str", node_string, 0);
   rb_define_method(cNode, "inspect", node_string, 0);
