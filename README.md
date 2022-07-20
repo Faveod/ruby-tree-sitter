@@ -4,6 +4,9 @@
 
 Ruby bindings for [tree-sitter](https://github.com/tree-sitter/tree-sitter).
 
+The [official bindings](https://github.com/tree-sitter/ruby-tree-sitter) are
+very old, and unmaintained; it doesn't work with modern `tree-sitter` APIs.
+
 ## About
 The main philosophy behind these bindings is to do a 1:1 mapping between
 tree-sitter's `C` API and `Ruby`.
