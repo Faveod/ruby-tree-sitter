@@ -11,6 +11,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Firas al-Khalil']
   spec.email         = ['firasalkhalil@gmail.com']
   spec.homepage      = 'https://www.github.com/stackmystack/grenadier'
+  spec.license       = 'MIT'
   spec.name          = 'tree_sitter'
   spec.summary       = 'Ruby bindings for Tree-Sitter'
   spec.version       = TreeSitter::VERSION
