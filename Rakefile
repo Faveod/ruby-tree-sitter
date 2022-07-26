@@ -34,7 +34,7 @@ cross_platforms = [
   'arm64-darwin',
 ].freeze
 
-ENV['RUBY_CC_VERSION'] = cross_rubies.join(':')
+ENV['RUBY_CC_VERSION'] = cross_rubies.join(':') if !ENV['RUBY_CC_VERSION']
 Rake::ExtensionTask.new('tree_sitter', gemspec) do |r|
   r.lib_dir = 'lib/tree_sitter'
     require "rake_compiler_dock"

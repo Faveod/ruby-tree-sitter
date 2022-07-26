@@ -38,10 +38,12 @@ on the grenadier.
 ## Dependencies
 
 This gem is a binding for `tree-sitter`.  It doesn't have a version of
-`tree-sitter` bundled.
+`tree-sitter` bundled by default, but allows you to pass an argument while building
+the extension to download `tree-sitter` sources, and bake it (static-linking) with
+the extension.  See [Install](#Install).
 
-You must install it an make sure that their dynamic library is accessible from
-`$PATH`.
+You must install `tree-sitter` and make sure that their dynamic library is accessible
+from `$PATH`.
 
 You can either install it from source or through your go-to package manager.
 
@@ -89,12 +91,25 @@ Meanwhile, please build from source.
 gem tree_sitter, git: 'https://github.com/stackmystack/grenadier'
 ```
 
+If you wish to have `tree-sitter` baked with the gem (aka static-linking), execute
+the following before `bundle install`:
+
+```console
+bundle config build.tree_sitter --disable-sys-libs
+```
+
 ### Build from source
 
 ```console
 git clone https://github.com/stackmystack/grenadier
 bundle install
 bundle exec rake compile
+```
+
+If you wish to have `tree-sitter` baked with the gem (aka static-linking), use:
+
+```console
+bundle exec rake compile -- --disable-sys-libs
 ```
 
 You can now jump into a REPL and start experimenting with Grenadier:
@@ -121,3 +136,20 @@ If you want to hack on this gem, you only have to work with `rake compile` and
 
 It's advised to run `rake clean && rake compile` everytime you modify `C` code.
 I've run into trouble several times by not doing so.
+
+### ASAN
+
+You can enable `asan` by setting the `SANITIZE` environment variable before building:
+
+```console
+SANITIZE=1 bundle exec rake compile
+```
+
+On linux:
+
+``` console
+LD_PRELOAD==libasan.so.8 bundle exec rake test
+```
+
+This is still experimental, and I haven't had any true success yet, but it's a good
+start.
