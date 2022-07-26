@@ -1,4 +1,5 @@
 #include "tree_sitter.h"
+#include "tree_sitter/api.h"
 
 extern VALUE mTreeSitter;
 
@@ -88,7 +89,13 @@ static VALUE node_field_name_for_child(VALUE self, VALUE idx) {
 }
 
 static VALUE node_child_count(VALUE self) {
-  return UINT2NUM(ts_node_child_count(SELF));
+  TSNode node = SELF;
+  const char *type = ts_node_type(node);
+  if (strcmp(type, "end") == 0) {
+    return UINT2NUM(0);
+  } else {
+    return UINT2NUM(ts_node_child_count(SELF));
+  }
 }
 
 static VALUE node_named_child(VALUE self, VALUE idx) {

@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <ruby.h>
 #include <stdio.h>
+#include <string.h>
 #include <tree_sitter/api.h>
 
 static inline VALUE safe_str(const char *str) {
