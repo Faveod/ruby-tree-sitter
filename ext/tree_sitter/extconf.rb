@@ -49,6 +49,9 @@ dir_include, dir_lib, static =
       end
     end
 
+    # We need to make sure we're selecting the proper toolchain.
+    # Especially needed for corss-compilation.
+    ENV['CC'] = RbConfig::CONFIG["CC"]
     # We need to clean because the same folder is used over and over
     # by rake-compiler-dock
     sh "cd #{src} && make clean && make"
@@ -72,9 +75,14 @@ dir_include, dir_lib, static =
 
 header = find_header('tree_sitter/api.h', *dir_include)
 
+if system_tree_sitter?
 library = find_library('tree-sitter',   # libtree-sitter
                        'ts_parser_new', # a symbol
                        *dir_lib)
+else
+  $LDFLAGS << " -L#{Pathname.pwd.to_s} -ltree-sitter"
+  library = Pathname.pwd / 'libtree-sitter.a'
+end
 
 if !header || !library
   abort <<~EOL
