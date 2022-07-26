@@ -1,6 +1,8 @@
 *.bundle
+*.dylib
 *.gemfile
 *.lock
+*.so
 pkg/*
 tmp/*
 

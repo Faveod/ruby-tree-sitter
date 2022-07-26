@@ -19,7 +19,7 @@ end
 
 task :clean do
   require 'fileutils'
-  bundle = File.join(__dir__, *%w[lib tree_sitter tree_sitter.bundle])
+  bundle = File.join(__dir__, *%w[lib tree_sitter tree_sitter.bundle tree_sitter.so tree_sitter.dylib])
   tmp = File.join(__dir__, 'tmp')
   [bundle, tmp].each do |f|
     if File.exist?(f)
