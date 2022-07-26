@@ -6,21 +6,20 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'tree_sitter/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'tree_sitter'
-  spec.version       = TreeSitter::VERSION
+  spec.required_ruby_version = '>= 2.7'
+
   spec.authors       = ['Firas al-Khalil']
   spec.email         = ['firasalkhalil@gmail.com']
-
-  spec.summary       = 'Ruby bindings for Tree-Sitter'
   spec.homepage      = 'https://www.github.com/stackmystack/grenadier'
+  spec.name          = 'tree_sitter'
+  spec.summary       = 'Ruby bindings for Tree-Sitter'
+  spec.version       = TreeSitter::VERSION
 
-  spec.files         = %w(LICENSE README.md tree_sitter.gemspec)
-  spec.files        += Dir.glob('lib/**/*.rb')
-  spec.files        += Dir.glob('ext/**/*.[ch]')
-  spec.test_files    = Dir.glob('test/**/*')
   spec.extensions    = %(ext/tree_sitter/extconf.rb)
-
-  spec.required_ruby_version = '>= 2.7'
+  spec.files         = %w(LICENSE README.md tree_sitter.gemspec)
+  spec.files        += Dir.glob('ext/**/*.[ch]')
+  spec.files        += Dir.glob('lib/**/*.rb')
+  spec.test_files    = Dir.glob('test/**/*')
 
   spec.add_development_dependency('minitest', '~> 5.16')
   spec.add_development_dependency('minitest-color', '~> 0.0.2')
