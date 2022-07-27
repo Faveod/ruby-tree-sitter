@@ -46,6 +46,8 @@ Rake::ExtensionTask.new('tree_sitter', gemspec) do |r|
     end
 end
 
+Gem::PackageTask.new(gemspec) do |pkg|
+end
 
 desc 'Build native gems'
 task 'gem:native' do
