@@ -40,7 +40,6 @@ Rake::ExtensionTask.new('tree_sitter', gemspec) do |r|
     require "rake_compiler_dock"
     r.cross_compile = true
     r.cross_platform = cross_platforms
-    r.cross_config_options << '--disable-sys-libs' # I don't know why this is not passing to extconf.rb
     r.cross_compiling do |spec|
       spec.files.reject! { |file| /(\.gz)$|(\.zip)$|(\.tar)$/ =~ File.basename(file) }
     end
@@ -52,26 +51,13 @@ end
 desc 'Build native gems'
 task 'gem:native' do
   cross_platforms.each do |plat|
-    RakeCompilerDock.sh "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem -- --disable-sys-libs", platform: plat
+    RakeCompilerDock.sh "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem", platform: plat
   end
 end
 
 cross_platforms.each do |plat|
   task "gem:#{plat}" do
-    RakeCompilerDock.sh "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem -- --disable-sys-libs", platform: plat
-  end
-end
-
-cross_platforms = ["x64-mingw32", "x86_64-linux", "x86_64-darwin", "arm64-darwin"]
-
-namespace "gem" do
-  cross_platforms.each do |platform|
-    namespace platform do
-      task "rcd" do
-        Rake::Task["native:#{platform}"].invoke
-        Rake::Task["pkg/#{rcee_precompiled_spec.full_name}-#{Gem::Platform.new(platform)}.gem"].invoke
-      end
-    end
+    RakeCompilerDock.sh "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem", platform: plat
   end
 end
 

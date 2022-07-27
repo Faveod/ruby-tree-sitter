@@ -16,14 +16,14 @@ def sh cmd
 end
 
 # ################################## #
-#    System lib + dynamic linking    #
+#            System lib              #
 #                                    #
 #                OR                  #
 #                                    #
-#  Downloaded libs + static linking  #
+#          Downloaded libs           #
 # ################################## #
 
-dir_include, dir_lib, static =
+dir_include, dir_lib =
   if system_tree_sitter?
     [['/opt/include', '/opt/local/include', '/usr/include', '/usr/local/include'],
      ['/opt/lib', '/opt/local/lib', '/usr/lib', '/usr/local/lib'],
@@ -52,21 +52,10 @@ dir_include, dir_lib, static =
     # We need to make sure we're selecting the proper toolchain.
     # Especially needed for corss-compilation.
     ENV['CC'] = RbConfig::CONFIG["CC"]
-    # We need to clean because the same folder is used over and over
-    # by rake-compiler-dock
+
     sh "cd #{src} && make clean && make"
 
-    # This is necessary to link statically against tree-sitter.
-    # The docs don't mention anything about static-linking, so here we are.
-    if !File.exists?(Pathname.pwd / 'libtree-sitter.a')
-      sh "ln -s #{src / 'libtree-sitter.a'} #{Pathname.pwd / 'libtree-sitter.a'}"
-    end
-
-    if !File.exists?(Pathname.pwd / 'include')
-      sh "ln -s #{src / 'lib' / 'include'} #{Pathname.pwd / 'include'}"
-    end
-
-    [[Pathname.pwd / 'include'], [Pathname.pwd.to_s], true]
+    [[Pathname.pwd / 'tree-sitter' / 'src'/ 'lib' / 'include'], [Pathname.pwd / 'tree-sitter']]
   end
 
 # ################################## #
@@ -75,14 +64,9 @@ dir_include, dir_lib, static =
 
 header = find_header('tree_sitter/api.h', *dir_include)
 
-if system_tree_sitter?
 library = find_library('tree-sitter',   # libtree-sitter
                        'ts_parser_new', # a symbol
                        *dir_lib)
-else
-  $LDFLAGS << " -L#{Pathname.pwd.to_s} -ltree-sitter"
-  library = Pathname.pwd / 'libtree-sitter.a'
-end
 
 if !header || !library
   abort <<~EOL
@@ -90,7 +74,6 @@ if !header || !library
     * Missing header         : #{header ? 'no' : 'yes'}
     * Missing lib            : #{library ? 'no' : 'yes'}
     * Use system tree-sitter : #{system_tree_sitter?}
-    * Static linking         : #{static}
 
     Try to install tree-sitter from source, or through your package manager,
     or even try one of the following options to extconf.rb/rake compile:

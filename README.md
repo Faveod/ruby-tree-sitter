@@ -38,14 +38,12 @@ on the grenadier.
 ## Dependencies
 
 This gem is a binding for `tree-sitter`.  It doesn't have a version of
-`tree-sitter` bundled by default, but allows you to pass an argument while building
-the extension to download `tree-sitter` sources, and bake it (static-linking) with
-the extension.  See [Install](#Install).
+`tree-sitter` baked in it.
 
 You must install `tree-sitter` and make sure that their dynamic library is accessible
-from `$PATH`.
+from `$PATH`, or build the gem with `--disable-sys-libs` (see [Install](#Install))
 
-You can either install it from source or through your go-to package manager.
+You can either install `tree-sitter` from source or through your go-to package manager.
 
 ### Linux
 
@@ -91,13 +89,6 @@ Meanwhile, please build from source.
 gem tree_sitter, git: 'https://github.com/stackmystack/grenadier'
 ```
 
-If you wish to have `tree-sitter` baked with the gem (aka static-linking), execute
-the following before `bundle install`:
-
-```console
-bundle config build.tree_sitter --disable-sys-libs
-```
-
 ### Build from source
 
 ```console
@@ -106,11 +97,12 @@ bundle install
 bundle exec rake compile
 ```
 
-If you wish to have `tree-sitter` baked with the gem (aka static-linking), use:
+If you chose not to install and bother with `tree-sitter` installation:
 
-```console
+``` console
 bundle exec rake compile -- --disable-sys-libs
 ```
+
 
 You can now jump into a REPL and start experimenting with Grenadier:
 
