@@ -3,7 +3,7 @@ name: ci
 on: [push, pull_request]
 
 jobs:
-  build:
+  native-gems:
     strategy:
       fail-fast: false
       matrix:
@@ -16,22 +16,15 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - name: clone tree-sitter
+      - name: build and install tree-sitter
         run: |
           git clone https://github.com/tree-sitter/tree-sitter
-      - name: build tree-sitter
-        run: |
           cd tree-sitter
           make
-      - name: install tree-sitter
-        run: |
-          cd tree-sitter
           sudo make install
-      - name: deps for ubuntu
+      - name: ldconfig
         if: ${{ matrix.os == 'ubuntu' }}
         run: |
-          sudo apt update -y
-          sudo apt install build-essential
           sudo ldconfig -v
       - name: bundle install
         run: |
@@ -42,3 +35,50 @@ jobs:
       - name: test
         run: |
           bundle exec rake test
+      - name: package native gem
+        run: |
+          rake native gem
+          for file in pkg/*.gem; do mv $file ${file%.*}-mri-${{ matrix.ruby }}.gem; done;
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}-${{ steps.vars.outputs.sha_short }}
+          draft: true
+          files: |
+            ./pkg/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # - We need this seperate step for now to avoid duplicate uploads on release
+  # - We're not testing here also because it's been taken care of in the previous
+  #   step
+  install-only-gem:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+      - name: build and install tree-sitter
+        run: |
+          git clone https://github.com/tree-sitter/tree-sitter
+          cd tree-sitter
+          make
+          sudo make install
+          sudo ldconfig -v
+      - name: bundle install
+        run: |
+          bundle install
+      - name: package native gem
+        run: |
+          rake gem
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}-${{ steps.vars.outputs.sha_short }}
+          draft: true
+          files: |
+            ./pkg/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
