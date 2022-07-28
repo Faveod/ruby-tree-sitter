@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.authors       = ['Firas al-Khalil']
   spec.email         = ['firasalkhalil@gmail.com']
-  spec.homepage      = 'https://www.github.com/stackmystack/grenadier'
+  spec.homepage      = 'https://www.github.com/Faveod/ruby-tree-sitter'
   spec.license       = 'MIT'
   spec.name          = 'tree_sitter'
   spec.summary       = 'Ruby bindings for Tree-Sitter'

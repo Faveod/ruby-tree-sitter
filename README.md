@@ -1,6 +1,6 @@
-# Grenadier
+# Ruby tree-sitter bindings
 
-[![ci](https://github.com/stackmystack/grenadier/actions/workflows/ci.yml/badge.svg)](https://github.com/stackmystack/grenadier/actions/workflows/ci.yml)
+[![ci](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/ci.yml/badge.svg)](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/ci.yml)
 
 Ruby bindings for [tree-sitter](https://github.com/tree-sitter/tree-sitter).
 
@@ -8,6 +8,7 @@ The [official bindings](https://github.com/tree-sitter/ruby-tree-sitter) are
 very old, and unmaintained, and don't work with modern `tree-sitter` APIs.
 
 ## About
+
 The main philosophy behind these bindings is to do a 1:1 mapping between
 tree-sitter's `C` API and `Ruby`.
 
@@ -30,11 +31,6 @@ provide a _safer_ interface, where you don't have to worry about when and how
 resources are freed.
 
 To See a full list of the ruby-specific APIs, see [here](lib/README.md).
-
-## Grenadier?
-
-A _grenadier_ is a pomegrenate tree.  Pomegrenate fruits are ruby.  And they sit
-on the grenadier.
 
 ## Dependencies
 
@@ -87,13 +83,13 @@ Meanwhile, please build from source.
 ### Gemfile
 
 ```ruby
-gem tree_sitter, git: 'https://github.com/stackmystack/grenadier'
+gem tree_sitter, git: 'https://github.com/Faveod/ruby-tree-sitter'
 ```
 
 ### Build from source
 
 ```console
-git clone https://github.com/stackmystack/grenadier
+git clone https://github.com/Faveod/ruby-tree-sitter
 bundle install
 bundle exec rake compile
 ```
@@ -105,7 +101,7 @@ bundle exec rake compile -- --disable-sys-libs
 ```
 
 
-You can now jump into a REPL and start experimenting with Grenadier:
+You can now jump into a REPL and start experimenting with `ruby-tree-sitter`:
 
 ```console
 bundle exec rake console
