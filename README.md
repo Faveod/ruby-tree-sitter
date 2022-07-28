@@ -78,7 +78,8 @@ Or if you use `WSL`, then follow the [Linux](#Linux) section above.
 
 We haven't released the gem on `Rubygems` as of yet, but wer'e planning on doing so.
 
-Meanwhile, please build from source.
+Meanwhile, please build from source, or download a native gem from this
+repository's [releases](https://github.com/Faveod/ruby-tree-sitter/releases).
 
 ### Gemfile
 
@@ -113,6 +114,30 @@ Or you can build the gem then install it:
 gem build tree_sitter.gemspec
 gem install tree_sitter-x.x.x.gem
 ```
+
+### Native gems
+
+By default, this gem will compile on installation.  To produce a gem that does so:
+
+``` console
+rake gem
+```
+
+To generate a native gems from source, which will not compile on installation:
+
+``` console
+rake native gem
+```
+
+### Parsers
+
+You will have to install parsers yourself, either by:
+
+1. Downloading and builing from source
+1. Downloading from your package manager, if available
+1. Downloading a pre-built binary from
+   [Faveod/tree-sitter-parsers](https://github.com/Faveod/tree-sitter-parsers)
+   which supports numerous architectures.
 
 ## Examples
 
