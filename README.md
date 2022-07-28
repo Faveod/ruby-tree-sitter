@@ -5,7 +5,7 @@
 Ruby bindings for [tree-sitter](https://github.com/tree-sitter/tree-sitter).
 
 The [official bindings](https://github.com/tree-sitter/ruby-tree-sitter) are
-very old, and unmaintained; it doesn't work with modern `tree-sitter` APIs.
+very old, and unmaintained, and don't work with modern `tree-sitter` APIs.
 
 ## About
 The main philosophy behind these bindings is to do a 1:1 mapping between
@@ -22,7 +22,8 @@ don't pay attention to what you're doing.
 We're only talking about `Tree`, `TreeCursor`, `Query`, and `QueryCursor`.  Just
 don't copy them left and right, and then expect them to work without
 `SEGFAULT`ing and creating a black-hole in your living-room.  Assume that you
-have to work locally with them.
+have to work locally with them. If you get a `SEGFAULT`, you can debug the
+native `C` code using `gdb`.  More on that in [Debugging](#Debugging)
 
 That said, we do aim at providing an idiomatic `Ruby` interface.  It should also
 provide a _safer_ interface, where you don't have to worry about when and how
@@ -145,3 +146,32 @@ LD_PRELOAD==libasan.so.8 bundle exec rake test
 
 This is still experimental, and I haven't had any true success yet, but it's a good
 start.
+
+### Debugging
+
+If you have issues in `ruby` code, use `rdbg` (from
+[ruby/debug](https://github.com/ruby/debug)).
+
+But if you're running into trouble with the `C` bindings, which usually
+manifests itself as a `SEGFAULT`, you can debug using `gdb` (more details in
+this [blogpost](https://blog.wataash.com/ruby-c-extension/))
+
+1. Install ruby with sources:
+
+``` console
+rbenv install --keep --verbose 3.1.2
+```
+
+2. Launch `gdb`:
+
+``` console
+bundle exec gdb -q -ex 'set breakpoint pending on' -ex 'b node_string' -ex run --args ruby examples/01-json.rb
+```
+
+This will stop at calls of `node_string` from `C` sources (in
+`ext/tree_sitter/node.c`).
+
+If you want to stop at a location causing a `SEGFAULT`, add `-ex 'handle SIGSEGV stop nopass'`.
+
+**NOTE**: following the same instructions for `lldb` on `macos` doesn't work. We
+will update this section if we figured it out.
