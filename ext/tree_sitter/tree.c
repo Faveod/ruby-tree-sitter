@@ -33,7 +33,9 @@ static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
     rb_ary_push(res, new_range(&ranges[i]));
   }
 
-  free(ranges);
+  if (ranges) {
+    free(ranges);
+  }
 
   return res;
 }
