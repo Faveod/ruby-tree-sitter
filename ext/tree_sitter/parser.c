@@ -80,7 +80,9 @@ static VALUE parser_set_included_ranges(VALUE self, VALUE array) {
     ranges[i] = value_to_range(rb_ary_entry(array, i));
   }
   bool res = ts_parser_set_included_ranges(SELF, ranges, (uint32_t)length);
-  free(ranges);
+  if (ranges) {
+    free(ranges);
+  }
   return res ? Qtrue : Qfalse;
 }
 
