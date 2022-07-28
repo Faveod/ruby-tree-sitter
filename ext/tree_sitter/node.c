@@ -30,7 +30,9 @@ static VALUE node_end_point(VALUE self) {
 static VALUE node_string(VALUE self) {
   char *str = ts_node_string(SELF);
   VALUE res = safe_str(str);
-  free(str);
+  if (str) {
+    free(str);
+  }
   return res;
 }
 
