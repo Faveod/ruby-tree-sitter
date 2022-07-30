@@ -1,6 +1,6 @@
 require_relative 'helpers'
 
-javascript = lang('javascript')
+javascript = TreeSitter.lang('javascript')
 
 parser = TreeSitter::Parser.new
 parser.language = javascript

@@ -3,7 +3,7 @@
 require_relative '../test_helper.rb'
 require "stringio"
 
-ruby = lang('ruby')
+ruby = TreeSitter.lang('ruby')
 parser = TreeSitter::Parser.new
 parser.language = ruby
 
