@@ -1,8 +1,8 @@
 require_relative 'helpers'
 
-template = lang('embedded-template')
-html = lang('html')
-ruby = lang('ruby')
+template = TreeSitter.lang('embedded-template')
+html = TreeSitter.lang('html')
+ruby = TreeSitter.lang('ruby')
 
 program = <<~ERB
   <ul>

@@ -1,7 +1,7 @@
 require_relative 'helpers'
 
 parser = TreeSitter::Parser.new
-language = lang('json')
+language = TreeSitter.lang('json')
 
 src = "[1, null]"
 

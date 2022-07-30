@@ -1,6 +1,6 @@
 require_relative 'helpers'
 
-ruby = lang('ruby')
+ruby = TreeSitter.lang('ruby')
 
 parser = TreeSitter::Parser.new
 parser.language = ruby
