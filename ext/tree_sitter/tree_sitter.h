@@ -27,6 +27,14 @@ static inline VALUE safe_str2(const char *str, uint32_t len) {
   }
 }
 
+static inline VALUE safe_symbol(const char *str) {
+  if (str == NULL) {
+    return Qnil;
+  } else {
+    return ID2SYM(rb_intern(str));
+  }
+}
+
 // VALUE to TS* converters
 
 TSInput value_to_input(VALUE);

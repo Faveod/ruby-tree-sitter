@@ -19,11 +19,11 @@ root = tree.root_node
 
 describe 'type' do
   it 'must be a string' do
-    assert_instance_of String, root.type
+    assert_instance_of Symbol, root.type
   end
 
   it 'must be "program" on root' do
-    assert_equal 'program', root.type
+    assert_equal :program, root.type
   end
 end
 

@@ -7,7 +7,7 @@ VALUE cNode;
 
 DATA_WRAP(Node, node)
 
-static VALUE node_type(VALUE self) { return safe_str(ts_node_type(SELF)); }
+static VALUE node_type(VALUE self) { return safe_symbol(ts_node_type(SELF)); }
 
 static VALUE node_symbol(VALUE self) { return UINT2NUM(ts_node_symbol(SELF)); }
 

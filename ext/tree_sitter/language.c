@@ -1,5 +1,6 @@
 #include "tree_sitter.h"
 #include <dlfcn.h>
+#include <stdint.h>
 #include <stdio.h>
 
 typedef TSLanguage *(tree_sitter_lang)(void);
@@ -34,8 +35,8 @@ static VALUE language_symbol_name(VALUE self, VALUE symbol) {
 
 static VALUE language_symbol_for_name(VALUE self, VALUE string,
                                       VALUE is_named) {
-  char *str = StringValuePtr(string);
-  uint32_t length = (uint32_t)RSTRING_LEN(string);
+  const char *str = rb_id2name(SYM2ID(string));
+  uint32_t length = (uint32_t)strlen(str);
   bool named = RTEST(is_named);
   return UINT2NUM(ts_language_symbol_for_name(SELF, str, length, named));
 }
