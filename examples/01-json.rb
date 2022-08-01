@@ -7,7 +7,7 @@ src = "[1, null]"
 
 parser.language = language
 
-tree = parser.parse_string(nil, src).copy
+tree = parser.parse_string(nil, src)
 root = tree.root_node
 array = root.named_child(0)
 number = array.named_child(0)
