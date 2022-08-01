@@ -243,7 +243,7 @@ void init_node(void) {
   rb_define_method(cNode, "named?", node_is_named, 0);
   rb_define_method(cNode, "missing?", node_is_missing, 0);
   rb_define_method(cNode, "extra?", node_is_extra, 0);
-  rb_define_method(cNode, "changes?", node_has_changes, 0);
+  rb_define_method(cNode, "changed?", node_has_changes, 0);
   rb_define_method(cNode, "error?", node_has_error, 0);
   rb_define_method(cNode, "parent", node_parent, 0);
   rb_define_method(cNode, "child", node_child, 1);

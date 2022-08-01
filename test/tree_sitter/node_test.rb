@@ -109,7 +109,8 @@ describe 'predicates' do
   end
 
   it 'must not have any changes' do
-    refute root.changes?
+    # TODO: needs a more elaborate test to check for true changes?
+    refute root.changed?
   end
 
   it 'must not have no errors' do
