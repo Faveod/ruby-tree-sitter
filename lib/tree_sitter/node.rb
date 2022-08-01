@@ -46,22 +46,6 @@ module TreeSitter
     end
 
     def respond_to_missing?(*args)
-      # NOTE: `puts` calls `to_ary` when you defing a `method missing`, even if
-      # you have `to_s` and `to_str` implemented.
-      #
-      # You can't `def to_ary = [self]` because for some weird reason it will
-      # print `[...]` suggesting that some infinite recursion is internally
-      # happening.
-      #
-      # One _hack_ can be `def to_ary = [self.to_s]`, but that screws with the
-      # semantics of the object.  But it works.
-      #
-      # It turns ou that it's enough to tell the Ruby runtime that we don't
-      # support `to_ary`, so it defaults to the expected behavior of calling
-      # `to_s` on the object.
-      if args[0] == :to_ary
-        return false
-      end
       init_fields
       args.length == 1 && @fields.include?(args[0])
     end
