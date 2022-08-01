@@ -81,5 +81,9 @@ module TreeSitter
         yield named_child(i)
       end
     end
+
+    def to_a
+      each.to_a
+    end
   end
 end

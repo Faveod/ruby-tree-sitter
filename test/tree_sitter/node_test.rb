@@ -294,3 +294,19 @@ describe 'method_missing' do
     assert_equal @child[:name], @child.name
   end
 end
+
+describe 'to_a' do
+  before do
+    @child = root.child(0)
+  end
+
+  it 'should return the list from each' do
+    ll = @child.to_a
+
+    refute ll.empty?
+
+    @child.each.with_index do |c, i|
+      assert_equal @child.child(i), c
+    end
+  end
+end
