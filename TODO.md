@@ -1,6 +1,5 @@
 # TODO
 
-1. `Language::load` should accept a `Pathname`
 1. `Node::type` should be a symbol
 1. Iterate on named children
 1. Pattern-matching:

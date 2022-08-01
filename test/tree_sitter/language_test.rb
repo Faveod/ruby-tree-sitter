@@ -22,6 +22,11 @@ root = tree.root_node
 # parsers evolve.
 
 describe 'language' do
+  it 'must be able to load a library from `Pathname` (or any object that has `to_s`)' do
+    ll = TreeSitter::Language.load('ruby', Pathname('tree-sitter-parsers') / 'ruby' / "libtree-sitter-ruby.#{ext}")
+    assert ll.field_count.positive?
+  end
+
   it 'must return symbol count' do
     assert ruby.symbol_count.positive?
   end

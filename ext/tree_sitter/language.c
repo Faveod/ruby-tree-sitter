@@ -64,12 +64,13 @@ static VALUE language_version(VALUE self) {
 }
 
 static VALUE language_load(VALUE self, VALUE name, VALUE path) {
-  void *lib = dlopen(StringValueCStr(path), RTLD_NOW);
+  VALUE path_s = rb_funcall(path, rb_intern("to_s"), 0);
+  char *path_cstr = StringValueCStr(path_s);
+  void *lib = dlopen(path_cstr, RTLD_NOW);
   const char *err = dlerror();
   if (err != NULL) {
     rb_raise(rb_eRuntimeError,
-             "Could not load shared library `%s'.\nReason: %s",
-             StringValueCStr(path), err);
+             "Could not load shared library `%s'.\nReason: %s", path_cstr, err);
   }
 
   char buf[256];
