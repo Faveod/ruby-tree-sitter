@@ -1,6 +1,7 @@
 # Ruby-Specific API
 
-This is not a comprehensive list, but a curated list of examples to showcase the ruby-specific API.
+This is not a comprehensive list, but a curated list of examples to showcase the
+ruby-specific API.
 
 ## IMPORTANT
 
@@ -18,27 +19,32 @@ For a give parse tree, that looks something like:
 (method name: (identifier) parameters: (method_parameters (identifier) (identifier)) ...
 ```
 
-We're oftern interested in accessing the children `name` and `parameters` field names.
-Unnamed children usually represent tokens of syntax. If you're writing a syntax highlighter,
-then yes this is very important. But if you're producing an AST from the parse tree, then
-you're more interested in the named children which are usually attached to fields.
+We're oftern interested in accessing the children `name` and `parameters` field
+names.  Unnamed children usually represent tokens of syntax. If you're writing a
+syntax highlighter, then yes this is very important. But if you're producing an
+AST from the parse tree, then you're more interested in the named children which
+are _usually attached to fields_.
 
 ### Iterating over children
+You can use vanilla `each` to iterate over all childre, with no distinction
+between named or anonymous one.
 
-It's often more interesting to iterate over named node so:
+It's often more interesting to iterate over named nodes, so use `each_named` for that.
 
 ``` ruby
-node.each do |field, child|
-  puts "#{field}: #{child}"
-end
-
-# => name: (identifier)
-# => parameters: (method_parameters ...
+node.each do |c| ... end
+node.each_named do |c| ... end
 ```
 
-Will iterate through named childs, and send back the attached field name.
+You can also iterate of children attached to fields with `each_fields`.
 
-See: `each_child`, `each_named_child`.
+``` ruby
+node.each_field do |f, c| ... end
+```
+
+The difference between a named child and a field is that the former is the
+result of a named rule in the grammar while the latter is an explicit field
+inside the AST (that the grammar tags as a field).
 
 ### Accessing children by field name
 
@@ -48,5 +54,21 @@ to access a `child_by_field_name` to enable the latter syntax.
 ``` ruby
 node[:name] # or even
 node.name
+```
+
+### Pattern matching
+
+Sometimes it's nice to do:
+
+``` ruby
+a, b, c = *node
+```
+
+Here, the splat operator will return all the children.
+
+But what's more intersting is to be able to dig a children by keys.
+
+``` ruby
+a, b = node.fetch(:lhs, :rhs)
 ```
 
