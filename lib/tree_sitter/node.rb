@@ -26,7 +26,10 @@ module TreeSitter
       case idx
       when Numeric        then named_child(idx)
       when String, Symbol then child_by_field_name(idx.to_s)
-      else raise 'Node#[] accepts Integer and returns named child at given index, or a (String | Symbol) and returns the child by given field name.'
+      else raise <<~ERR
+        Node#[] accepts Integer and returns named child at given index,
+          or a (String | Symbol) and returns the child by given field name.
+      ERR
       end
     end
 
