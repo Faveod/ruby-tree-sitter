@@ -1,5 +1,8 @@
 # TODO
 
-1. Github actions.
-1. Revisit the APIs to see if you return nil in case the user made a huge
-   mistake like oob access.
+1. `Language::load` should accept a `Pathname`
+1. `Node::type` should be a symbol
+1. Iterate on named children
+1. Pattern-matching:
+   - deconstruct for `children`
+   - deconstruct for `named_children`
