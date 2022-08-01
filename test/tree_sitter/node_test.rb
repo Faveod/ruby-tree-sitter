@@ -310,3 +310,24 @@ describe 'to_a' do
     end
   end
 end
+
+describe 'fetch' do
+  before do
+    @child = root.child(0).child(4)
+  end
+
+  it 'should return all requested keys by order' do
+    method = @child.child(0)
+    arguments = @child.child(1)
+
+    m, a = @child.fetch(:method, :arguments)
+
+    assert_equal method, m
+    assert_equal arguments, a
+
+    a, m = @child.fetch(:arguments, :method)
+
+    assert_equal method, m
+    assert_equal arguments, a
+  end
+end

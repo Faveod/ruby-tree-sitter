@@ -88,5 +88,23 @@ module TreeSitter
     def to_a
       each.to_a
     end
+
+    def fetch(*keys)
+      dict = {}
+      keys.each.with_index do |k, i|
+        dict[k.to_s] = i
+      end
+
+      res = {}
+      each_field do |f, c|
+        if dict.key?(f)
+          res[dict[f]] = c
+          dict.delete(f)
+        end
+        break if dict.empty?
+      end
+
+      res.sort.map { |_, v| v }
+    end
   end
 end
