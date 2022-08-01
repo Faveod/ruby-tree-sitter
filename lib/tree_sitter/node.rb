@@ -55,7 +55,7 @@ module TreeSitter
     # @yieldparam name [NilClass | String] field name if it exists.
     # @yieldparam child [Node] the child
     def each
-      child_count.times.each do |i|
+      (0...(child_count)).each do |i|
         next if !child(i).named?
 
         yield field_name_for_child(i), child(i)
