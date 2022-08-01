@@ -7,3 +7,5 @@ AllCops:
 
 Style/IfUnlessModifier:
   Enabled: false
+Style/NegatedIf:
+  Enabled: false
