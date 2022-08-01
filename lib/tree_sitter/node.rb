@@ -50,37 +50,40 @@ module TreeSitter
       args.length == 1 && @fields.include?(args[0])
     end
 
-    # Iterate over a node's named children.
+    # Iterate over a node's children.
     #
-    # @yieldparam name [NilClass | String] field name if it exists.
     # @yieldparam child [Node] the child
     def each
-      (0...(child_count)).each do |i|
-        next if !child(i).named?
+      return enum_for __method__ if !block_given?
 
-        yield field_name_for_child(i), child(i)
+      (0...(child_count)).each do |i|
+        yield child(i)
+      end
+    end
+
+    # Iterate over a node's children assigned to a field.
+    #
+    # @yieldparam name [NilClass | String] field name.
+    # @yieldparam child [Node] the child.
+    def each_field
+      return enum_for __method__ if !block_given?
+
+      each.with_index do |c, i|
+        f = field_name_for_child(i)
+        next if f.nil? || f.empty?
+
+        yield f, c
       end
     end
 
     # Iterate over a node's named children
     #
     # @yieldparam child [Node] the child
-    def each_named_child
+    def each_named
       return enum_for __method__ if !block_given?
 
       (0...(named_child_count)).each do |i|
         yield named_child(i)
-      end
-    end
-
-    # Iterate over a node's children
-    #
-    # @yieldparam child [Node] the child
-    def each_child
-      return enum_for __method__ if !block_given?
-
-      (0...(child_count)).each do |i|
-        yield child(i)
       end
     end
   end

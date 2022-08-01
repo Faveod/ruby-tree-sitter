@@ -259,31 +259,29 @@ describe 'each' do
     @child = root.child(0)
   end
 
-  it 'must iterate ove named children only' do
+  it 'must iterate over all children' do
     i = 0
-    @child.each do |k, v|
-      assert v.named?
-      assert_equal @child[k], v if k
+    @child.each do |_|
       i += 1
     end
-    assert @child.named_child_count, i
+    assert @child.child_count, i
+  end
+
+  it 'must iterate ove named children attached to fields only' do
+    @child.each_field do |f, c|
+      refute f.nil?
+      refute f.empty?
+      assert_equal @child[f], c
+    end
   end
 
   it 'must iterate over named children when `each_named_child`' do
     i = 0
-    @child.each_named_child do |c|
+    @child.each_named do |c|
       assert c.named?
       i += 1
     end
     assert @child.named_child_count, i
-  end
-
-  it 'must iterate over all children when `each_child`' do
-    i = 0
-    @child.each_child do |_|
-      i += 1
-    end
-    assert_equal @child.child_count, i
   end
 end
 
