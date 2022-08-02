@@ -120,7 +120,7 @@ gem 'tree_sitter', path: 'path/to/native/tree_sitter.gem'
 
 You will have to install parsers yourself, either by:
 
-1. Downloading and builing from source.
+1. Downloading and building from source.
 1. Downloading from your package manager, if available.
 1. Downloading a pre-built binary from
    [Faveod/tree-sitter-parsers](https://github.com/Faveod/tree-sitter-parsers)
