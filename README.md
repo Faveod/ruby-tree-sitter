@@ -5,7 +5,7 @@
 Ruby bindings for [tree-sitter](https://github.com/tree-sitter/tree-sitter).
 
 The [official bindings](https://github.com/tree-sitter/ruby-tree-sitter) are
-very old, and unmaintained, and don't work with modern `tree-sitter` APIs.
+very old, unmaintained, and don't work with modern `tree-sitter` APIs.
 
 
 ## Usage
