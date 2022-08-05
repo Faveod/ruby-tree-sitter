@@ -45,7 +45,8 @@ We're only talking about `Tree`, `TreeCursor`, `Query`, and `QueryCursor`.  Just
 don't copy them left and right, and then expect them to work without
 `SEGFAULT`ing and creating a black-hole in your living-room.  Assume that you
 have to work locally with them. If you get a `SEGFAULT`, you can debug the
-native `C` code using `gdb`.  More on that in [Debugging](#Debugging).
+native `C` code using `gdb`.  You can read more on `SEGFAULT`s
+[here](docs/SIGSEGV.md), and debugging [here](docs/Development.md#Debugging).
 
 That said, we do aim at providing an idiomatic `Ruby` interface.  It should also
 provide a _safer_ interface, where you don't have to worry about when and how
