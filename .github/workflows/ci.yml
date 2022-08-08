@@ -40,6 +40,7 @@ jobs:
           rake native gem
           for file in pkg/*.gem; do mv $file ${file%.*}-mri-${{ matrix.ruby }}.gem; done;
       - name: release
+        if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}-${{ steps.vars.outputs.sha_short }}
@@ -74,6 +75,7 @@ jobs:
         run: |
           rake gem
       - name: release
+        if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}-${{ steps.vars.outputs.sha_short }}
