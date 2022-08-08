@@ -26,8 +26,7 @@ end
 dir_include, dir_lib =
   if system_tree_sitter?
     [['/opt/include', '/opt/local/include', '/usr/include', '/usr/local/include'],
-     ['/opt/lib', '/opt/local/lib', '/usr/lib', '/usr/local/lib'],
-     false]
+     ['/opt/lib', '/opt/local/lib', '/usr/lib', '/usr/local/lib']]
   else
     src = Pathname.pwd / "tree-sitter-#{TreeSitter::VERSION}"
     if !Dir.exists? src
@@ -52,10 +51,11 @@ dir_include, dir_lib =
     # We need to make sure we're selecting the proper toolchain.
     # Especially needed for corss-compilation.
     ENV['CC'] = RbConfig::CONFIG["CC"]
-
+    # We need to clean because the same folder is used over and over
+    # by rake-compiler-dock
     sh "cd #{src} && make clean && make"
 
-    [[Pathname.pwd / 'tree-sitter' / 'src'/ 'lib' / 'include'], [Pathname.pwd / 'tree-sitter']]
+    [[src / 'lib' / 'include'], [src.to_s]]
   end
 
 # ################################## #
