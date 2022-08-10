@@ -11,13 +11,17 @@ end
 def self.lang name, lib = nil
   symbol = name.gsub(/-/, '_')
   if lib.nil?
-    dylib = Pathname('tree-sitter-parsers') / name / "libtree-sitter-#{name}.#{ext}"
-    if !dylib.exist? && system("bin/get #{name}").nil?
-      raise "could not load #{name} from #{dylib}"
+    if root = ENV.fetch('TREE_SITTER_PARSERS', nil)
+      dylib = Pathname(root) / "libtree-sitter-#{name}.#{ext}"
+    else
+      dylib = Pathname('tree-sitter-parsers') / name / "libtree-sitter-#{name}.#{ext}"
+      if !dylib.exist? && system("bin/get #{name}").nil?
+        raise "could not load #{name} from #{dylib}"
+      end
     end
-
-    lib = File.expand_path(dylib, FileUtils.getwd)
+    lib = dylib.expand_path
   end
+
   TreeSitter::Language.load(symbol, lib)
 end
 

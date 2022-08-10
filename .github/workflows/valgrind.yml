@@ -1,0 +1,13 @@
+name: valgrind
+
+on: [push, pull_request]
+
+jobs:
+  valgrind-1:
+    name: "Valgrind"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: valgrind
+        run: |
+          ./bin/valgrind

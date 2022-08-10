@@ -23,7 +23,13 @@ root = tree.root_node
 
 describe 'language' do
   it 'must be able to load a library from `Pathname` (or any object that has `to_s`)' do
-    ll = TreeSitter::Language.load('ruby', Pathname('tree-sitter-parsers') / 'ruby' / "libtree-sitter-ruby.#{ext}")
+    path =
+      if p = ENV.fetch('TREE_SITTER_PARSERS', nil)
+        Pathname(p) / "libtree-sitter-ruby.#{ext}"
+      else
+        Pathname('tree-sitter-parsers') / 'ruby' / "libtree-sitter-ruby.#{ext}"
+      end
+    ll = TreeSitter::Language.load('ruby', path)
     assert ll.field_count.positive?
   end
 
