@@ -55,6 +55,23 @@ On linux:
 LD_PRELOAD=libasan.so.6 bundle exec rake test
 ```
 
+### Valgrind
+
+If you're on linux, you can simply run:
+
+```console
+bundle exec rake test:valgrind
+```
+
+Which will run the tests with valgrind and report any memory leaks.
+
+If you're on a mac, or if you don't want to install valgrind locally, you can run
+valgrind in the provided docker image:
+
+```console
+./bin/valgrind
+```
+
 ### Debugging
 
 If you have issues in `ruby` code, use `rdbg` (from

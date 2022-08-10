@@ -28,4 +28,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency('rake', '~> 13.0')
   spec.add_development_dependency('rake-compiler', '~> 1.2')
   spec.add_development_dependency('rake-compiler-dock', '~> 1.2')
+  spec.add_development_dependency('ruby_memcheck', '~> 1.0')
 end

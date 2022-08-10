@@ -11,6 +11,8 @@ rescue LoadError
   ERROR
 end
 
+require "ruby_memcheck"
+
 gemspec = Gem::Specification.load('tree_sitter.gemspec')
 
 cross_rubies = [
@@ -89,12 +91,19 @@ task :console do
   Pry.start
 end
 
-Rake::TestTask.new(:test) do |t|
+test_config = lambda do |t|
   t.libs << 'lib' << 'test'
   t.libs << 'minitest/autorun' << 'minitest/color'
   t.pattern = 'test/**/*_test.rb'
   t.verbose = false
   t.warning = true
+end
+
+Rake::TestTask.new(test: :compile, &test_config)
+
+RubyMemcheck.config(binary_name: 'tree_sitter')
+namespace :test do
+  RubyMemcheck::TestTask.new(valgrind: :compile, &test_config)
 end
 
 begin

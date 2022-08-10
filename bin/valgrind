@@ -1,0 +1,8 @@
+#! /usr/bin/env sh
+
+TAG='faveod/ruby-tree-sitter-valgrind:latest'
+
+set -e
+
+docker build -t $TAG -f $PWD/docker/Valgrind.dockerfile .
+docker run -t $TAG
