@@ -71,6 +71,12 @@ jobs:
       - name: bundle install
         run: |
           bundle install
+      - name: compile
+        run: |
+          bundle exec rake compile
+      - name: test
+        run: |
+          bundle exec rake test
       - name: package native gem
         run: |
           rake gem
