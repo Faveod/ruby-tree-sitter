@@ -5,7 +5,38 @@ extern VALUE mTreeSitter;
 
 VALUE cNode;
 
-DATA_WRAP(Node, node)
+DATA_TYPE(TSNode, node)
+
+static void node_free(void *ptr) {
+  node_t *type = (node_t *)ptr;
+  tree_rc_free(type->data.tree);
+  xfree(ptr);
+}
+
+DATA_MEMSIZE(node)
+DATA_DECLARE_DATA_TYPE(node)
+DATA_ALLOCATE(node)
+DATA_UNWRAP(node)
+
+VALUE new_node(const TSNode *ptr) {
+  if (ptr == NULL) {
+    return Qnil;
+  }
+  VALUE res = node_allocate(cNode);
+  node_t *type = unwrap(res);
+  type->data = *ptr;
+  tree_rc_new(type->data.tree);
+  return res;
+}
+VALUE new_node_by_val(TSNode ptr) {
+  VALUE res = node_allocate(cNode);
+  node_t *type = unwrap(res);
+  type->data = ptr;
+  tree_rc_new(type->data.tree);
+  return res;
+}
+
+DATA_FROM_VALUE(TSNode, node)
 
 static VALUE node_type(VALUE self) { return safe_symbol(ts_node_type(SELF)); }
 
