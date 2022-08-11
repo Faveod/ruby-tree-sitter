@@ -5,3 +5,5 @@ require 'minitest/color'
 require 'tree_sitter'
 
 require_relative '../examples/helpers'
+
+at_exit { GC.start }
