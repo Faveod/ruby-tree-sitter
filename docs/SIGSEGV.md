@@ -35,14 +35,14 @@ class to traverse the whole tree.
 If `node` outlives `tree`, then you're setting a trap for yourself, and you're
 asking for `SEGFAULT` trouble, because internally, a `TSNode` struct contains a
 `TSTree` pointer, and invoking functions on the `node` will most likely involve
-the `TSTree` pointer. When `ruby`'s `GC` decides to collect `tree`, it will call
-its finalizer, which in turn calls the `C` function `ts_tree_delete`; from now
-on, any pointer referring to `tree` is a loaded weapon.
+the `TSTree` pointer.  When `ruby`'s `GC` decides to collect `tree`, it will
+call its finalizer, which in turn calls the `C` function `ts_tree_delete`; from
+now on, any pointer referring to `tree` is a loaded weapon.
 
 But sometimes you're not in control of the lifecycle of these objects, and this
 is why this doc exists.
 
-PS: Other objects that will have their `ts_*_delete` called on garbage
+*PS*: Other objects that will have their `ts_*_delete` called on garbage
 collection are `TreeCursor`, `Query`, and `QueryCursor`.
 
 ## The Setup
@@ -140,7 +140,7 @@ end
 
 Obviously, an `Array` doesn't have a `type` method, so we should just get an
 exception. The test suite should report the exception and we should move on with
-out lives. Why would it segfault? It can't be a `ruby` bug on such a trivial
+our lives. Why would it segfault? It can't be a `ruby` bug on such a trivial
 case! It was doing it when running this test in isolation *and* when we run
 the whole test-suite serially!
 
@@ -166,7 +166,7 @@ descendants, is invalid ⇒ 💥.
 Could it be that the visitor and its member `parser`, `tree`, etc. were `GC`ed
 already when the time came to output the exception message?
 
-Of course the answer is yes. I don't do click-baits …
+The answer is yes, of course. I don't do click-baits …
 
 ## Reproducing the Bug
 
@@ -252,7 +252,7 @@ itself will be collected when we hit `ensure`.
 
 The only true fix for this is to retain `Test.new` in a `Minitest` member.
 
-## Conclusion
+## Who's to blame?
 
 So who's fault its this, and who has to fix this behavior?
 
@@ -268,6 +268,48 @@ Are we all guilty for chosing `ruby`? Or any garbage-collected language for that
 matter?
 
 Alas, the blame game is nice, but unproductive. I could cache the results of
-`inspect` in a `ruby` string upon `Node` creation. Possible, doable, and works.
-It means I (the library consumer) would need to consume far more memory than we
-should, and it's all redundant information.
+`inspect` in a `ruby` string upon `Node` creation. Possible, doable, and it
+works.  It means I (the library consumer) would need to consume far more memory
+than we should, and it's all redundant information.
+
+So I'd rather not.
+
+## A fix or a hack? Potato, poh-tah-toh!
+
+I ended up doing some reference-counting on the `TSTree*` pointers.  In a very
+hacky way, I must confess.
+
+The `Tree` class now has class variable `@@rc` which is a hashmap of `ptr ->
+reference-count`.  Every time a `Node` object is created, we increment its
+`TSTree*` ptr's ref count.  When a `Node` is garbage collected, we decrement the
+ref count. When ref count hits `0`, `ts_tree_delete` is called, as if nothing
+happened.
+
+And cruicially, I added a finalizer to the `Tree` class that will delete the
+remaining references to `Tree`, if any.
+
+Et voilà! 
+
+I am not sure whether other parts might require a similar treatment.  I am
+particularly nervous about `TreeCursor` which holds a `void *tree`.  I am not
+touching it for now because I am sure it's a `void *` for a reason; assuming
+that it's a `TSTree *` is most likely a mistake.
+
+If you found a similar behavior, don't hesitate to open an issue, or even
+better: submit a PR.
+
+*PS*: If you want to reproduce the segfault with `examples/05-segfault.rb`,
+checkout commit `d8ee60a`.
+
+*PPS*: It is true that if you tampered with `@@rc` then a portal to
+[Hades](https://en.wikipedia.org/wiki/Greek_underworld) will replace your
+screen, and [Cerebrus](https://en.wikipedia.org/wiki/Cerberus) themselves will
+come after you, but this is trouble you explicitly asked for. A more long-term
+solution is to create a thread-safe association-list in `C`-space and hide
+reference-counting from `Ruby`-space; until then, try not to disturb the balance
+of nature, will ya?
+
+### Acknowledgment
+
+I would like to thank [Ulysse Buonomo](https://github.com/BuonOmo).  He was very kind
+to help me figure out solutions for this.

@@ -97,6 +97,10 @@ void init_tree_cursor(void);
 const char *quantifier_str(TSQuantifier);
 const char *query_error_str(TSQueryError);
 
+// TSTree reference counting
+int tree_rc_free(const TSTree *);
+void tree_rc_new(const TSTree *);
+
 // This is a special entry-point for the extension
 void Init_tree_sitter(void);
 

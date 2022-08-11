@@ -4,7 +4,64 @@ extern VALUE mTreeSitter;
 
 VALUE cTree;
 
-DATA_PTR_WRAP(Tree, tree)
+int tree_rc_free(const TSTree *tree) {
+  VALUE ptr = ULONG2NUM((uintptr_t)tree);
+  VALUE rc = rb_cv_get(cTree, "@@rc");
+  VALUE val = rb_hash_lookup(rc, ptr);
+
+  if (!NIL_P(val)) {
+    unsigned int count = NUM2UINT(val);
+    --count;
+    if (count < 1) {
+      rb_hash_delete(rc, ptr);
+      ts_tree_delete((TSTree *)tree);
+      return 1;
+    } else {
+      rb_hash_aset(rc, ptr, ULONG2NUM(count));
+      return 0;
+    }
+  } else {
+    return 1;
+  }
+}
+
+void tree_rc_new(const TSTree *tree) {
+  VALUE ptr = ULONG2NUM((uintptr_t)tree);
+  VALUE rc = rb_cv_get(cTree, "@@rc");
+  VALUE val = rb_hash_lookup(rc, ptr);
+
+  if (NIL_P(val)) {
+    rb_hash_aset(rc, ptr, UINT2NUM(1));
+  } else {
+    rb_hash_aset(rc, ptr, UINT2NUM(NUM2UINT(val) + 1));
+  }
+}
+
+DATA_TYPE(TSTree *, tree)
+static void tree_free(void *ptr) {
+  tree_t *type = (tree_t *)ptr;
+  if (tree_rc_free(type->data)) {
+    xfree(ptr);
+  }
+}
+
+DATA_MEMSIZE(tree)
+DATA_DECLARE_DATA_TYPE(tree)
+DATA_ALLOCATE(tree)
+DATA_UNWRAP(tree)
+
+VALUE new_tree(TSTree *ptr) {
+  if (ptr == NULL) {
+    return Qnil;
+  }
+  VALUE res = tree_allocate(cTree);
+  tree_t *type = unwrap(res);
+  type->data = ptr;
+  tree_rc_new(ptr);
+  return res;
+}
+
+DATA_FROM_VALUE(TSTree *, tree)
 
 static VALUE tree_copy(VALUE self) { return new_tree(ts_tree_copy(SELF)); }
 
@@ -49,6 +106,25 @@ static VALUE tree_print_dot_graph(VALUE self, VALUE file) {
   return Qnil;
 }
 
+static VALUE tree_finalizer(VALUE _self) {
+  VALUE rc = rb_cv_get(cTree, "@@rc");
+  VALUE keys = rb_funcall(rc, rb_intern("keys"), 0);
+  VALUE *elements = RARRAY_PTR(keys);
+  long len = RARRAY_LEN(keys);
+
+  for (long i = 0; i < len; ++i) {
+    VALUE curr = elements[i];
+    unsigned int val = NUM2UINT(rb_hash_lookup(rc, curr));
+    if (val > 0) {
+      ts_tree_delete((TSTree *)NUM2ULONG(curr));
+    }
+
+    rb_hash_delete(rc, curr);
+  }
+
+  return Qnil;
+}
+
 void init_tree(void) {
   cTree = rb_define_class_under(mTreeSitter, "Tree", rb_cObject);
 
@@ -59,4 +135,9 @@ void init_tree(void) {
   rb_define_method(cTree, "edit", tree_edit, 1);
   rb_define_module_function(cTree, "changed_ranges", tree_changed_ranges, 2);
   rb_define_method(cTree, "print_dot_graph", tree_print_dot_graph, 1);
+  rb_define_module_function(cTree, "finalizer", tree_finalizer, 0);
+
+  // Reference-count created trees
+  VALUE rc = rb_hash_new();
+  rb_cv_set(cTree, "@@rc", rc);
 }
