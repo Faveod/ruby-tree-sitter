@@ -94,8 +94,15 @@ $CFLAGS << ' -fPIC'
 $CFLAGS << ' -Wall'
 
 if ENV['SANITIZE']
-  $CFLAGS  << ' -fsanitize=address -fno-omit-frame-pointer'
-  $LDFLAGS << ' -fsanitize=address -dynamic-libasan'
+  $CFLAGS  << ' -fdeclspec'
+  $CFLAGS  << ' -fsanitize=address,undefined,float-divide-by-zero,float-cast-overflow'
+  $CFLAGS  << ' -fsanitize-blacklist=../../../../.asanignore'
+  $CFLAGS  << ' -fsanitize-recover=address,undefined,float-divide-by-zero,float-cast-overflow'
+
+  $CFLAGS  << ' -fno-sanitize-recover=all -fno-sanitize=null -fno-sanitize=alignment'
+  $CFLAGS  << ' -fno-omit-frame-pointer'
+
+  $LDFLAGS << ' -fsanitize=address,undefined,float-divide-by-zero,float-cast-overflow -dynamic-libasan'
 end
 
 dir_config('tree-sitter')
