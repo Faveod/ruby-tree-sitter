@@ -7,7 +7,7 @@ ARG work_dir=/workdir
 ENV TREE_SITTER_PARSERS=/tree-sitter-parsers
 
 WORKDIR ${work_dir}
-COPY . ${workdir}
+COPY . ${work_dir}
 
 RUN rm -rf tree-sitter-parsers
 RUN gem update --system --no-document
