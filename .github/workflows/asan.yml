@@ -1,13 +1,13 @@
-name: valgrind
+name: asan
 
 on: [push, pull_request]
 
 jobs:
-  valgrind:
-    name: "Valgrind"
+  asan:
+    name: "ASan / UBSan"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: valgrind
+      - name: asan
         run: |
-          ./bin/memcheck valgrind
+          ./bin/memcheck address,undefined

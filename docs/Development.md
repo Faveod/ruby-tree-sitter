@@ -46,7 +46,7 @@ rake native gem
 You can enable `asan` by setting the `SANITIZE` environment variable before building:
 
 ```console
-SANITIZE=1 bundle exec rake compile
+SANITIZE=address,undefined bundle exec rake compile
 ```
 
 On linux:
@@ -54,6 +54,16 @@ On linux:
 ``` console
 LD_PRELOAD=libasan.so.6 bundle exec rake test
 ```
+
+If you're on a mac, or if you don't want to have a headache running `asan`
+locally, you can run `asan` in the provided docker image:
+
+```console
+./bin/memcheck address,undefined
+```
+
+The [dockerfile](../docker/asan.dockerfile) contains more details on how to
+set-up `asan` and filter out the noise.
 
 ### Valgrind
 
@@ -63,14 +73,16 @@ If you're on linux, you can simply run:
 bundle exec rake test:valgrind
 ```
 
-Which will run the tests with valgrind and report any memory leaks.
+Which will run the tests with `valgrind` and report any memory leaks.
 
-If you're on a mac, or if you don't want to install valgrind locally, you can run
-valgrind in the provided docker image:
+If you're on a mac, or if you don't want to install `valgrind` locally, you can run
+`valgrind` in the provided docker image:
 
 ```console
-./bin/valgrind
+./bin/memcheck valgrind
 ```
+
+The [dockerfile](../docker/valgrind.dockerfile) contains more details.
 
 ### Debugging
 
