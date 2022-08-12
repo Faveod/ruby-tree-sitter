@@ -7,14 +7,27 @@ require 'pathname'
 
 RbConfig::MAKEFILE_CONFIG['CC'] = ENV['CC'] if ENV['CC']
 
+cflags = []
+ldflags = []
+
 def system_tree_sitter?
   enable_config('sys-libs', true)
 end
 
 def sh cmd
   if !system(cmd)
-    abort "Aborting.\nFailed to run:\n    #{cmd}\n"
+    abort <<~MSG
+
+      Failed to run: #{cmd}
+
+      exiting…
+
+    MSG
   end
+end
+
+def env_var_on?(var)
+  %w[1 on true t yes y].include?(ENV.fetch(var, '').downcase)
 end
 
 # ################################## #
@@ -31,7 +44,7 @@ dir_include, dir_lib =
      ['/opt/lib', '/opt/local/lib', '/usr/lib', '/usr/local/lib']]
   else
     src = Pathname.pwd / "tree-sitter-#{TreeSitter::VERSION}"
-    if !Dir.exists? src
+    if !Dir.exist? src
       if find_executable('git')
         sh "git clone https://github.com/tree-sitter/tree-sitter #{src}"
         sh "cd #{src} && git checkout tags/v#{TreeSitter::VERSION}"
@@ -52,7 +65,7 @@ dir_include, dir_lib =
 
     # We need to make sure we're selecting the proper toolchain.
     # Especially needed for corss-compilation.
-    ENV['CC'] = RbConfig::CONFIG["CC"]
+    ENV.store('CC', RbConfig::CONFIG['CC'])
     # We need to clean because the same folder is used over and over
     # by rake-compiler-dock
     sh "cd #{src} && make clean && make"
@@ -71,7 +84,7 @@ library = find_library('tree-sitter',   # libtree-sitter
                        *dir_lib)
 
 if !header || !library
-  abort <<~EOL
+  abort <<~MSG
 
     * Missing header         : #{header ? 'no' : 'yes'}
     * Missing lib            : #{library ? 'no' : 'yes'}
@@ -84,24 +97,32 @@ if !header || !library
       --with-tree-sitter-lib=/path/to/tree-sitter/lib
       --with-tree-sitter-include=/path/to/tree-sitter/include
 
-  EOL
+  MSG
 end
 
-$CFLAGS << ' -O3'
-$CFLAGS << ' -std=c99'
-$CFLAGS << ' -fPIC'
+if env_var_on?('TREE_SITTER_PEDANTIC')
+  cflags << '-Werror'
+end
 
-sanitizers = ENV['SANITIZE'] if ENV['SANITIZE']
+if env_var_on?('DEBUG')
+  cflags << '-fbounds-check'
+  CONFIG['optflags'].gsub!(/-O\d/, '-O0')
+else
+  cflags << '-DNDEBUG'
+  CONFIG['optflags'].gsub!(/-O\d/, '-O3')
+end
+
+sanitizers = ENV.fetch('SANITIZE', nil)
 
 if sanitizers =~ /memory/
-  puts ''
-  puts ''
-  puts "We don't support memory sanitizers as of yet."
-  puts 'It requires building ruby with the same sanitizer, and maybe its dependencies.'
-  puts ''
-  puts 'exiting…'
-  puts ''
-  puts ''
+  puts <<~MSG
+
+    We do not support memory sanitizers as of yet.
+    It requires building ruby with the same sanitizer, and maybe its dependencies.
+
+    exiting…
+
+  MSG
   exit 1
 end
 
@@ -110,21 +131,41 @@ if sanitizers
   # warnings.
   #
   # I couldn't make mkmf understand it's running with clang and not gcc, so
-  # I'm omitting those flags.
+  # I'm omitting the warning generating warnings.
   #
   # It should be harmless, since sanitization is meant for CI and dev builds.
-  $warnflags = ''
+  %w[
+    -Wduplicated-cond
+    -Wimplicit-fallthrough=\d+
+    -Wno-cast-function-type
+    -Wno-packed-bitfield-compat
+    -Wsuggest-attribute=\w+
+  ].each do |r|
+    $warnflags.gsub!(/#{r}/, '')
+  end
 
-  $CFLAGS  << ' -fdeclspec'
-  $CFLAGS  << " -fsanitize=#{sanitizers}"
-  $CFLAGS  << ' -fsanitize-blacklist=../../../../.asanignore'
-  $CFLAGS  << " -fsanitize-recover=#{sanitizers}"
+  cflags.concat %W[
+    -fms-extensions
+    -fdeclspec
+    -fsanitize=#{sanitizers}
+    -fsanitize-blacklist=../../../../.asanignore
+    -fsanitize-recover=#{sanitizers}
+    -fno-sanitize-recover=all
+    -fno-sanitize=null
+    -fno-sanitize=alignment
+    -fno-omit-frame-pointer
+  ]
 
-  $CFLAGS  << ' -fno-sanitize-recover=all -fno-sanitize=null -fno-sanitize=alignment'
-  $CFLAGS  << ' -fno-omit-frame-pointer'
-
-  $LDFLAGS << " -fsanitize=#{sanitizers} -dynamic-libasan"
+  ldflags.concat %W[
+    -fsanitize=#{sanitizers}
+    -dynamic-libasan
+  ]
 end
+
+cflags.concat %w[-std=c99 -fPIC -Wall]
+
+append_cflags(cflags)
+append_ldflags(ldflags)
 
 dir_config('tree-sitter')
 create_header
