@@ -18,7 +18,7 @@ RUN bundle install
 # RUN ls -lah | grep asan && sleep 10
 ENV CC=clang
 ENV CXX=clang++
-ENV SANITIZE=1
+ARG SANITIZE=address,undefined
 ENV ASAN_OPTIONS=halt_on_error=0:abort_on_error=0:fast_unwind_on_malloc=1:detect_leaks=1
 ENV UBSAN_OPTIONS=print_stacktrace=1
 RUN bundle exec rake clean compile

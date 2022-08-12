@@ -1,0 +1,56 @@
+#! /usr/bin/env sh
+
+set -e
+
+case $1 in
+  valgrind)
+      IMG=$1
+      DOCKERFILE=$IMG
+      ;;
+  *)
+      SANITIZE=$1
+      IMG=san-"$(echo $SANITIZE | sed 's/,/-/g')"
+      DOCKERFILE=asan
+      ;;
+esac
+
+TAG="faveod/ruby-tree-sitter-${IMG}:latest"
+
+
+if echo $IMG | grep valgrind
+then
+    docker build -t $TAG -f "${PWD}/docker/${DOCKERFILE}.dockerfile" .
+    docker run -t $TAG
+    cat <<MSG
+
+          ***   Valgrind OK   ***
+
+MSG
+else
+    # NOTE: I have no clue why docker is not accepting env vars
+    #       I could only make it work with ARG, which sucks
+    rm -f log
+    docker build --build-arg SANITIZE="${SANITIZE}" -t $TAG -f "${PWD}/docker/${DOCKERFILE}.dockerfile" .
+    docker run -t $TAG > log
+
+    if grep "#1 .*tree_sitter" log
+    then
+        cat <<MSG
+
+          ***   ASAN     KO  ***
+
+          ---   DUMPING LOG   ---
+
+MSG
+        cat log
+        exit 1
+    else
+        cat <<MSG
+
+          ***   ASAN     OK   ***
+
+MSG
+        exit 0
+    fi
+    echo "here?"
+fi

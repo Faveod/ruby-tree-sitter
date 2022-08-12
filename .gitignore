@@ -2,8 +2,10 @@
 *.dylib
 *.gemfile
 *.lock
+*.log
 *.so
 pkg/*
 tmp/*
 
 tree-sitter-parsers
+log

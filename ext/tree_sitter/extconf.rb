@@ -5,6 +5,8 @@ require 'pathname'
 #             Some helpers           #
 # ################################## #
 
+RbConfig::MAKEFILE_CONFIG['CC'] = ENV['CC'] if ENV['CC']
+
 def system_tree_sitter?
   enable_config('sys-libs', true)
 end
@@ -85,26 +87,45 @@ if !header || !library
   EOL
 end
 
-RbConfig::MAKEFILE_CONFIG['CC'] = ENV['CC'] if ENV['CC']
-
 $CFLAGS << ' -O3'
-$CFLAGS << ' -g'
 $CFLAGS << ' -std=c99'
 $CFLAGS << ' -fPIC'
-$CFLAGS << ' -Wall'
 
-if ENV['SANITIZE']
+sanitizers = ENV['SANITIZE'] if ENV['SANITIZE']
+
+if sanitizers =~ /memory/
+  puts ''
+  puts ''
+  puts "We don't support memory sanitizers as of yet."
+  puts 'It requires building ruby with the same sanitizer, and maybe its dependencies.'
+  puts ''
+  puts 'exiting…'
+  puts ''
+  puts ''
+  exit 1
+end
+
+if sanitizers
+  # NOTE: when sanitizing, the default generated warning flags emit a lot of …
+  # warnings.
+  #
+  # I couldn't make mkmf understand it's running with clang and not gcc, so
+  # I'm omitting those flags.
+  #
+  # It should be harmless, since sanitization is meant for CI and dev builds.
+  $warnflags = ''
+
   $CFLAGS  << ' -fdeclspec'
-  $CFLAGS  << ' -fsanitize=address,undefined,float-divide-by-zero,float-cast-overflow'
+  $CFLAGS  << " -fsanitize=#{sanitizers}"
   $CFLAGS  << ' -fsanitize-blacklist=../../../../.asanignore'
-  $CFLAGS  << ' -fsanitize-recover=address,undefined,float-divide-by-zero,float-cast-overflow'
+  $CFLAGS  << " -fsanitize-recover=#{sanitizers}"
 
   $CFLAGS  << ' -fno-sanitize-recover=all -fno-sanitize=null -fno-sanitize=alignment'
   $CFLAGS  << ' -fno-omit-frame-pointer'
 
-  $LDFLAGS << ' -fsanitize=address,undefined,float-divide-by-zero,float-cast-overflow -dynamic-libasan'
+  $LDFLAGS << " -fsanitize=#{sanitizers} -dynamic-libasan"
 end
 
 dir_config('tree-sitter')
-create_header()
+create_header
 create_makefile('tree_sitter/tree_sitter')
