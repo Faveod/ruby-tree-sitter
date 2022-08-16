@@ -26,6 +26,9 @@ cd $LOCAL
 if [ ! -d $1 ]
 then
     git clone https://github.com/tree-sitter/$GET $1
+    cd $1
+    git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
+    cd ..
 fi
 
 cd $1/src
