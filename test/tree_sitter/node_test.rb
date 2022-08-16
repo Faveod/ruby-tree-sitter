@@ -252,6 +252,11 @@ describe '[]' do
     assert_equal @child.named_child(0), @child[:name]
     assert_equal @child.named_child(0), @child['name']
   end
+
+  it 'must return an array of nodes when index is an Array' do
+    arr = [@child.named_child(0)] * 3
+    assert_equal arr, @child[0, :name, 'name']
+  end
 end
 
 describe 'each' do
@@ -329,5 +334,14 @@ describe 'fetch' do
 
     assert_equal method, m
     assert_equal arguments, a
+  end
+
+  it 'should return unique keys' do
+    method = @child.child(0)
+
+    m = @child.fetch(:method, :method)
+
+    assert_equal 1, m.length
+    assert_equal method, m.first
   end
 end
