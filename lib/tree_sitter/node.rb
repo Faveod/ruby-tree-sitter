@@ -16,20 +16,46 @@ module TreeSitter
 
     private :init_fields
 
-    # Access node's named children
+    # Access node's named children.
     #
-    # @param idx [Integer | String | Symbol, #read]
+    # It's similar to {#fetch}, but differes in input type, return values, and
+    # the internal implementation.
     #
-    # @return [Node] The named child @idx `if idx.is_a?(Numeric)`, or the named child
-    # for the given field name `if idx.is_a(String) || idx.is_a?(Symbol).`
-    def [](idx)
-      case idx
-      when Numeric        then named_child(idx)
-      when String, Symbol then child_by_field_name(idx.to_s)
-      else raise <<~ERR
-        Node#[] accepts Integer and returns named child at given index,
-          or a (String | Symbol) and returns the child by given field name.
-      ERR
+    # Both of these methods exist for separate use cases, but also because
+    # sometime tree-sitter does some monkey business and having both separate
+    # implementations can help.
+    #
+    # Comparison with {#fetch}:
+    #
+    #              []                            | fetch
+    #              ------------------------------+----------------------
+    # input types  Integer, String, Symbol       | Array<String, Symbol>
+    #              Array<Integer, String, Symbol>|
+    #              ------------------------------+----------------------
+    # returns      1-to-1 correspondance with    | unique nodes
+    #              input                         |
+    #              ------------------------------+----------------------
+    # uses         named_child                   | field_name_for_child
+    #              child_by_field_name           |   via each_node
+    #              ------------------------------+----------------------
+    #
+    # @param keys [Integer | String | Symbol | Array<Integer, String, Symbol>, #read]
+    #
+    # @return [Node | Array<Node>]
+    def [](*keys)
+      case keys.length
+      when 0 then raise "#{self.class.name}##{__method__} requires a key."
+      when 1
+        case k = keys.first
+        when Numeric        then named_child(k)
+        when String, Symbol then child_by_field_name(k.to_s)
+        else raise <<~ERR
+          #{self.class.name}##{__method__} accepts Integer and returns named child at given index,
+              or a (String | Symbol) and returns the child by given field name.
+        ERR
+        end
+      else
+        keys.map { |key| self[key] }
       end
     end
 
@@ -89,6 +115,28 @@ module TreeSitter
       each.to_a
     end
 
+    # Access node's named children.
+    #
+    # It's similar to {#fetch}, but differes in input type, return values, and
+    # the internal implementation.
+    #
+    # Both of these methods exist for separate use cases, but also because
+    # sometime tree-sitter does some monkey business and having both separate
+    # implementations can help.
+    #
+    # Comparison with {#fetch}:
+    #
+    #              []                            | fetch
+    #              ------------------------------+----------------------
+    # input types  Integer, String, Symbol       | String, Symbol
+    #              Array<Integer, String, Symbol>| Array<String, Symbol>
+    #              ------------------------------+----------------------
+    # returns      1-to-1 correspondance with    | unique nodes
+    #              input                         |
+    #              ------------------------------+----------------------
+    # uses         named_child                   | field_name_for_child
+    #              child_by_field_name           |   via each_node
+    #              ------------------------------+----------------------
     def fetch(*keys)
       dict = {}
       keys.each.with_index do |k, i|

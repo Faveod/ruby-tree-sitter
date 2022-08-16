@@ -48,12 +48,26 @@ inside the AST (that the grammar tags as a field).
 
 ### Accessing children by field name
 
-You can call `[]` or just `node.field_name`; we use `mehod_missing` to allow you
-to access a `child_by_field_name` to enable the latter syntax.
+The `[]` call accepts `Integer`s to access children by index:
 
 ``` ruby
-node[:name] # or even
+node[0]
+```
+
+It can also accept `String`s, `Symbol`s which will act as if you called
+`node.field_name`; we use `mehod_missing` to allow you to access a
+`child_by_field_name` to enable the latter syntax.
+
+``` ruby
+node[:name] 
+# or
 node.name
+```
+
+Finally, you can pass multiple arguments to `[]` as such:
+
+``` ruby
+name, arg, z = node[:name, 'argument', 0]
 ```
 
 ### Pattern matching
@@ -62,11 +76,21 @@ Sometimes it's nice to do:
 
 ``` ruby
 a, b, c = *node
+# or
+a, b = node[:lhs, :rhs]
 ```
 
-Here, the splat operator will return all the children.
+Here, the splat operator will return all the children, `[]` will also return all
+filtered children.
 
-But what's more intersting is to be able to dig a children by keys.
+However, `[]` will return an array of all specified children names or indexes:
+
+``` ruby
+node[:lhs, :lhs, :lhs, :rhs]
+# => [Node, Node, Node, Node]
+```
+
+So if you want to fetch unique children by name, use `fetch`:
 
 ``` ruby
 a, b = node.fetch(:lhs, :rhs)
