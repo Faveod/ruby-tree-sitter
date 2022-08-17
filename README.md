@@ -36,23 +36,14 @@ tree-sitter's `C` API and `Ruby`.
 It doesn't mean that we're going to yield the best perormance, but this design
 allows us to better experiment, and easily port ideas from other projects.
 
-This design also implies that you need to be extra-careful when playing with the
-provided objects.  Some of them have their underlying `C` data-structure
-automatically freed, so you might get yourself in undesirable situations if you
-don't pay attention to what you're doing.
+### Versioning
 
-We're only talking about `Tree`, `TreeCursor`, `Query`, and `QueryCursor`.  Just
-don't copy them left and right, and then expect them to work without
-`SEGFAULT`ing and creating a black-hole in your living-room.  Assume that you
-have to work locally with them. If you get a `SEGFAULT`, you can debug the
-native `C` code using `gdb`.  You can read more on `SEGFAULT`s
-[here](docs/SIGSEGV.md), and debugging [here](docs/Development.md#Debugging).
+This gem follows the `tree-sitter` versioning scheme, and prepends its own
+version at the end.
 
-That said, we do aim at providing an idiomatic `Ruby` interface.  It should also
-provide a _safer_ interface, where you don't have to worry about when and how
-resources are freed.
-
-To See a full list of the ruby-specific APIs, see [here](lib/README.md).
+For instance, `tree-sitter` is now at version `0.20.6`, so this gem's version
+will be `0.20.6.x` where x is an incremented with every notable batch of
+bugfixes or some ruby-only additions.
 
 ## Dependencies
 
@@ -134,3 +125,24 @@ See `examples` directory.
 ## Development
 
 See [`docs/README.md`](docs/Development.md).
+
+## 🚧 👷‍♀️ Notes 👷 🚧
+
+Since we're doing a 1:1 mapping between the `tree-sitter` API and the bindings,
+you need to be extra-careful when playing with the provided objects.  Some of
+them have their underlying `C` data-structure automatically freed, so you might
+get yourself in undesirable situations if you don't pay attention to what you're
+doing.
+
+We're only talking about `Tree`, `TreeCursor`, `Query`, and `QueryCursor`.  Just
+don't copy them left and right, and then expect them to work without
+`SEGFAULT`ing and creating a black-hole in your living-room.  Assume that you
+have to work locally with them. If you get a `SEGFAULT`, you can debug the
+native `C` code using `gdb`.  You can read more on `SEGFAULT`s
+[here](docs/SIGSEGV.md), and debugging [here](docs/Development.md#Debugging).
+
+That said, we do aim at providing an idiomatic `Ruby` interface.  It should also
+provide a _safer_ interface, where you don't have to worry about when and how
+resources are freed.
+
+To See a full list of the ruby-specific APIs, see [here](lib/README.md).
