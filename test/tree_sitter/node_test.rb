@@ -18,7 +18,7 @@ tree = parser.parse_string(nil, program)
 root = tree.root_node
 
 describe 'type' do
-  it 'must be a string' do
+  it 'must be a Symbol' do
     assert_instance_of Symbol, root.type
   end
 
