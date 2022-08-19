@@ -3,7 +3,9 @@
 set -e
 set -x
 
-case "$OSTYPE" in
+OS="$(uname -o | tr '[:upper:]' '[:lower:]')"
+
+case "$OS" in
   darwin*)
       EXT=dylib
       CC=cc
@@ -16,44 +18,45 @@ case "$OSTYPE" in
       ;;
 esac
 
+PARSER="$1"
 LOCAL=tree-sitter-parsers
-GET=tree-sitter-$1
-OUT="../libtree-sitter-$1.$EXT"
+GET=tree-sitter-"$PARSER"
+OUT=../libtree-sitter-"$PARSER.$EXT"
 
 mkdir -p $LOCAL
 cd $LOCAL
 
-if [ ! -d $1 ]
+if [ ! -d "$PARSER" ]
 then
-    git clone https://github.com/tree-sitter/$GET $1
-    cd $1
-    git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
+    git clone https://github.com/tree-sitter/"$GET" "$PARSER"
+    cd "$PARSER"
+    git checkout "$(git describe --tags "$(git rev-list --tags --max-count=1)")"
     cd ..
 fi
 
-cd $1/src
+cd "$PARSER"/src
 
 LDFLAGS='-lstdc++'
 CFLAGS='-I/usr/include -I/usr/local/include -I/opt/include -I/opt/local/include'
 set +e
-CFILES=$(ls *.c)
-CXXFILES=$(ls *.cc *.cpp *.cxx)
+CFILES=$(ls ./*.c)
+CXXFILES=$(ls ./*.cc ./*.cpp ./*.cxx)
 set -e
 
 for i in $CFILES; do
     [ -f "$i" ] || continue
-    $CC $CFLAGS -std=c99 -fPIC -c $i
+    "$CC" "$CFLAGS" -std=c99 -fPIC -c "$i"
 done
 
 for i in $CXXFILES; do
     [ -f "$i" ] || continue
-    $CXX $CFLAGS -fPIC -c $i
+    "$CXX" "$CFLAGS" -fPIC -c "$i"
 done
 
 if test -n "$CXXFILES"; then
-    COMP=$CXX
+    COMP="$CXX"
 else
-    COMP=$CC
+    COMP="$CC"
 fi
 
-$COMP $LDFLAGS -shared *.o -o $OUT
+"$COMP" "$LDFLAGS" -shared ./*.o -o "$OUT"
