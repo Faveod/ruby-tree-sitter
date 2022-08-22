@@ -257,6 +257,14 @@ describe '[]' do
     arr = [@child.named_child(0)] * 3
     assert_equal arr, @child[0, :name, 'name']
   end
+
+  it 'must throw an exception when out of index' do
+    assert_raises { @child[255] }
+  end
+
+  it 'must throw an exception when field is not found (NO SIGSEGV ANYMORE!)' do
+    assert_raises { @child[:randomzes] }
+  end
 end
 
 describe 'each' do
