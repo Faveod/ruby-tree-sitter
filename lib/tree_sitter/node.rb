@@ -43,12 +43,18 @@ module TreeSitter
     #
     # @return [Node | Array<Node>]
     def [](*keys)
+      init_fields
       case keys.length
       when 0 then raise "#{self.class.name}##{__method__} requires a key."
       when 1
         case k = keys.first
         when Numeric        then named_child(k)
-        when String, Symbol then child_by_field_name(k.to_s)
+        when String, Symbol
+          if @fields.include?(k.to_sym)
+            child_by_field_name(k.to_s)
+          else
+            raise "Cannot find field #{k}"
+          end
         else raise <<~ERR
           #{self.class.name}##{__method__} accepts Integer and returns named child at given index,
               or a (String | Symbol) and returns the child by given field name.
