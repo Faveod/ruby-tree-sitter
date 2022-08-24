@@ -3,7 +3,7 @@
 set -e
 set -x
 
-OS="$(uname -o | tr '[:upper:]' '[:lower:]')"
+OS="$(uname | tr '[:upper:]' '[:lower:]')"
 
 case "$OS" in
   darwin*)
