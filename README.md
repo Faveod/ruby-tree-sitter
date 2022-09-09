@@ -146,3 +146,7 @@ provide a _safer_ interface, where you don't have to worry about when and how
 resources are freed.
 
 To See a full list of the ruby-specific APIs, see [here](lib/README.md).
+
+## Sponsors
+
+<img src="img/faveod.jpg" width="75%">
