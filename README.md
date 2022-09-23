@@ -98,7 +98,7 @@ source](docs/Development.md#build-from-source) .)
 ### Gemfile
 
 ```ruby
-gem tree_sitter, git: 'https://github.com/Faveod/ruby-tree-sitter'
+gem 'tree_sitter', git: 'https://github.com/Faveod/ruby-tree-sitter'
 ```
 
 If you chose to install a native gem, then you'd have to download it somewhere
