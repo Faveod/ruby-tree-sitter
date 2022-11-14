@@ -22,6 +22,7 @@ jobs:
           cd tree-sitter
           make
           sudo make install
+          sudo rm /usr/local/lib/libtree-sitter.so*
       - name: ldconfig
         if: ${{ matrix.os == 'ubuntu' }}
         run: |
@@ -67,6 +68,7 @@ jobs:
           cd tree-sitter
           make
           sudo make install
+          sudo rm /usr/local/lib/libtree-sitter.so*
           sudo ldconfig -v
       - name: bundle install
         run: |
