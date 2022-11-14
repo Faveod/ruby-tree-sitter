@@ -22,7 +22,14 @@ jobs:
           cd tree-sitter
           make
           sudo make install
+      - name: delete .so (ubuntu)
+        if: ${{ matrix.os == 'ubuntu'}}
+        run: |
           sudo rm /usr/local/lib/libtree-sitter.so*
+      - name: delete .so (macos)
+        if: ${{ matrix.os == 'macos'}}
+        run: |
+          sudo rm /usr/local/lib/libtree-sitter.dylib*
       - name: ldconfig
         if: ${{ matrix.os == 'ubuntu' }}
         run: |
