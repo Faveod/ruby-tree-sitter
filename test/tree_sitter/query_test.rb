@@ -25,6 +25,32 @@ combined = "#{pattern} #{capture}"
 
 # NOTE: It' still unclear to me what a captured string is.
 
+describe 'querying anonymouns nodes' do
+  it 'must match & capture the correct nodes' do
+    binary = '(binary left: (identifier) operator: "*" right: (identifier)) @binary'
+    prog = <<~RUBY
+      c + d
+      a * b
+      e / f
+    RUBY
+    prog_tree = parser.parse_string(nil, prog)
+    prog_root = prog_tree.root_node
+    query = TreeSitter::Query.new(ruby, binary)
+    cursor = TreeSitter::QueryCursor.exec(query, prog_root)
+
+    match = cursor.next_match
+    refute_nil(match)
+    assert_equal(1, match.captures.size)
+    node = match.captures.first.node
+    assert_equal "a * b", prog[node.start_byte...node.end_byte]
+
+    assert_nil(cursor.next_match)
+    assert_equal(1, match.captures.size)
+    node = match.captures.first.node
+    assert_equal "a * b", prog[node.start_byte...node.end_byte]
+  end
+end
+
 describe 'pattern/capture/string' do
   it 'must return an Integer for pattern count' do
     query = TreeSitter::Query.new(ruby, pattern)
