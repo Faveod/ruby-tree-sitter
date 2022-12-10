@@ -7,6 +7,11 @@ module TreeSitter
       @fields
     end
 
+    def field?(f)
+      init_fields
+      @fields.include?(f)
+    end
+
     def init_fields
       if !@fields
         @fields = Set.new
