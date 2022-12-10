@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'tree_sitter'
+require 'pathname'
 
 module TreeSitter
   def self.ext
