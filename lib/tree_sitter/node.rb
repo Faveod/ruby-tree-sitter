@@ -2,7 +2,10 @@
 
 module TreeSitter
   class Node
-    attr_reader :fields
+    def fields
+      init_fields
+      @fields
+    end
 
     def init_fields
       if !@fields
@@ -13,7 +16,6 @@ module TreeSitter
         end
       end
     end
-
     private :init_fields
 
     # Access node's named children.
