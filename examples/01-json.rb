@@ -1,5 +1,9 @@
 require_relative 'helpers'
 
+def assert_eq(a, b)
+  puts "#{a.inspect} #{a == b ? '==' : '!='} #{b.inspect}"
+end
+
 parser = TreeSitter::Parser.new
 language = TreeSitter.lang('json')
 
