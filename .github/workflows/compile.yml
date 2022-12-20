@@ -1,0 +1,75 @@
+name: "Compile & Publish"
+on:
+  push:
+    branches:
+      - "master"
+  release:
+    types: [published]
+
+jobs:
+  native_gem:
+    name: Compile native gem
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          # - x64-mingw32
+          # - x64-mingw-ucrt
+          - x86_64-linux
+          - aarch64-linux
+          #
+          # FIXME: ld: unknown -soname
+          # that's a bug in tree-sitter's makefile: it only checks for OS type and
+          # not compiler type, so when we're cross-building it blows in out face
+          #
+          # - x86_64-darwin
+          # - arm64-darwin
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+
+      - uses: oxidize-rb/cross-gem-action@v7
+        with:
+          platform: ${{ matrix.platform }}
+          version: 'latest'
+          ruby-versions: '3.1, 3.0, 2.7'
+          setup: |
+            bundle install
+          env: |
+            DISABLE_SYS_LIBS=1
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: cross-gem
+          path: pkg/
+
+  publish_gem:
+    name: Publish to Rubygems
+    runs-on: ubuntu-latest
+    needs: native_gem
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: cross-gem
+          path: pkg/
+
+      - name: Display structure of built gems
+        run: ls -l
+        working-directory: pkg/
+
+      - name: Release Gem
+        if: contains(github.ref, 'refs/tags/v') && github.event_name == "release"
+        uses: cadwallion/publish-rubygems-action@master
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
+          RELEASE_COMMAND: bin/publish

@@ -43,18 +43,18 @@ dir_include, dir_lib =
     [['/opt/include', '/opt/local/include', '/usr/include', '/usr/local/include'],
      ['/opt/lib', '/opt/local/lib', '/usr/lib', '/usr/local/lib']]
   else
-    src = Pathname.pwd / "tree-sitter-#{TreeSitter::VERSION}"
+    src = Pathname.pwd / "tree-sitter-#{TreeSitter::TS_VERSION}"
     if !Dir.exist? src
       if find_executable('git')
         sh "git clone https://github.com/tree-sitter/tree-sitter #{src}"
-        sh "cd #{src} && git checkout tags/v#{TreeSitter::VERSION}"
+        sh "cd #{src} && git checkout tags/v#{TreeSitter::TS_VERSION}"
       elsif find_executable('curl')
         if find_executable('tar')
-          sh "curl -L https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v#{TreeSitter::VERSION}.tar.gz -o tree-sitter-v#{TreeSitter::VERSION}.tar.gz"
-          sh "tar -xf tree-sitter-v#{TreeSitter::VERSION}.tar.gz"
+          sh "curl -L https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v#{TreeSitter::TS_VERSION}.tar.gz -o tree-sitter-v#{TreeSitter::TS_VERSION}.tar.gz"
+          sh "tar -xf tree-sitter-v#{TreeSitter::TS_VERSION}.tar.gz"
         elsif find_executable('zip')
-          sh "curl -L https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v#{TreeSitter::VERSION}.zip -o tree-sitter-v#{TreeSitter::VERSION}.zip"
-          sh "unzip -q tree-sitter-v#{TreeSitter::VERSION}.zip"
+          sh "curl -L https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v#{TreeSitter::TS_VERSION}.zip -o tree-sitter-v#{TreeSitter::TS_VERSION}.zip"
+          sh "unzip -q tree-sitter-v#{TreeSitter::TS_VERSION}.zip"
         else
           abort('Could not find `tar` or `zip` (and `git` was not found!)')
         end

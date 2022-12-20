@@ -45,6 +45,8 @@ Rake::ExtensionTask.new('tree_sitter', gemspec) do |r|
     r.cross_compiling do |spec|
       spec.files.reject! { |file| /(\.gz)$|(\.zip)$|(\.tar)$/ =~ File.basename(file) }
     end
+
+    r.config_options << "--disable-sys-libs" if ENV["DISABLE_SYS_LIBS"]
 end
 
 Gem::PackageTask.new(gemspec) do |pkg|
