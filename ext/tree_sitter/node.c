@@ -263,6 +263,8 @@ static VALUE node_eq(VALUE self, VALUE other) {
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
+  rb_undef_alloc_func(cNode);
+
   /* Class methods */
   rb_define_method(cNode, "type", node_type, 0);
   rb_define_method(cNode, "symbol", node_symbol, 0);

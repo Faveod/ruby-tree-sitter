@@ -128,6 +128,8 @@ static VALUE tree_finalizer(VALUE _self) {
 void init_tree(void) {
   cTree = rb_define_class_under(mTreeSitter, "Tree", rb_cObject);
 
+  rb_undef_alloc_func(cTree);
+
   /* Class methods */
   rb_define_method(cTree, "copy", tree_copy, 0);
   rb_define_method(cTree, "root_node", tree_root_node, 0);
