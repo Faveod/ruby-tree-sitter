@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../test_helper.rb'
+require_relative '../test_helper'
 
 ruby = TreeSitter.lang('ruby')
 parser = TreeSitter::Parser.new
@@ -8,7 +8,7 @@ parser.language = ruby
 
 program = <<~RUBY
   def mul(a, b)
-    res = a* b
+    res = a * b
     puts res.inspect
     return res
   end
@@ -56,28 +56,28 @@ describe 'pattern/capture/string' do
   it 'must return an array of predicates for a pattern' do
     query = TreeSitter::Query.new(ruby, combined)
 
-    preds_0 = query.predicates_for_pattern(0)
-    assert_instance_of Array, preds_0
-    assert_equal 0, preds_0.size
+    preds0 = query.predicates_for_pattern(0)
+    assert_instance_of Array, preds0
+    assert_equal 0, preds0.size
 
-    preds_1 = query.predicates_for_pattern(1)
-    assert_instance_of Array, preds_1
-    assert_equal 0, preds_1.size
+    preds1 = query.predicates_for_pattern(1)
+    assert_instance_of Array, preds1
+    assert_equal 0, preds1.size
 
     query = TreeSitter::Query.new(ruby, predicate)
-    preds_2 = query.predicates_for_pattern(0)
-    assert_instance_of Array, preds_2
-    assert_equal 4, preds_2.size
+    preds2 = query.predicates_for_pattern(0)
+    assert_instance_of Array, preds2
+    assert_equal 4, preds2.size
   end
 
   it 'must return string names, quanitfier, and string value for capture id' do
     query = TreeSitter::Query.new(ruby, predicate)
     query.predicates_for_pattern(0).each do |step|
-      if TreeSitter::QueryPredicateStep::CAPTURE == step.type
-        assert_equal 'args', query.capture_name_for_id(step.value_id)
-        assert_equal TreeSitter::Quantifier::ONE_OR_MORE, query.capture_quantifier_for_id(0, step.value_id)
-        assert_equal 'match?', query.string_value_for_id(step.value_id)
-      end
+      next if step.type != TreeSitter::QueryPredicateStep::CAPTURE
+
+      assert_equal 'args', query.capture_name_for_id(step.value_id)
+      assert_equal TreeSitter::Quantifier::ONE_OR_MORE, query.capture_quantifier_for_id(0, step.value_id)
+      assert_equal 'match?', query.string_value_for_id(step.value_id)
     end
   end
 
