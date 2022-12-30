@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../test_helper.rb'
-require "stringio"
+require_relative '../test_helper'
+require 'stringio'
 
 ruby = TreeSitter.lang('ruby')
 parser = TreeSitter::Parser.new
@@ -9,7 +9,7 @@ parser.language = ruby
 
 program = <<~RUBY
   def mul(a, b)
-    res = a* b
+    res = a * b
     puts res.inspect
     return res
   end
@@ -19,7 +19,8 @@ def capture_stderr
   # The output stream must be an IO-like object. In this case we capture it in
   # an in-memory IO object so we can return the string value. You can assign any
   # IO object here.
-  previous_stderr, $stderr = $stderr, StringIO.new
+  previous_stderr = $stderr
+  $stderr = StringIO.new
   yield
   $stderr.string
 ensure
@@ -50,7 +51,7 @@ describe 'logging' do
     parser.logger = TreeSitter::Logger.new(backend, "%s#{delim}%s")
     parser.parse_string(nil, program)
     backend.each_line do |l|
-      assert (/#{delim}/) =~ l, 'delimiter must be in every single line'
+      assert (/#{delim}/ =~ l), 'delimiter must be in every single line'
     end
   end
 end
