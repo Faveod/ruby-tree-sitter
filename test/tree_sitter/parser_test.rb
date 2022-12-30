@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../test_helper.rb'
+require_relative '../test_helper'
 
 ruby = TreeSitter.lang('ruby')
 parser = TreeSitter::Parser.new
@@ -8,7 +8,7 @@ parser.language = ruby
 
 program = <<~RUBY
   def mul(a, b)
-    res = a* b
+    res = a * b
     puts res.inspect
     return res
   end
@@ -30,7 +30,7 @@ RUBY
 #                      | otherwise = fib' b (a+b) (n-1)
 # YBUR
 
-program_16 = program.encode('utf-16')
+program16 = program.encode('utf-16')
 # margorp_16 = margorp.encode('utf-16')
 
 describe 'loading a language' do
@@ -87,7 +87,7 @@ describe 'parse_string_encoding' do
     ['valid', program, 1, :utf8],
     # ['invalid', margorp, 3, :utf8],
     ['empty', ''.encode('utf-16'), 0, :utf16],
-    ['valid', program_16, 1, :utf16],
+    ['valid', program16, 1, :utf16],
     # ['invalid', margorp_16, 1, :utf16]
   ].each do |q, p, c, e|
     it "must parse #{q} programs in #{e}" do
