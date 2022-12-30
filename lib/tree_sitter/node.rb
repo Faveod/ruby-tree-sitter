@@ -3,25 +3,20 @@
 module TreeSitter
   class Node
     def fields
-      init_fields
+      return @fields if @fields
+
+      @fields = Set.new
+      child_count.times do |i|
+        name = field_name_for_child(i)
+        @fields << name.to_sym if name
+      end
+
       @fields
     end
 
-    def field?(f)
-      init_fields
-      @fields.include?(f)
+    def field?(field)
+      fields.include?(field)
     end
-
-    def init_fields
-      if !@fields
-        @fields = Set.new
-        child_count.times do |i|
-          name = field_name_for_child(i)
-          @fields << name.to_sym if name
-        end
-      end
-    end
-    private :init_fields
 
     # Access node's named children.
     #
@@ -50,14 +45,13 @@ module TreeSitter
     #
     # @return [Node | Array<Node>]
     def [](*keys)
-      init_fields
       case keys.length
       when 0 then raise "#{self.class.name}##{__method__} requires a key."
       when 1
         case k = keys.first
         when Numeric        then named_child(k)
         when String, Symbol
-          if @fields.include?(k.to_sym)
+          if fields.include?(k.to_sym)
             child_by_field_name(k.to_s)
           else
             raise "Cannot find field #{k}"
@@ -74,8 +68,7 @@ module TreeSitter
 
     # Allows access to child_by_field_name without using [].
     def method_missing(method_name, *_args, &_block)
-      init_fields
-      if @fields.include?(method_name)
+      if fields.include?(method_name)
         child_by_field_name(method_name.to_s)
       else
         super
@@ -84,7 +77,7 @@ module TreeSitter
 
     def respond_to_missing?(*args)
       init_fields
-      args.length == 1 && @fields.include?(args[0])
+      args.length == 1 && fields.include?(args[0])
     end
 
     # Iterate over a node's children.
