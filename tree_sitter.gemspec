@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['firasalkhalil@gmail.com']
   spec.homepage      = 'https://www.github.com/Faveod/ruby-tree-sitter'
   spec.license       = 'MIT'
-  spec.name          = 'tree_sitter'
+  spec.name          = 'ruby_tree_sitter'
   spec.summary       = 'Ruby bindings for Tree-Sitter'
   spec.version       = TreeSitter::VERSION
 
