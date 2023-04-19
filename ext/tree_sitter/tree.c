@@ -100,7 +100,13 @@ static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
 static VALUE tree_print_dot_graph(VALUE self, VALUE file) {
   Check_Type(file, T_STRING);
   char *path = StringValueCStr(file);
-  int fd = open(path, O_WRONLY);
+  int fd = open(path, O_CREAT | O_WRONLY | O_TRUNC,
+                S_IWUSR | S_IRUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+  if (fd < 0) {
+    rb_raise(rb_eRuntimeError, "Could not open file `%s'.\nReason:\n%s", path,
+             strerror(fd));
+    return Qnil;
+  }
   ts_tree_print_dot_graph(SELF, fd);
   close(fd);
   return Qnil;
