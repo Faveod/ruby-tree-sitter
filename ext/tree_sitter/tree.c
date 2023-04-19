@@ -100,9 +100,9 @@ static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
 static VALUE tree_print_dot_graph(VALUE self, VALUE file) {
   Check_Type(file, T_STRING);
   char *path = StringValueCStr(file);
-  FILE *fd = fopen(path, "w+");
+  int fd = open(path, O_WRONLY);
   ts_tree_print_dot_graph(SELF, fd);
-  fclose(fd);
+  close(fd);
   return Qnil;
 }
 
