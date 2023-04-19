@@ -20,6 +20,7 @@ jobs:
         run: |
           git clone https://github.com/tree-sitter/tree-sitter
           cd tree-sitter
+          git checkout tags/v0.20.6
           make
           sudo make install
       - name: delete .so (ubuntu)
@@ -73,6 +74,7 @@ jobs:
         run: |
           git clone https://github.com/tree-sitter/tree-sitter
           cd tree-sitter
+          git checkout tags/v0.20.6
           make
           sudo make install
           sudo rm /usr/local/lib/libtree-sitter.so*
