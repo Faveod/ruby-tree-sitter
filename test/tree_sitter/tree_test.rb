@@ -38,7 +38,7 @@ end
 
 describe 'print_dot_graph' do
   it 'must save to disk' do
-    dot = File.expand_path('tmp/tree-dot.gv', FileUtils.getwd)
+    dot = File.expand_path('/tmp/tree-dot.gv', FileUtils.getwd)
     tree.print_dot_graph(dot)
 
     assert File.exist?(dot), 'dot file must be exist'

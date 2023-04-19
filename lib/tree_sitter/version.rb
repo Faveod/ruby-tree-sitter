@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module TreeSitter
-  VERSION = '0.20.6.4'
+  VERSION = '0.20.8.1'
 end

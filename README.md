@@ -41,8 +41,8 @@ allows us to better experiment, and easily port ideas from other projects.
 This gem follows the `tree-sitter` versioning scheme, and appends its own
 version at the end.
 
-For instance, `tree-sitter` is now at version `0.20.6`, so this gem's version
-will be `0.20.6.x` where x is incremented with every notable batch of
+For instance, `tree-sitter` is now at version `0.20.8`, so this gem's version
+will be `0.20.8.x` where x is incremented with every notable batch of
 bugfixes or some ruby-only additions.
 
 ## Dependencies
