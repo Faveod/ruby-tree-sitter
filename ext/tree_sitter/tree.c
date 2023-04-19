@@ -109,11 +109,10 @@ static VALUE tree_print_dot_graph(VALUE self, VALUE file) {
 static VALUE tree_finalizer(VALUE _self) {
   VALUE rc = rb_cv_get(cTree, "@@rc");
   VALUE keys = rb_funcall(rc, rb_intern("keys"), 0);
-  VALUE *elements = RARRAY_PTR(keys);
   long len = RARRAY_LEN(keys);
 
   for (long i = 0; i < len; ++i) {
-    VALUE curr = elements[i];
+    VALUE curr = RARRAY_AREF(keys, i);
     unsigned int val = NUM2UINT(rb_hash_lookup(rc, curr));
     if (val > 0) {
       ts_tree_delete((TSTree *)NUM2ULONG(curr));
