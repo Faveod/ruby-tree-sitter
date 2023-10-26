@@ -85,24 +85,31 @@ brew install tree-sitter
 
 ## Install
 
-We haven't released the gem on `Rubygems` as of yet, but we'e planning on doing so.
+From [rubygems](https://rubygems.org/gems/ruby_tree_sitter), in your `Gemfile`:
 
-Meanwhile, please install from `git` source, which will compile on installation.
+```ruby
+gem 'ruby_tree_sitter', '~> 0.20.8.1'
+```
 
-If you don't want to install from `git`, or if you don't want to compile on
-install, download a native gem from this repository's
-[releases](https://github.com/Faveod/ruby-tree-sitter/releases), or you can
-compile it yourself (see [Build from
-source](docs/Development.md#build-from-source) .)
+Or manually:
 
-### Gemfile
+```sh
+gem install ruby_tree_sitter
+```
+
+Or from `git` sources, which will compile on installation:
 
 ```ruby
 gem 'tree_sitter', git: 'https://github.com/Faveod/ruby-tree-sitter'
 ```
 
-If you chose to install a native gem, then you'd have to download it somewhere
-and then specify `path` as such:
+If you don't want to install from `rubygems`, `git`, or if you don't want to
+compile on install, then download a native gem from this repository's
+[releases](https://github.com/Faveod/ruby-tree-sitter/releases), or you can
+compile it yourself (see [Build from
+source](docs/Development.md#build-from-source) .)
+
+In that case, you'd have to point your `Gemfile` to the `gem` as such:
 
 ``` ruby
 gem 'tree_sitter', path: 'path/to/native/tree_sitter.gem'
