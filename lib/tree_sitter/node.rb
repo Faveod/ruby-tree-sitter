@@ -76,7 +76,6 @@ module TreeSitter
     end
 
     def respond_to_missing?(*args)
-      init_fields
       args.length == 1 && fields.include?(args[0])
     end
 
