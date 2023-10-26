@@ -27,7 +27,7 @@ mkdir -p $LOCAL
 cd $LOCAL
 
 if [ ! -d "$PARSER" ]; then
-  git clone --depth=1 https://github.com/tree-sitter/"$GET" "$PARSER"
+  git clone https://github.com/tree-sitter/"$GET" "$PARSER"
   cd "$PARSER"
   git checkout "$(git describe --tags "$(git rev-list --tags --max-count=1)")"
   cd ..
