@@ -44,12 +44,12 @@ set -e
 
 for i in $CFILES; do
   [ -f "$i" ] || continue
-  "$CC" "$CFLAGS" -std=c99 -fPIC -c "$i"
+  "$CC" $CFLAGS -std=c99 -fPIC -c "$i"
 done
 
 for i in $CXXFILES; do
   [ -f "$i" ] || continue
-  "$CXX" "$CFLAGS" -fPIC -c "$i"
+  "$CXX" $CFLAGS -fPIC -c "$i"
 done
 
 if test -n "$CXXFILES"; then
