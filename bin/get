@@ -7,15 +7,15 @@ OS="$(uname | tr '[:upper:]' '[:lower:]')"
 
 case "$OS" in
   darwin*)
-      EXT=dylib
-      CC=cc
-      CXX=c++
-      ;;
+    EXT=dylib
+    CC=cc
+    CXX=c++
+    ;;
   *)
-      EXT=so
-      CC=gcc
-      CXX=g++
-      ;;
+    EXT=so
+    CC=gcc
+    CXX=g++
+    ;;
 esac
 
 PARSER="$1"
@@ -26,12 +26,11 @@ OUT=../libtree-sitter-"$PARSER.$EXT"
 mkdir -p $LOCAL
 cd $LOCAL
 
-if [ ! -d "$PARSER" ]
-then
-    git clone https://github.com/tree-sitter/"$GET" "$PARSER"
-    cd "$PARSER"
-    git checkout "$(git describe --tags "$(git rev-list --tags --max-count=1)")"
-    cd ..
+if [ ! -d "$PARSER" ]; then
+  git clone --depth=1 https://github.com/tree-sitter/"$GET" "$PARSER"
+  cd "$PARSER"
+  git checkout "$(git describe --tags "$(git rev-list --tags --max-count=1)")"
+  cd ..
 fi
 
 cd "$PARSER"/src
@@ -44,19 +43,19 @@ CXXFILES=$(ls ./*.cc ./*.cpp ./*.cxx)
 set -e
 
 for i in $CFILES; do
-    [ -f "$i" ] || continue
-    "$CC" "$CFLAGS" -std=c99 -fPIC -c "$i"
+  [ -f "$i" ] || continue
+  "$CC" "$CFLAGS" -std=c99 -fPIC -c "$i"
 done
 
 for i in $CXXFILES; do
-    [ -f "$i" ] || continue
-    "$CXX" "$CFLAGS" -fPIC -c "$i"
+  [ -f "$i" ] || continue
+  "$CXX" "$CFLAGS" -fPIC -c "$i"
 done
 
 if test -n "$CXXFILES"; then
-    COMP="$CXX"
+  COMP="$CXX"
 else
-    COMP="$CC"
+  COMP="$CC"
 fi
 
 "$COMP" "$LDFLAGS" -shared ./*.o -o "$OUT"
