@@ -3,59 +3,68 @@
 set -e
 set -x
 
-OS="$(uname | tr '[:upper:]' '[:lower:]')"
-
-case "$OS" in
-  darwin*)
-    EXT=dylib
-    CC=cc
-    CXX=c++
-    ;;
-  *)
-    EXT=so
-    CC=gcc
-    CXX=g++
-    ;;
+case $OSTYPE in
+  (darwin*)
+      ext=dylib
+      CC=cc
+      CXX=c++
+      ;;
+  (*)
+      ext=so
+      CC=gcc
+      CXX=g++
+      ;;
 esac
 
-PARSER="$1"
-LOCAL=tree-sitter-parsers
-GET=tree-sitter-"$PARSER"
-OUT=../libtree-sitter-"$PARSER.$EXT"
+lang=$1
+local=tree-sitter-parsers
+repo=tree-sitter-$lang
+out=../libtree-sitter-$lang.$ext
 
-mkdir -p $LOCAL
-cd $LOCAL
+mkdir -p "$local"
+cd "$local"
 
-if [ ! -d "$PARSER" ]; then
-  git clone https://github.com/tree-sitter/"$GET" "$PARSER"
-  cd "$PARSER"
+if [ ! -d "$lang" ]; then
+  git clone "https://github.com/tree-sitter/$repo" "$lang"
+  cd "$lang"
   git checkout "$(git describe --tags "$(git rev-list --tags --max-count=1)")"
   cd ..
 fi
 
-cd "$PARSER"/src
+ls "$lang"
 
-LDFLAGS='-lstdc++'
-CFLAGS='-I/usr/include -I/usr/local/include -I/opt/include -I/opt/local/include'
-set +e
-CFILES=$(ls ./*.c)
-CXXFILES=$(ls ./*.cc ./*.cpp ./*.cxx)
-set -e
-
-for i in $CFILES; do
-  [ -f "$i" ] || continue
-  "$CC" $CFLAGS -std=c99 -fPIC -c "$i"
-done
-
-for i in $CXXFILES; do
-  [ -f "$i" ] || continue
-  "$CXX" $CFLAGS -fPIC -c "$i"
-done
-
-if test -n "$CXXFILES"; then
-  COMP="$CXX"
-else
-  COMP="$CC"
+if test -d "$lang/src"; then
+    cd "$lang/src"
+elif test -d "$lang/$lang/src"; then # This is the case of typescript parser.
+    cd "$lang/$lang/src"
 fi
 
-"$COMP" "$LDFLAGS" -shared ./*.o -o "$OUT"
+LDFLAGS='-lstdc++'
+CPPFLAGS='-I/usr/include -I/usr/local/include -I/opt/include -I/opt/local/include'
+CFLAGS='-std=c99'
+CXXFLAGS=
+
+set +e
+cfiles=$(echo *.c)
+cxxfiles=$(echo *.cc *.cpp *.cxx)
+set -e
+
+for i in $cfiles; do
+  if [ -f "$i" ]; then
+    $CC $CPPFLAGS $CFLAGS -fPIC -c $i
+  fi
+done
+
+for i in $cxxfiles; do
+  if [ -f "$i" ]; then
+    $CXX $CPPFLAGS $CXXFLAGS -fPIC -c $i
+  fi
+done
+
+if test -n "$cxxfiles"; then
+  LD=$CXX
+else
+  LD=$CC
+fi
+
+$LD $LDFLAGS -shared *.o -o $out
