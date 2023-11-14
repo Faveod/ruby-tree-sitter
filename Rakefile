@@ -11,14 +11,15 @@ rescue LoadError
   ERROR
 end
 
-require "ruby_memcheck"
+require 'ruby_memcheck'
 
 gemspec = Gem::Specification.load('tree_sitter.gemspec')
 
 cross_rubies = [
+  '3.2.0',
   '3.1.0',
   '3.0.0',
-  '2.7.0',
+  '2.7.0'
 ].freeze
 
 cross_platforms = [
@@ -30,21 +31,21 @@ cross_platforms = [
   #
   # FIXME: ld: unknown -soname
   # that's a bug in tree-sitter's makefile: it only checks for OS type and
-  # not compiler type, so when we're cross-building it blows in out face
+  # not compiler type, so when we're cross-building it blows in our face
   #
   'x86_64-darwin',
-  'arm64-darwin',
+  'arm64-darwin'
 ].freeze
 
 ENV['RUBY_CC_VERSION'] = cross_rubies.join(':') if !ENV['RUBY_CC_VERSION']
 Rake::ExtensionTask.new('tree_sitter', gemspec) do |r|
   r.lib_dir = 'lib/tree_sitter'
-    require "rake_compiler_dock"
-    r.cross_compile = true
-    r.cross_platform = cross_platforms
-    r.cross_compiling do |spec|
-      spec.files.reject! { |file| /(\.gz)$|(\.zip)$|(\.tar)$/ =~ File.basename(file) }
-    end
+  require 'rake_compiler_dock'
+  r.cross_compile = true
+  r.cross_platform = cross_platforms
+  r.cross_compiling do |spec|
+    spec.files.reject! { |file| /(\.gz)$|(\.zip)$|(\.tar)$/ =~ File.basename(file) }
+  end
 end
 
 Gem::PackageTask.new(gemspec) do |pkg|
