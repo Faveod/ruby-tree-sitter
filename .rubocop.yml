@@ -1,11 +1,13 @@
-AllCops:
-  TargetRubyVersion: "2.7"
-  Exclude:
-    - tree-sitter-parsers/**/*
-    - tmp/**/*
-  NewCops: enable
+Metrics/AbcSize:
+  Max: 29
 
-Style/IfUnlessModifier:
-  Enabled: false
+Metrics/MethodLength:
+  Max: 29
+
+Style/GlobalVars:
+  Exclude:
+    - ext/tree_sitter/extconf.rb
+
+# `unless` is cool and all, but I'd rather not. Less confusion.
 Style/NegatedIf:
   Enabled: false
