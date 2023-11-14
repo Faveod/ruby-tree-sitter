@@ -1,5 +1,9 @@
+# frozen_string_literal: true
+
 require 'mkmf'
 require 'pathname'
+
+require_relative 'repo'
 
 # ################################## #
 #             Some helpers           #
@@ -14,35 +18,13 @@ def system_tree_sitter?
   enable_config('sys-libs', true)
 end
 
-def sh cmd
-  if !system(cmd)
-    abort <<~MSG
-
-      Failed to run: #{cmd}
-
-      exiting…
-
-    MSG
-  end
-end
-
 def env_var_on?(var)
   %w[1 on true t yes y].include?(ENV.fetch(var, '').downcase)
 end
 
 # ################################## #
-#            System lib              #
-#                                    #
-#                OR                  #
-#                                    #
-#          Downloaded libs           #
+#    System lib vs Downloaded lib    #
 # ################################## #
-
-# This library's version is not really in semver.
-#
-# We append a version next to the tree-sitter's, so when fetching from sources
-# we need to strip off the addition.
-version = TreeSitter::VERSION.gsub(/\A(\d+\.\d+\.\d+)(\.\d+)?\z/, '\1')
 
 dir_include, dir_lib =
   if system_tree_sitter?
@@ -51,42 +33,73 @@ dir_include, dir_lib =
       %w[/opt/lib /opt/local/lib /usr/lib /usr/local/lib]
     ]
   else
-    src = Pathname.pwd / "tree-sitter-#{version}"
-    if !Dir.exist? src
-      if find_executable('git')
-        sh "git clone https://github.com/tree-sitter/tree-sitter #{src}"
-        sh "cd #{src} && git checkout tags/v#{version}"
-      elsif find_executable('curl')
-        if find_executable('tar')
-          sh "curl -L https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v#{version}.tar.gz -o tree-sitter-v#{version}.tar.gz"
-          sh "tar -xf tree-sitter-v#{version}.tar.gz"
-        elsif find_executable('zip')
-          sh "curl -L https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v#{version}.zip -o tree-sitter-v#{version}.zip"
-          sh "unzip -q tree-sitter-v#{version}.zip"
-        else
-          abort('Could not find `tar` or `zip` (and `git` was not found!)')
-        end
-      else
-        abort('Could not find `git` or `curl` to download tree-sitter and build from sources.')
-      end
+    repo = TreeSitter::Repo.new
+    if !repo.download
+      msg = <<~MSG
+
+        Could not fetch tree-sitter sources:
+
+        #{repo.exe.map { |k, v| "#{k}: #{v}" }.join("\n")}
+
+      MSG
+      abort(msg)
     end
 
     # We need to make sure we're selecting the proper toolchain.
     # Especially needed for corss-compilation.
     ENV.store('CC', RbConfig::CONFIG['CC'])
-    # We need to clean because the same folder is used over and over
-    # by rake-compiler-dock
-    sh "cd #{src} && make clean && make"
-
-    [[src / 'lib' / 'include'], [src.to_s]]
+    repo.compile
+    repo.keep_static_lib
+    repo.include_and_lib_dirs
   end
+
+# TREESITTER_SPEC = Bundler.load_gemspec('../../../../tree_sitter.gemspec')
+
+# # def version = TREESITTER_SPEC.version.gsub(/\A(\d+\.\d+\.\d+)(\.\d+)?\z/, '\1')
+
+# def version = '0.20.8'
+
+# LINUX_PLATFORM_REGEX = /linux/
+# DARWIN_PLATFORM_REGEX = /darwin/
+
+# def platform = RUBY_PLATFORM
+
+# def darwin?
+#   !!(platform =~ DARWIN_PLATFORM_REGEX)
+# end
+
+# def dll_ext
+#   darwin? ? 'dylib' : 'so'
+# end
+
+# def staging_path
+#   '../../stage/lib/tree_sitter'
+# end
+
+# def downloaded_dll_path
+#   "tree-sitter-#{version}"
+# end
+
+# def add_tree_sitter_dll_to_gem
+#   puts ">>>>>>>>>>>>> #{`pwd`}"
+#   path = "#{downloaded_dll_path}/libtree-sitter*.#{dll_ext}"
+#   files =
+#     Dir.glob(path)
+#        .map { |f| Pathname(f) }
+#        .filter { |f| !f.symlink? && f.file? }
+#   dll = files.first
+#   dst = Pathname(staging_path) / "libtree-sitter.#{dll_ext}"
+#   FileUtils.cp(dll, dst)
+#   TREESITTER_SPEC.files << dst
+# end
+
+# add_tree_sitter_dll_to_gem
 
 # ################################## #
 #          Generate Makefile         #
 # ################################## #
 
 header = find_header('tree_sitter/api.h', *dir_include)
-
 library = find_library('tree-sitter',   # libtree-sitter
                        'ts_parser_new', # a symbol
                        *dir_lib)
@@ -108,9 +121,7 @@ if !header || !library
   MSG
 end
 
-if env_var_on?('TREE_SITTER_PEDANTIC')
-  cflags << '-Werror'
-end
+cflags << '-Werror' if env_var_on?('TREE_SITTER_PEDANTIC')
 
 if env_var_on?('DEBUG')
   cflags << '-fbounds-check'
