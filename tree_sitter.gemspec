@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 lib = File.expand_path('lib', __dir__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+$LOAD_PATH.unshift(lib) if !$LOAD_PATH.include?(lib)
 
 require 'tree_sitter/version'
 
@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.version       = TreeSitter::VERSION
 
   spec.extensions    = %(ext/tree_sitter/extconf.rb)
-  spec.files         = %w(LICENSE README.md tree_sitter.gemspec)
+  spec.files         = %w[LICENSE README.md tree_sitter.gemspec]
   spec.files        += Dir.glob('ext/**/*.[ch]')
   spec.files        += Dir.glob('lib/**/*.rb')
   spec.test_files    = Dir.glob('test/**/*')
