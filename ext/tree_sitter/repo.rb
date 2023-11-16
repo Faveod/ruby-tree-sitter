@@ -8,11 +8,7 @@ module TreeSitter
     attr_reader :exe, :src, :url, :version
 
     def initialize
-      # This library's version is not really in semver.
-      #
-      # We append a version next to the tree-sitter's, so when fetching from sources
-      # we need to strip off the addition. And that's the default behavior.
-      @version = TreeSitter::VERSION.gsub(/\A(\d+\.\d+\.\d+)(\.\d+)?\z/, '\1')
+      @version = TREESITTER_VERSION
 
       # `tree-sitter-@version` is the name produced by tagged releases of sources
       # by git, so we use it everywhere, including when cloning from git.
