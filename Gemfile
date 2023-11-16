@@ -6,4 +6,4 @@ gemspec
 
 gem 'rubocop', require: false
 
-gem "ruby-lsp", "~> 0.3.2", :group => :development
+gem 'ruby-lsp', require: false
