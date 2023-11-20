@@ -27,7 +27,12 @@ describe 'language' do
       if p = ENV.fetch('TREE_SITTER_PARSERS', nil)
         Pathname(p) / "libtree-sitter-ruby.#{TreeSitter.ext}"
       else
-        Pathname('tree-sitter-parsers') / 'ruby' / "libtree-sitter-ruby.#{TreeSitter.ext}"
+        downloaded = Pathname('tree-sitter-parsers') / "libtree-sitter-ruby.#{TreeSitter.ext}"
+        if !downloaded.exist?
+          Pathname('tree-sitter-parsers') / "ruby" / "libtree-sitter-ruby.#{TreeSitter.ext}"
+        else
+          downloaded
+        end
       end
     ll = TreeSitter::Language.load('ruby', path)
     assert ll.field_count.positive?
