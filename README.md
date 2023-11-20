@@ -100,8 +100,24 @@ gem install ruby_tree_sitter
 Or from `git` sources, which will compile on installation:
 
 ```ruby
-gem 'tree_sitter', git: 'https://github.com/Faveod/ruby-tree-sitter'
+gem 'ruby_tree_sitter', git: 'https://github.com/Faveod/ruby-tree-sitter'
 ```
+
+### Disable system libraries
+
+To install with `--disable-sys-lib`, you can either:
+
+```sh
+gem install ruby_tree_sitter -- --disable-sys-libs
+```
+
+Or via bundle:
+
+```sh
+bundle config set build.ruby_tree_sitter --disable-sys-libs
+```
+
+### No compilation
 
 If you don't want to install from `rubygems`, `git`, or if you don't want to
 compile on install, then download a native gem from this repository's
@@ -124,6 +140,16 @@ You will have to install parsers yourself, either by:
 1. Downloading a pre-built binary from
    [Faveod/tree-sitter-parsers](https://github.com/Faveod/tree-sitter-parsers)
    which supports numerous architectures.
+
+### A note on static vs dynamic linking
+
+This extension will statically link against a downloaded version of
+`tree-sitter` when you use the `--disable-sys-lib`.  So any installed version of
+`tree-sitter` will not be loaded.
+
+The native gems are also statically linked.
+
+All other methods will dynamically link against the installed `tree-sitter`.
 
 ## Examples
 
