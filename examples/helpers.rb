@@ -9,20 +9,37 @@ module TreeSitter
     else             'so'
     end
   end
+  LIBDIRS = [
+    ENV['TREE_SITTER_PARSERS'] ? Pathname(ENV['TREE_SITTER_PARSERS']) : nil,
+    Pathname('lib'),
+    Pathname('app/lib'),
+    Pathname('tree-sitter-parsers'),
+    Pathname('/usr/lib'),
+    Pathname('/usr/local/lib'),
+    Pathname('/opt/lib'),
+    Pathname('/opt/local/lib'),
+  ].compact.freeze
 
   def self.lang name, lib = nil
     symbol = name.gsub(/-/, '_')
+    so     = "libtree-sitter-#{name}.#{ext}"
+
+    # Look for an existing lib installation.
+    lib ||= LIBDIRS.find { |dir|
+      dylib = dir / so
+      dylib = dir / name / so if !dylib.exist?
+      break dylib.expand_path if dylib.exist?
+    }
+
+    # Download if we still didn't find.
+    # NOTE: we only allow .so download to tree-sitter-parsers locally.
     if lib.nil?
-      if root = ENV.fetch('TREE_SITTER_PARSERS', nil)
-        dylib = Pathname(root) / "libtree-sitter-#{name}.#{ext}"
-      else
-        dylib = Pathname('tree-sitter-parsers') / name / "libtree-sitter-#{name}.#{ext}"
-        if !dylib.exist? && system("bin/get #{name}").nil?
-          raise "could not load #{name} from #{dylib}"
-        end
-      end
-      lib = dylib.expand_path
+      raise "could not load/download #{name} from #{dylib}" if system("bin/get #{name}").nil?
+
+      lib = Pathname.new("tree-sitter-parsers/#{name}/#{so}").expand_path
     end
+
+    raise "could not find a library with the symbol #{name}" if lib.nil?
 
     TreeSitter::Language.load(symbol, lib)
   end
