@@ -77,7 +77,7 @@ jobs:
           git checkout tags/v0.20.8
           make
           sudo make install
-          sudo rm /usr/local/lib/libtree-sitter.so*
+          sudo rm /usr/local/lib/libtree-sitter.a
           sudo ldconfig -v
       - name: bundle install
         run: |
