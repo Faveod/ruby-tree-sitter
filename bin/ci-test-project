@@ -1,0 +1,14 @@
+#! /usr/bin/env sh
+
+set -e
+set -x
+
+GITSRC=$(pwd)
+cp -R examples/test-project /tmp
+cd /tmp/test-project
+sed -i.bak "s/branch: 'ruby_tree_sitter'/branch: '$BRANCH'/" Gemfile
+bundle config set --local path vendor/bundle
+bundle config set local.ruby_tree_sitter "$GITSRC"
+bundle config set build.ruby_tree_sitter --disable-sys-libs
+bundle install
+env TREE_SITTER_PARSERS="$GITSRC/tree-sitter-parsers" bundle exec ruby main.rb

@@ -2,4 +2,4 @@
 
 source 'https://rubygems.org'
 
-gem 'ruby_tree_sitter', github: 'Faveod/ruby-tree-sitter', branch: 'HEAD'
+gem 'ruby_tree_sitter', github: 'Faveod/ruby-tree-sitter', branch: 'ruby_tree_sitter'
