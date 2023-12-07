@@ -16,6 +16,7 @@ case $OSTYPE in
       ;;
 esac
 
+tstag="0.20.8"
 lang=$1
 local=tree-sitter-parsers
 repo=tree-sitter-$lang
@@ -31,12 +32,28 @@ if [ ! -d "$lang" ]; then
   cd ..
 fi
 
-ls "$lang"
+clitarget="tree-sitter-$PLATFORM"
+cli="$(pwd)/$clitarget"
+if [ -n "$PLATFORM" ] && [ ! -f $clitarget ]
+then
+  # Get tree-sitter-cli
+  gz="$clitarget.gz"
+  wget "https://github.com/tree-sitter/tree-sitter/releases/download/v$tstag/$gz"
+  gunzip "$gz"
+  chmod +x "$clitarget"
+elif [ -z "$PLATFORM" ]
+then
+  # use system-wide tree-sitter-cli
+  cli="tree-sitter"
+fi
 
-if test -d "$lang/src"; then
+cd $lang
+$cli generate 
+
+if test -d "src"; then
+    cd "src"
+elif test -d "$lang/src"; then # This is the case of typescript parser.
     cd "$lang/src"
-elif test -d "$lang/$lang/src"; then # This is the case of typescript parser.
-    cd "$lang/$lang/src"
 fi
 
 LDFLAGS='-lstdc++'
