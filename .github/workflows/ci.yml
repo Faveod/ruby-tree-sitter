@@ -140,14 +140,13 @@ jobs:
       - name: test
         run: |
           bundle exec rake test
-      - name: fresh-project
-        run: |
-          GITSRC=$(pwd)
-          cp -R examples/test-project /tmp
-          cd /tmp/test-project
-          # sed -i "s/branch: 'ruby_tree_sitter'/branch: '$CI_COMMIT_BRANCH'/" Gemfile
-          bundle config set --local path vendor/bundle
-          bundle config set local.ruby_tree_sitter "$GITSRC"
-          bundle config set build.ruby_tree_sitter --disable-sys-libs
-          bundle install
-          env TREE_SITTER_PARSERS="$GITSRC/tree-sitter-parsers" bundle exec ruby main.rb
+      - name: fresh project on PR
+        if: github.event_name == 'pull_request'
+        env: 
+           BRANCH: HEAD
+        run: bin/ci-test-project
+      - name: fresh project when not a PR
+        if: github.event_name != 'pull_request'
+        env: 
+           BRANCH: ${{ github.ref_name }}
+        run: bin/ci-test-project
