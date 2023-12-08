@@ -142,7 +142,12 @@ module TreeSitter
     # uses         named_child                   | field_name_for_child
     #              child_by_field_name           |   via each_node
     #              ------------------------------+----------------------
-    def fetch(*keys)
+    # @param all [Boolean] If `true`, return an array of nodes for all the
+    # demanded keys, putting `nil` for missing ones.  If `false`, return the
+    # same array after calling `compact`. Defaults to `false`.
+    #
+    # See {#fetch_all}.
+    def fetch(*keys, all: false, **_kwargs)
       dict = {}
       keys.each.with_index do |k, i|
         dict[k.to_s] = i
@@ -151,13 +156,25 @@ module TreeSitter
       res = {}
       each_field do |f, c|
         if dict.key?(f)
-          res[dict[f]] = c
+          res[f] = c
           dict.delete(f)
         end
         break if dict.empty?
       end
 
-      res.sort.map { |_, v| v }
+      res = keys.uniq.map { |k| res[k.to_s] }
+      res = res.compact if !all
+      res
+    end
+
+    # Access all named children of a node, returning `nil` for missing ones.
+    #
+    # Equivalent to `fetch(…, all: true)`.
+    #
+    # See {#fetch}.
+    def fetch_all(*keys, **kwargs)
+      kwargs[:all] = true
+      fetch(*keys, **kwargs)
     end
   end
 end
