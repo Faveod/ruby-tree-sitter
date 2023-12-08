@@ -62,6 +62,7 @@ describe 'logging' do
     backend = StringIO.new
     parser.logger = TreeSitter::Logger.new(backend, "%s#{delim}%s")
     parser.parse_string(nil, program)
+    refute_empty backend.string, 'the backend should be filled with logs'
     backend.each_line do |l|
       assert (/#{delim}/ =~ l), 'delimiter must be in every single line'
     end
