@@ -61,12 +61,12 @@ static void logger_payload_set(logger_t *logger, VALUE value) {
     if (rb_respond_to(logger->payload, rb_intern("printf"))) {
       logger->data.log = logger_log_printf;
     } else if (rb_respond_to(logger->payload, rb_intern("puts"))) {
-      logger->data.log = &logger_log_puts;
+      logger->data.log = logger_log_puts;
     } else {
-      logger->data.log = &logger_log_write;
+      logger->data.log = logger_log_write;
     }
   } else if (!NIL_P(logger->payload)) {
-    logger->data.log = &logger_log_write;
+    logger->data.log = logger_log_write;
   }
 }
 
