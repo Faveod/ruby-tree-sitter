@@ -352,4 +352,60 @@ describe 'fetch' do
     assert_equal 1, m.length
     assert_equal method, m.first
   end
+
+  it 'should return an empty array when asked for non-existent fields' do
+    b = @child.fetch(:a)
+    assert_empty b
+
+    b = @child.fetch(:b, :focus)
+    assert_empty b
+  end
+
+  it 'should return an array of `nil` values when asked for non-existent fields with `all: true`' do
+    b = @child.fetch(:d, all: true)
+    refute_empty b
+    assert b.all?(&:nil?)
+
+    b = @child.fetch(:e, :f, all: true)
+    refute_empty b
+    assert b.all?(&:nil?)
+  end
+
+  it 'should return values, even if `nil`, for all keys when `all: true`' do
+    method = @child.child(0)
+    arguments = @child.child(1)
+
+    m, a, f = @child.fetch(:method, :arguments, :fake, all: true)
+
+    assert_equal method, m
+    assert_equal arguments, a
+    assert_nil f
+  end
+end
+
+describe 'fetch_all' do
+  before do
+    @child = root.child(0).child(4)
+  end
+
+  it 'should return an array of `nil` values when asked for non-existent fields' do
+    b = @child.fetch_all(:d)
+    refute_empty b
+    assert b.all?(&:nil?)
+
+    b = @child.fetch_all(:e, :f)
+    refute_empty b
+    assert b.all?(&:nil?)
+  end
+
+  it 'should return values, even if `nil`, for all keys' do
+    method = @child.child(0)
+    arguments = @child.child(1)
+
+    m, a, f = @child.fetch_all(:method, :arguments, :fake)
+
+    assert_equal method, m
+    assert_equal arguments, a
+    assert_nil f
+  end
 end
