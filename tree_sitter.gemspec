@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
 
   spec.extensions    = %(ext/tree_sitter/extconf.rb)
   spec.files         = %w[LICENSE README.md tree_sitter.gemspec]
-  spec.files        += Dir.glob('ext/**/*.[ch]')
+  spec.files        += Dir.glob('ext/**/*.{c,h,rb}')
   spec.files        += Dir.glob('lib/**/*.rb')
   spec.test_files    = Dir.glob('test/**/*')
 
