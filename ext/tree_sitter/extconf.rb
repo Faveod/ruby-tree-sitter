@@ -53,48 +53,6 @@ dir_include, dir_lib =
     repo.include_and_lib_dirs
   end
 
-# TREESITTER_SPEC = Bundler.load_gemspec('../../../../tree_sitter.gemspec')
-
-# # def version = TREESITTER_SPEC.version.gsub(/\A(\d+\.\d+\.\d+)(\.\d+)?\z/, '\1')
-
-# def version = '0.20.8'
-
-# LINUX_PLATFORM_REGEX = /linux/
-# DARWIN_PLATFORM_REGEX = /darwin/
-
-# def platform = RUBY_PLATFORM
-
-# def darwin?
-#   !!(platform =~ DARWIN_PLATFORM_REGEX)
-# end
-
-# def dll_ext
-#   darwin? ? 'dylib' : 'so'
-# end
-
-# def staging_path
-#   '../../stage/lib/tree_sitter'
-# end
-
-# def downloaded_dll_path
-#   "tree-sitter-#{version}"
-# end
-
-# def add_tree_sitter_dll_to_gem
-#   puts ">>>>>>>>>>>>> #{`pwd`}"
-#   path = "#{downloaded_dll_path}/libtree-sitter*.#{dll_ext}"
-#   files =
-#     Dir.glob(path)
-#        .map { |f| Pathname(f) }
-#        .filter { |f| !f.symlink? && f.file? }
-#   dll = files.first
-#   dst = Pathname(staging_path) / "libtree-sitter.#{dll_ext}"
-#   FileUtils.cp(dll, dst)
-#   TREESITTER_SPEC.files << dst
-# end
-
-# add_tree_sitter_dll_to_gem
-
 # ################################## #
 #          Generate Makefile         #
 # ################################## #
