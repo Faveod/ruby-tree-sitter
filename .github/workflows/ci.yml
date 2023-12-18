@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         ruby: [2.7, 3.0, 3.1, 3.2]
-        platform: 
+        platform:
           - { os: ubuntu, target: linux-x64 }
           - { os: macos,  target: macos-x64 }
     runs-on: ${{ matrix.platform.os }}-latest
@@ -110,7 +110,7 @@ jobs:
       fail-fast: false
       matrix:
         ruby: [2.7, 3.0, 3.1, 3.2]
-        platform: 
+        platform:
           - { os: ubuntu, target: linux-x64, ext: so    }
           - { os: macos,  target: macos-x64, ext: dylib }
     runs-on: ${{ matrix.platform.os }}-latest
@@ -140,13 +140,13 @@ jobs:
       - name: test
         run: |
           bundle exec rake test
-      - name: fresh project on PR
-        if: github.event_name == 'pull_request'
-        env: 
+      - name: fresh project on PR or tag
+        if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/')
+        env:
            BRANCH: HEAD
         run: bin/ci-test-project
       - name: fresh project when not a PR
         if: github.event_name != 'pull_request'
-        env: 
+        env:
            BRANCH: ${{ github.ref_name }}
         run: bin/ci-test-project
