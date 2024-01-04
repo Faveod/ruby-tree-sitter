@@ -113,6 +113,7 @@ static VALUE input_set_payload(VALUE self, VALUE payload) {
   return Qnil;
 }
 
+// FIXME: Missing encoding and read!
 void init_input(void) {
   cInput = rb_define_class_under(mTreeSitter, "Input", rb_cObject);
 
