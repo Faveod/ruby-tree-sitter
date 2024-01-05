@@ -19,7 +19,7 @@ cross_rubies = [
   '3.2.0',
   '3.1.0',
   '3.0.0',
-  '2.7.0'
+  '2.7.0',
 ].freeze
 
 cross_platforms = [
@@ -34,7 +34,7 @@ cross_platforms = [
   # not compiler type, so when we're cross-building it blows in our face
   #
   'x86_64-darwin',
-  'arm64-darwin'
+  'arm64-darwin',
 ].freeze
 
 ENV['RUBY_CC_VERSION'] = cross_rubies.join(':') if !ENV['RUBY_CC_VERSION']
@@ -54,13 +54,19 @@ end
 desc 'Build native gems'
 task 'gem:native' do
   cross_platforms.each do |plat|
-    RakeCompilerDock.sh "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem", platform: plat
+    RakeCompilerDock.sh(
+      "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem",
+      platform: plat,
+    )
   end
 end
 
 cross_platforms.each do |plat|
   task "gem:#{plat}" do
-    RakeCompilerDock.sh "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem", platform: plat
+    RakeCompilerDock.sh(
+      "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem",
+      platform: plat,
+    )
   end
 end
 
@@ -84,7 +90,7 @@ task :console do
   require_relative 'examples/helpers'
 
   def reload!
-    files = $LOADED_FEATURES.select { |feat| feat =~ %r{/tree_sitter/} }
+    files = $LOADED_FEATURES.grep(%r{/tree_sitter/})
     files.each { |file| load file }
   end
 
@@ -92,7 +98,7 @@ task :console do
   Pry.start
 end
 
-test_config = lambda do |t|
+test_config = ->(t) do
   t.libs << 'lib' << 'test'
   t.libs << 'minitest/autorun' << 'minitest/color'
   t.pattern = 'test/**/*_test.rb'

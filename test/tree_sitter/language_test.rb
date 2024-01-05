@@ -28,10 +28,10 @@ describe 'language' do
         Pathname(p) / "libtree-sitter-ruby.#{TreeSitter.ext}"
       else
         downloaded = Pathname('tree-sitter-parsers') / "libtree-sitter-ruby.#{TreeSitter.ext}"
-        if !downloaded.exist?
-          Pathname('tree-sitter-parsers') / "ruby" / "libtree-sitter-ruby.#{TreeSitter.ext}"
-        else
+        if downloaded.exist?
           downloaded
+        else
+          Pathname('tree-sitter-parsers') / 'ruby' / "libtree-sitter-ruby.#{TreeSitter.ext}"
         end
       end
     ll = TreeSitter::Language.load('ruby', path)

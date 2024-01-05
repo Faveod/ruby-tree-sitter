@@ -17,7 +17,7 @@ module TreeSitter
       @url = {
         git: 'https://github.com/tree-sitter/tree-sitter',
         tar: "https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v#{@version}.tar.gz",
-        zip: "https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v#{@version}.zip"
+        zip: "https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v#{@version}.zip",
       }
 
       @exe = {}
