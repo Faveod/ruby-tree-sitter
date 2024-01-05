@@ -6,7 +6,22 @@ VALUE cQuery;
 
 DATA_PTR_WRAP(Query, query);
 
+/**
+ * Create a new query from a string containing one or more S-expression
+ * patterns. The query is associated with a particular language, and can
+ * only be run on syntax nodes parsed with that language.
+ *
+ * If all of the given patterns are valid, this returns a {Query}.
+ *
+ * @raise [RuntimeError]
+ *
+ * @param language [Language]
+ * @param source   [String]
+ *
+ * @return [Query]
+ */
 static VALUE query_initialize(VALUE self, VALUE language, VALUE source) {
+  // FIXME: should we raise an exception here?
   TSLanguage *lang = value_to_language(language);
   const char *src = StringValuePtr(source);
   uint32_t len = (uint32_t)RSTRING_LEN(source);
@@ -25,18 +40,45 @@ static VALUE query_initialize(VALUE self, VALUE language, VALUE source) {
   return self;
 }
 
+/**
+ * Get the number of patterns in the query.
+ *
+ * @return [Integer]
+ */
 static VALUE query_pattern_count(VALUE self) {
   return UINT2NUM(ts_query_pattern_count(SELF));
 }
 
+/**
+ * Get the number of captures literals in the query.
+ *
+ * @return [Integer]
+ */
 static VALUE query_capture_count(VALUE self) {
   return UINT2NUM(ts_query_capture_count(SELF));
 }
 
+/**
+ * Get the number of string literals in the query.
+ *
+ * @return [Integer]
+ */
 static VALUE query_string_count(VALUE self) {
   return UINT2NUM(ts_query_string_count(SELF));
 }
 
+/**
+ * Get the byte offset where the given pattern starts in the query's source.
+ *
+ * This can be useful when combining queries by concatenating their source
+ * code strings.
+ *
+ * @raise [IndexError] if out of range.
+ *
+ * @param pattern_index [Integer]
+ *
+ * @return [Integer]
+ */
 static VALUE query_start_byte_for_pattern(VALUE self, VALUE pattern_index) {
   const TSQuery *query = SELF;
   uint32_t index = NUM2UINT(pattern_index);
@@ -49,6 +91,26 @@ static VALUE query_start_byte_for_pattern(VALUE self, VALUE pattern_index) {
   }
 }
 
+/**
+ * Get all of the predicates for the given pattern in the query.
+ *
+ * The predicates are represented as a single array of steps. There are three
+ * types of steps in this array, which correspond to the three legal values for
+ * the +type+ field:
+ * - {QueryPredicateStep::CAPTURE}: Steps with this type represent names
+ *   of captures. Their +value_id+ can be used with the
+ *   {Query#capture_name_for_id} function to obtain the name of the capture.
+ * - {QueryPredicateStep::STRING}: Steps with this type represent literal
+ *   strings. Their +value_id+ can be used with the
+ *   {Query#string_value_for_id} function to obtain their string value.
+ * - {QueryPredicateStep::DONE}: Steps with this type are *sentinels*
+ *   that represent the end of an individual predicate. If a pattern has two
+ *   predicates, then there will be two steps with this +type+ in the array.
+ *
+ * @param pattern_index [Integer]
+ *
+ * @return [Array<QueryPredicateStep>]
+ */
 static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
   const TSQuery *query = SELF;
   uint32_t index = NUM2UINT(pattern_index);
@@ -64,11 +126,30 @@ static VALUE query_predicates_for_pattern(VALUE self, VALUE pattern_index) {
   return res;
 }
 
+/**
+ * Check if a given pattern is guaranteed to match once a given step is reached.
+ * The step is specified by its byte offset in the query's source code.
+ *
+ * @param byte_offset [Integer]
+ *
+ * @return [Integer]
+ */
 static VALUE query_pattern_guaranteed_at_step(VALUE self, VALUE byte_offset) {
   return UINT2NUM(
       ts_query_is_pattern_guaranteed_at_step(SELF, NUM2UINT(byte_offset)));
 }
 
+/**
+ * Get the name and length of one of the query's captures, or one of the
+ * query's string literals. Each capture and string is associated with a
+ * numeric id based on the order that it appeared in the query's source.
+ *
+ * @raise [IndexError] if out of range.
+ *
+ * @param id [Integer]
+ *
+ * @return [String]
+ */
 static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
   const TSQuery *query = SELF;
   uint32_t index = NUM2UINT(id);
@@ -83,6 +164,17 @@ static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
   }
 }
 
+/**
+ * Get the quantifier of the query's captures. Each capture is associated
+ * with a numeric id based on the order that it appeared in the query's source.
+ *
+ * @raise [IndexError] if out of range.
+ *
+ * @param id         [Integer]
+ * @param capture_id [Integer]
+ *
+ * @return [Integer]
+ */
 static VALUE query_capture_quantifier_for_id(VALUE self, VALUE id,
                                              VALUE capture_id) {
   const TSQuery *query = SELF;
@@ -98,6 +190,14 @@ static VALUE query_capture_quantifier_for_id(VALUE self, VALUE id,
   }
 }
 
+/**
+ * @raise [IndexError] if out of range.
+ *
+ * @param id [Integer]
+ *
+ * @return [String]
+ */
+
 static VALUE query_string_value_for_id(VALUE self, VALUE id) {
   const TSQuery *query = SELF;
   uint32_t index = NUM2UINT(id);
@@ -112,6 +212,17 @@ static VALUE query_string_value_for_id(VALUE self, VALUE id) {
   }
 }
 
+/**
+ * Disable a certain capture within a query.
+ *
+ * This prevents the capture from being returned in matches, and also avoids
+ * any resource usage associated with recording the capture. Currently, there
+ * is no way to undo this.
+ *
+ * @param capture [String]
+ *
+ * @return [nil]
+ */
 static VALUE query_disable_capture(VALUE self, VALUE capture) {
   const char *cap = StringValuePtr(capture);
   uint32_t length = (uint32_t)RSTRING_LEN(capture);
@@ -119,6 +230,18 @@ static VALUE query_disable_capture(VALUE self, VALUE capture) {
   return Qnil;
 }
 
+/**
+ * Disable a certain pattern within a query.
+ *
+ * This prevents the pattern from matching and removes most of the overhead
+ * associated with the pattern. Currently, there is no way to undo this.
+ *
+ * @raise [IndexError] if out of range.
+ *
+ * @param pattern [Integer]
+ *
+ * @return [nil]
+ */
 static VALUE query_disable_pattern(VALUE self, VALUE pattern) {
   TSQuery *query = SELF;
   uint32_t index = NUM2UINT(pattern);
@@ -132,6 +255,9 @@ static VALUE query_disable_pattern(VALUE self, VALUE pattern) {
   }
 }
 
+// FIXME: missing:
+// 1. ts_query_is_pattern_rooted
+// 1. ts_query_is_pattern_non_local
 void init_query(void) {
   cQuery = rb_define_class_under(mTreeSitter, "Query", rb_cObject);
 
