@@ -63,22 +63,66 @@ VALUE new_tree(TSTree *ptr) {
 
 DATA_FROM_VALUE(TSTree *, tree)
 
+/**
+ * Create a shallow copy of the syntax tree. This is very fast.
+ *
+ * You need to copy a syntax tree in order to use it on more than one thread at
+ * a time, as syntax trees are not thread safe.
+ *
+ * @return [Tree]
+ */
 static VALUE tree_copy(VALUE self) { return new_tree(ts_tree_copy(SELF)); }
 
+/**
+ * Get the root node of the syntax tree.
+ *
+ * @return [Node]
+ */
 static VALUE tree_root_node(VALUE self) {
   return new_node_by_val(ts_tree_root_node(SELF));
 }
 
+/**
+ * Get the language that was used to parse the syntax tree.
+ *
+ * @return [Language]
+ */
 static VALUE tree_language(VALUE self) {
   return new_language(ts_tree_language(SELF));
 }
 
+/**
+ * Edit the syntax tree to keep it in sync with source code that has been
+ * edited.
+ *
+ * You must describe the edit both in terms of byte offsets and in terms of
+ * (row, column) coordinates.
+ *
+ * @param edit [InputEdit]
+ *
+ * @return [nil]
+ */
 static VALUE tree_edit(VALUE self, VALUE edit) {
   TSInputEdit in = value_to_input_edit(edit);
   ts_tree_edit(SELF, &in);
   return Qnil;
 }
 
+/**
+ * Compare an old edited syntax tree to a new syntax tree representing the same
+ * document, returning an array of ranges whose syntactic structure has changed.
+ *
+ * For this to work correctly, the old syntax tree must have been edited such
+ * that its ranges match up to the new tree. Generally, you'll want to call
+ * this function right after calling one of the {Parser#parse} functions.
+ * You need to pass the old tree that was passed to parse, as well as the new
+ * tree that was returned from that function.
+ *
+ * @param old_tree [Tree]
+ * @param new_tree [Tree]
+ *
+ * @return [Array<Range>]
+ */
 static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
   TSTree *old = unwrap(old_tree)->data;
   TSTree *new = unwrap(new_tree)->data;
@@ -97,6 +141,13 @@ static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
   return res;
 }
 
+/**
+ * Write a DOT graph describing the syntax tree to the given file.
+ *
+ * @param file [String]
+ *
+ * @return [nil]
+ */
 static VALUE tree_print_dot_graph(VALUE self, VALUE file) {
   Check_Type(file, T_STRING);
   char *path = StringValueCStr(file);
@@ -130,6 +181,9 @@ static VALUE tree_finalizer(VALUE _self) {
   return Qnil;
 }
 
+// FIXME: missing:
+// 1. ts_tree_root_node_with_offset
+// 1. ts_tree_included_ranges
 void init_tree(void) {
   cTree = rb_define_class_under(mTreeSitter, "Tree", rb_cObject);
 
