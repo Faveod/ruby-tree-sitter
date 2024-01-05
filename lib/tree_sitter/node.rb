@@ -2,6 +2,7 @@
 
 module TreeSitter
   class Node
+    # @return [Array<Symbol>] the node's named fields
     def fields
       return @fields if @fields
 
@@ -116,6 +117,7 @@ module TreeSitter
       end
     end
 
+    # @return [Array<TreeSitter::Node>] all the node's children
     def to_a
       each.to_a
     end
