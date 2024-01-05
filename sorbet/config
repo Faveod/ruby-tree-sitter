@@ -1,0 +1,6 @@
+--dir
+.
+--ignore=tmp/
+--ignore=test/
+--ignore=vendor/
+--ignore=ext/
