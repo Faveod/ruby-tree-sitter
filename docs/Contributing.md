@@ -1,4 +1,4 @@
-# Development
+# Contributting to tree-sitter
 
 If you want to hack on this gem, please follow [Build from
 Source](#build-from-source), and then you only have to work with `rake compile`
@@ -9,35 +9,95 @@ We've run into trouble several times by not doing so.
 
 You can jump into a REPL and start experimenting with:
 
-```console
+```sh
 bundle exec rake console
 ```
 
-### Build from source
+## Build from source
 
-```console
+### Dependencies
+
+To work on this gem you'll need the tree-sitter CLI tool. See the [offical
+documentation](https://github.com/tree-sitter/tree-sitter/blob/master/cli/README.md#tree-sitter-cli) for installation
+instructions.
+
+Clone the repository and run the setup script.
+
+### Clone and Build
+```sh
 git clone https://github.com/Faveod/ruby-tree-sitter
-bundle install
-bundle exec rake compile
+bin/setup
 ```
 
 If you chose not to bother with `tree-sitter` installation:
 
-``` console
+```sh
 bundle exec rake compile -- --disable-sys-libs
 ```
+
+## Testing
+
+```
+bundle exec rake test
+```
+
+## Typechecking
+
+```
+bundle exec srb tc
+```
+
+## Documentation
+
+To run the documentation server, execute the following command and open [localhost:8808](http://localhost:8808).
+
+```
+bundle exec yard server --reload
+```
+
+To get statistics about documentation coverage and which items are missing documentation run the following command.
+
+```
+bundle exec yard stats --list-undoc
+# Example output:
+#
+# Files:          10
+# Modules:         2 (    0 undocumented)
+# Classes:        11 (    0 undocumented)
+# Constants:       1 (    0 undocumented)
+# Attributes:     14 (    0 undocumented)
+# Methods:        34 (    0 undocumented)
+#  100.00% documented
+```
+
+## Pushing a new Version
+
+Create a new PR to bump the version number in `lib/tree_sitter/version.rb`.
+
+Once that PR is merged, tag the latest commit with the format `v#{TreeSitter::VERSION}` and push the new tag.
+
+```sh
+git tag v1.0.0
+git push --tags
+```
+
+Draft a new Release [on Github](https://github.com/Faveod/ruby-tree-sitter/releases).
+
+## Advanced topics
+
+⚠️  ASAN and Valgrind are not currently passing the CI, but maybe they would on your local machine.
 
 ### Native gems
 
 To produce a gem that compiles on installation:
 
-``` console
+```sh
 rake gem
 ```
 
 To produce a native gem, which will not compile on installation:
 
-``` console
+```sh
 rake native gem
 ```
 
@@ -45,20 +105,20 @@ rake native gem
 
 You can enable `asan` by setting the `SANITIZE` environment variable before building:
 
-```console
+```sh
 SANITIZE=address,undefined bundle exec rake compile
 ```
 
 On linux:
 
-``` console
+```sh
 LD_PRELOAD=libasan.so.6 bundle exec rake test
 ```
 
 If you're on a mac, or if you don't want to have a headache running `asan`
 locally, you can run `asan` in the provided docker image:
 
-```console
+```sh
 ./bin/memcheck address,undefined
 ```
 
@@ -69,7 +129,7 @@ set-up `asan` and filter out the noise.
 
 If you're on linux, you can simply run:
 
-```console
+```sh
 bundle exec rake test:valgrind
 ```
 
@@ -78,7 +138,7 @@ Which will run the tests with `valgrind` and report any memory leaks.
 If you're on a mac, or if you don't want to install `valgrind` locally, you can run
 `valgrind` in the provided docker image:
 
-```console
+```sh
 ./bin/memcheck valgrind
 ```
 
@@ -95,13 +155,13 @@ this [blogpost](https://blog.wataash.com/ruby-c-extension/))
 
 1. Install ruby with sources:
 
-``` console
+```sh
 rbenv install --keep --verbose 3.1.2
 ```
 
 2. Launch `gdb`:
 
-``` console
+```sh
 bundle exec gdb -q -ex 'set breakpoint pending on' -ex 'b node_string' -ex run --args ruby examples/01-json.rb
 ```
 
