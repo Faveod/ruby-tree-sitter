@@ -20,6 +20,18 @@ module TreeSitter
       fields.include?(field)
     end
 
+    # FIXME: These APIs (`[]` and `fetch`) need absolute fixing.
+    # 1. The documentation with the table doesn't work.
+    # 1. The APIs are very confusing! Make them act similarly to Hash's
+    #    `fetch` and `[]`.
+    #    1. `[]` should take a single input and return nil if nothing found
+    #       (no exceptions).
+    #    1. `fetch` should should accept a single argument, potentially a
+    #       default, and raise exception if no default was provided.
+    #       Also allow for the `all:` kwarg.
+    #    1. `values_at` takes many arguments.
+    # And I don't think we can move to 1.0 without adressing them.
+    #
     # Access node's named children.
     #
     # It's similar to {#fetch}, but differes in input type, return values, and
@@ -66,6 +78,8 @@ module TreeSitter
       end
     end
 
+    # @!visibility private
+    #
     # Allows access to child_by_field_name without using [].
     def method_missing(method_name, *_args, &_block)
       if fields.include?(method_name)
@@ -75,6 +89,8 @@ module TreeSitter
       end
     end
 
+    # @!visibility private
+    #
     def respond_to_missing?(*args)
       args.length == 1 && fields.include?(args[0])
     end
