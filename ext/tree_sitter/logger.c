@@ -147,19 +147,35 @@ static void logger_initialize_stderr(logger_t *logger) {
   }
 }
 
-// For now, we only take:
-// argv[0] = stream
-// argv[1] = format : String
-//
-// We need to add support for argv[1] : lambda/block
-//
-// case argv[1]
-// in lambda => lambda
-// in String => puts || printf || write
-// else      => write
-// end
-//
+/**
+ * Create a new logger.
+ *
+ * By default, it logs to stderr.
+ *
+ * You can provide your proper backend. You have to make sure that it
+ * exposes a +printf+, +puts+, or +write+ (lookup is done in that specific
+ * order). {StringIO} is a perfect candidate.
+ *
+ * You can also provide a format ({String}) if your backend supports a +printf+.
+ *
+ * @example
+ *   backend = StringIO.new
+ *   parser.logger = TreeSitter::Logger.new(backend)
+ *
+ * @param args [Array] The first argument is always a backend. The second
+ *                     argument is the format.
+ */
 static VALUE logger_initialize(int argc, VALUE *argv, VALUE self) {
+  // TODO:
+  // For now, we only take:
+  //   argv[0] = stream
+  //   argv[1] = format : String
+  // We need to add support for argv[1] : lambda/block
+  //   case argv[1]
+  //   in lambda => lambda
+  //   in String => puts || printf || write
+  //   else      => write
+  //   end
   logger_t *logger = unwrap(self);
 
   VALUE payload;
