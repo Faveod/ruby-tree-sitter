@@ -10,6 +10,10 @@ very old, unmaintained, and don't work with modern `tree-sitter` APIs.
 
 ## Usage
 
+### TreeSitter API
+
+The TreeSitter API is a low-level Ruby binding for tree-sitter.
+
 ``` ruby
 require 'tree_sitter'
 
@@ -28,27 +32,34 @@ root.each do |child|
 end
 ```
 
-## About
+The main philosophy behind the TreeSitter bindings is to do a 1:1 mapping between
+tree-sitter's `C` API and `Ruby`, which makes it easier to experiment and port
+ideas from different languages/bindings.
 
-The main philosophy behind these bindings is to do a 1:1 mapping between
-tree-sitter's `C` API and `Ruby`.
+But it feels like writing some managed `C` with `Ruby`, and that's why we provide
+a high-level API ([TreeStand](#treestand-api)) as well.
 
-It doesn't mean that we're going to yield the best perormance, but this design
-allows us to better experiment, and easily port ideas from other projects.
+### TreeStand API
 
-### Versioning
+The TreeStand API is a high-level Ruby wrapper for the [TreeSitter](#treesitter-api) bindings. It
+makes it easier to configure the parsers, and work with the underlying syntax tree.
+```ruby
+require 'tree_stand'
 
-This gem follows the `tree-sitter` versioning scheme, and appends its own
-version at the end.
+TreeStand.configure do
+  config.parser_path = "path/to/parser/folder/"
+end
 
-For instance, `tree-sitter` is now at version `0.20.8`, so this gem's version
-will be `0.20.8.x` where x is incremented with every notable batch of
-bugfixes or some ruby-only additions.
+sql_parser = TreeStand::Parser.new("sql")
+ruby_parser = TreeStand::Parser.new("ruby")
+```
+
+TreeStand provides an idiomatic Ruby interface to work with tree-sitter parsers.
 
 ## Dependencies
 
-This gem is a binding for `tree-sitter`.  It doesn't have a version of
-`tree-sitter` baked in it.
+This gem is a binding for `tree-sitter`. It doesn't have a version of
+`tree-sitter` baked in it by default.
 
 You must install `tree-sitter` and make sure that their dynamic library is
 accessible from `$PATH`, or build the gem with `--disable-sys-libs`, which will
@@ -130,6 +141,9 @@ In that case, you'd have to point your `Gemfile` to the `gem` as such:
 ``` ruby
 gem 'tree_sitter', path: 'path/to/native/tree_sitter.gem'
 ```
+
+⚠️ We're currently missing a lot of platforms and architectures. Cross-build
+will come back in the near future.
 
 ### Parsers
 
