@@ -18,5 +18,3 @@ gcc -shared -o target/parser.so -fPIC src/parser.c -I./src
 cd ../..
 mkdir -p tree-sitter-parsers
 cp tmp/tree-sitter-math/target/parser.so tree-sitter-parsers/math.so
-
-bundle exec rake compile -- --disable-sys-libs
