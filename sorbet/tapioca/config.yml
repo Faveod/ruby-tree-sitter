@@ -1,0 +1,47 @@
+gem:
+  exclude:
+  - ansi
+  - ast
+  - builder
+  - diff-lcs
+  - io-console
+  - irb
+  - json
+  - language_server-protocol
+  - mini_portile2
+  - minitest-focus
+  - minitest-reporters
+  - minitest
+  - netrc
+  - nokogiri
+  - parallel
+  - parser
+  - prettier_print
+  - psych
+  - racc
+  - rainbow
+  - rake-compiler-dock
+  - rake-compiler
+  - rake
+  - rbi
+  - rdoc
+  - regexp_parser
+  - reline
+  - rexml
+  - rubocop-ast
+  - rubocop
+  - ruby-lsp
+  - ruby-progressbar
+  - ruby_memcheck
+  - spoom
+  - stringio
+  - syntax_tree
+  - tapioca
+  - thor
+  - unicode-display_width
+  - unparser
+  - webrick
+  - yard-sorbet
+  - yard
+  doc: false
+dsl:

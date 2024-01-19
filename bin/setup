@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+set -vx
+
+bundle install
+
+if [[ ! -d tmp/tree-sitter-math ]]; then
+  mkdir -p tmp
+  git -C tmp/ clone --depth=1 https://github.com/DerekStride/tree-sitter-math.git
+fi
+
+cd tmp/tree-sitter-math
+
+mkdir -p target
+gcc -shared -o target/parser.so -fPIC src/parser.c -I./src
+
+cd ../..
+mkdir -p tree-sitter-parsers
+cp tmp/tree-sitter-math/target/parser.so tree-sitter-parsers/math.so

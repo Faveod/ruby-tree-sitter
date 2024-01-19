@@ -30,7 +30,7 @@ dir_include, dir_lib =
   if system_tree_sitter?
     [
       %w[/opt/include /opt/local/include /usr/include /usr/local/include],
-      %w[/opt/lib /opt/local/lib /usr/lib /usr/local/lib]
+      %w[/opt/lib /opt/local/lib /usr/lib /usr/local/lib],
     ]
   else
     repo = TreeSitter::Repo.new

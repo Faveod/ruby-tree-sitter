@@ -13,7 +13,7 @@ RUN rm -rf tree-sitter-parsers
 RUN gem update --system --no-document
 RUN gem install rake-compiler
 RUN bundle config set --local path './vendor'
-RUN bundle install
+RUN bin/setup
 
 # RUN ls -lah | grep asan && sleep 10
 ENV CC=clang

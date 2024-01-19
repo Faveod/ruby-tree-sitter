@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TreeSitter is a Ruby interface to the tree-sitter parsing library.
 module TreeSitter
 end
 

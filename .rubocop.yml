@@ -1,13 +1,76 @@
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3
+  SuggestExtensions: false
+  Exclude:
+    - tree-sitter-parsers/**/*
+    - tmp/**/*
+    - pkg/**/*
+    - examples/**/*
+    - vendor/**/*
+
+# This should probably be updated
+Gemspec/RequireMFA:
+  Enabled: false
+
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Lint/EmptyBlock:
+  Exclude:
+    - test/**/*
+    - Rakefile
+
 Metrics/AbcSize:
   Max: 29
 
+Metrics/BlockLength:
+  Exclude:
+    - test/**/*
+
+Metrics/ClassLength:
+  Enabled: false
+
 Metrics/MethodLength:
   Max: 29
+  Exclude:
+    - test/**/*
+
+Security/Eval:
+  Exclude:
+    - bin/*
+
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+
+Style/AccessorGrouping:
+  Enabled: false
 
 Style/GlobalVars:
   Exclude:
     - ext/tree_sitter/extconf.rb
 
+Style/Lambda:
+  EnforcedStyle: literal
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
 # `unless` is cool and all, but I'd rather not. Less confusion.
 Style/NegatedIf:
+  Enabled: false
+
+Style/NegatedWhile:
   Enabled: false

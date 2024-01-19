@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module TreeSitter
+  # Node is a wrapper around a tree-sitter node.
   class Node
+    # @return [Array<Symbol>] the node's named fields
     def fields
       return @fields if @fields
 
@@ -49,13 +51,11 @@ module TreeSitter
       when 0 then raise "#{self.class.name}##{__method__} requires a key."
       when 1
         case k = keys.first
-        when Numeric        then named_child(k)
+        when Numeric then named_child(k)
         when String, Symbol
-          if fields.include?(k.to_sym)
-            child_by_field_name(k.to_s)
-          else
-            raise "Cannot find field #{k}"
-          end
+          raise "Cannot find field #{k}" unless fields.include?(k.to_sym)
+
+          child_by_field_name(k.to_s)
         else raise <<~ERR
           #{self.class.name}##{__method__} accepts Integer and returns named child at given index,
               or a (String | Symbol) and returns the child by given field name.
@@ -116,6 +116,7 @@ module TreeSitter
       end
     end
 
+    # @return [Array<TreeSitter::Node>] all the node's children
     def to_a
       each.to_a
     end
