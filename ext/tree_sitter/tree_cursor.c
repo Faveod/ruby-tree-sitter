@@ -18,52 +18,35 @@ DATA_NEW(cTreeCursor, TSTreeCursor, tree_cursor)
 DATA_FROM_VALUE(TSTreeCursor, tree_cursor)
 
 /**
- * Create a new tree cursor starting from the given node.
- *
- * A tree cursor allows you to walk a syntax tree more efficiently than is
- * possible using the {Node} functions. It is a mutable object that is always
- * on a certain syntax node, and can be moved imperatively to different nodes.
+ * Safely copy a tree cursor.
  *
  * @return [TreeCursor]
  */
-static VALUE tree_cursor_initialize(VALUE self, VALUE node) {
-  TSNode n = value_to_node(node);
-  tree_cursor_t *ptr = unwrap(self);
-  ptr->data = ts_tree_cursor_new(n);
-  return self;
+static VALUE tree_cursor_copy(VALUE self) {
+  VALUE res = tree_cursor_allocate(cTreeCursor);
+  tree_cursor_t *ptr = unwrap(res);
+  ptr->data = ts_tree_cursor_copy(&SELF);
+  return res;
 }
 
 /**
- * Re-initialize a tree cursor to start at a different node.
+ * Get the depth of the cursor's current node relative to the original
+ * node that the cursor was constructed with.
  *
- * @return [nil]
+ * @return [Integer]
  */
-static VALUE tree_cursor_reset(VALUE self, VALUE node) {
-  ts_tree_cursor_reset(&SELF, value_to_node(node));
-  return Qnil;
+static VALUE tree_cursor_current_depth(VALUE self) {
+  return UINT2NUM(ts_tree_cursor_current_depth(&SELF));
 }
 
 /**
- * Get the tree cursor's current node.
+ * Get the index of the cursor's current node out of all of the
+ * descendants of the original node that the cursor was constructed with.
  *
- * @return [Node]
+ * @return [Integer]
  */
-static VALUE tree_cursor_current_node(VALUE self) {
-  TSNode node = ts_tree_cursor_current_node(&SELF);
-  return new_node(&node);
-}
-
-/**
- * Get the field name of the tree cursor's current node.
- *
- * This returns +nil+ if the current node doesn't have a field.
- *
- * @see Node#child_by_field_name
- *
- * @return [String]
- */
-static VALUE tree_cursor_current_field_name(VALUE self) {
-  return safe_str(ts_tree_cursor_current_field_name(&SELF));
+static VALUE tree_cursor_current_descendant_index(VALUE self) {
+  return UINT2NUM(ts_tree_cursor_current_descendant_index(&SELF));
 }
 
 /**
@@ -81,27 +64,39 @@ static VALUE tree_cursor_current_field_id(VALUE self) {
 }
 
 /**
- * Move the cursor to the parent of its current node.
+ * Get the field name of the tree cursor's current node.
  *
- * This returns +true+ if the cursor successfully moved, and returns +false+
- * if there was no parent node (the cursor was already on the root node).
+ * This returns +nil+ if the current node doesn't have a field.
  *
- * @return [Boolean]
+ * @see Node#child_by_field_name
+ *
+ * @return [String]
  */
-static VALUE tree_cursor_goto_parent(VALUE self) {
-  return ts_tree_cursor_goto_parent(&SELF) ? Qtrue : Qfalse;
+static VALUE tree_cursor_current_field_name(VALUE self) {
+  return safe_str(ts_tree_cursor_current_field_name(&SELF));
 }
 
 /**
- * Move the cursor to the next sibling of its current node.
+ * Get the tree cursor's current node.
  *
- * This returns +true+ if the cursor successfully moved, and returns +false+
- * if there was no next sibling node.
- *
- * @return Boolean
+ * @return [Node]
  */
-static VALUE tree_cursor_goto_next_sibling(VALUE self) {
-  return ts_tree_cursor_goto_next_sibling(&SELF) ? Qtrue : Qfalse;
+static VALUE tree_cursor_current_node(VALUE self) {
+  TSNode node = ts_tree_cursor_current_node(&SELF);
+  return new_node(&node);
+}
+
+/**
+ * Move the cursor to the node that is the nth descendant of
+ * the original node that the cursor was constructed with, where
+ * zero represents the original node itself.
+ *
+ * @return [nil]
+ */
+static VALUE tree_cursor_goto_descendant(VALUE self, VALUE descendant_idx) {
+  uint32_t idx = NUM2UINT(descendant_idx);
+  ts_tree_cursor_goto_descendant(&SELF, idx);
+  return Qnil;
 }
 
 /**
@@ -145,28 +140,41 @@ static VALUE tree_cursor_goto_first_child_for_point(VALUE self, VALUE point) {
 }
 
 /**
- * Safely copy a tree cursor.
+ * Move the cursor to the last child of its current node.
  *
- * @return [TreeCursor]
+ * This returns +true+ if the cursor successfully moved, and returns +false+ if
+ * there were no children.
+ *
+ * Note that this function may be slower than {#goto_first_child}
+ * because it needs to iterate through all the children to compute the child's
+ * position.
  */
-static VALUE tree_cursor_copy(VALUE self) {
-  VALUE res = tree_cursor_allocate(cTreeCursor);
-  tree_cursor_t *ptr = unwrap(res);
-  ptr->data = ts_tree_cursor_copy(&SELF);
-  return res;
+static VALUE tree_cursor_goto_last_child(VALUE self) {
+  return ts_tree_cursor_goto_last_child(&SELF) ? Qtrue : Qfalse;
 }
 
 /**
- * Re-initialize a tree cursor to the same position as another cursor.
+ * Move the cursor to the next sibling of its current node.
  *
- * Unlike {#reset}, this will not lose parent information and allows reusing
- * already created cursors.
+ * This returns +true+ if the cursor successfully moved, and returns +false+
+ * if there was no next sibling node.
  *
- * @return [nil]
+ * @return Boolean
  */
-VALUE tree_cursor_reset_to(VALUE self, VALUE src) {
-  ts_tree_cursor_reset_to(&SELF, &unwrap(src)->data);
-  return Qnil;
+static VALUE tree_cursor_goto_next_sibling(VALUE self) {
+  return ts_tree_cursor_goto_next_sibling(&SELF) ? Qtrue : Qfalse;
+}
+
+/**
+ * Move the cursor to the parent of its current node.
+ *
+ * This returns +true+ if the cursor successfully moved, and returns +false+
+ * if there was no parent node (the cursor was already on the root node).
+ *
+ * @return [Boolean]
+ */
+static VALUE tree_cursor_goto_parent(VALUE self) {
+  return ts_tree_cursor_goto_parent(&SELF) ? Qtrue : Qfalse;
 }
 
 /**
@@ -187,50 +195,42 @@ static VALUE tree_cursor_goto_previous_sibling(VALUE self) {
 }
 
 /**
- * Move the cursor to the last child of its current node.
+ * Create a new tree cursor starting from the given node.
  *
- * This returns +true+ if the cursor successfully moved, and returns +false+ if
- * there were no children.
+ * A tree cursor allows you to walk a syntax tree more efficiently than is
+ * possible using the {Node} functions. It is a mutable object that is always
+ * on a certain syntax node, and can be moved imperatively to different nodes.
  *
- * Note that this function may be slower than {#goto_first_child}
- * because it needs to iterate through all the children to compute the child's
- * position.
+ * @return [TreeCursor]
  */
-static VALUE tree_cursor_goto_last_child(VALUE self) {
-  return ts_tree_cursor_goto_last_child(&SELF) ? Qtrue : Qfalse;
+static VALUE tree_cursor_initialize(VALUE self, VALUE node) {
+  TSNode n = value_to_node(node);
+  tree_cursor_t *ptr = unwrap(self);
+  ptr->data = ts_tree_cursor_new(n);
+  return self;
 }
 
 /**
- * Move the cursor to the node that is the nth descendant of
- * the original node that the cursor was constructed with, where
- * zero represents the original node itself.
+ * Re-initialize a tree cursor to start at a different node.
  *
  * @return [nil]
  */
-static VALUE tree_cursor_goto_descendant(VALUE self, VALUE descendant_idx) {
-  uint32_t idx = NUM2UINT(descendant_idx);
-  ts_tree_cursor_goto_descendant(&SELF, idx);
+static VALUE tree_cursor_reset(VALUE self, VALUE node) {
+  ts_tree_cursor_reset(&SELF, value_to_node(node));
   return Qnil;
 }
 
 /**
- * Get the index of the cursor's current node out of all of the
- * descendants of the original node that the cursor was constructed with.
+ * Re-initialize a tree cursor to the same position as another cursor.
  *
- * @return [Integer]
- */
-static VALUE tree_cursor_current_descendant_index(VALUE self) {
-  return UINT2NUM(ts_tree_cursor_current_descendant_index(&SELF));
-}
-
-/**
- * Get the depth of the cursor's current node relative to the original
- * node that the cursor was constructed with.
+ * Unlike {#reset}, this will not lose parent information and allows reusing
+ * already created cursors.
  *
- * @return [Integer]
+ * @return [nil]
  */
-static VALUE tree_cursor_current_depth(VALUE self) {
-  return UINT2NUM(ts_tree_cursor_current_depth(&SELF));
+VALUE tree_cursor_reset_to(VALUE self, VALUE src) {
+  ts_tree_cursor_reset_to(&SELF, &unwrap(src)->data);
+  return Qnil;
 }
 
 void init_tree_cursor(void) {
@@ -239,33 +239,31 @@ void init_tree_cursor(void) {
   rb_define_alloc_func(cTreeCursor, tree_cursor_allocate);
 
   /* Class methods */
-  rb_define_method(cTreeCursor, "initialize", tree_cursor_initialize, 1);
-  rb_define_method(cTreeCursor, "reset", tree_cursor_reset, 1);
-  rb_define_method(cTreeCursor, "goto_descendant", tree_cursor_goto_descendant,
-                   1);
+  rb_define_method(cTreeCursor, "copy", tree_cursor_copy, 0);
+  rb_define_method(cTreeCursor, "current_depth", tree_cursor_current_depth, 0);
   rb_define_method(cTreeCursor, "current_descendant_index",
                    tree_cursor_current_descendant_index, 0);
-  rb_define_method(cTreeCursor, "current_depth", tree_cursor_current_depth, 0);
-  rb_define_method(cTreeCursor, "reset_to", tree_cursor_reset_to, 1);
-  rb_define_method(cTreeCursor, "goto_previous_sibling",
-                   tree_cursor_goto_previous_sibling, 0);
-  rb_define_method(cTreeCursor, "current_node", tree_cursor_current_node, 0);
-  rb_define_method(cTreeCursor, "current_field_name",
-                   tree_cursor_current_field_name, 0);
   rb_define_method(cTreeCursor, "current_field_id",
                    tree_cursor_current_field_id, 0);
-  rb_define_method(cTreeCursor, "goto_parent", tree_cursor_goto_parent, 0);
-  rb_define_method(cTreeCursor, "goto_previous_sibling",
-                   tree_cursor_goto_previous_sibling, 0);
-  rb_define_method(cTreeCursor, "goto_next_sibling",
-                   tree_cursor_goto_next_sibling, 0);
+  rb_define_method(cTreeCursor, "current_field_name",
+                   tree_cursor_current_field_name, 0);
+  rb_define_method(cTreeCursor, "current_node", tree_cursor_current_node, 0);
+  rb_define_method(cTreeCursor, "goto_descendant", tree_cursor_goto_descendant,
+                   1);
   rb_define_method(cTreeCursor, "goto_first_child",
                    tree_cursor_goto_first_child, 0);
-  rb_define_method(cTreeCursor, "goto_last_child", tree_cursor_goto_last_child,
-                   0);
   rb_define_method(cTreeCursor, "goto_first_child_for_byte",
                    tree_cursor_goto_first_child_for_byte, 1);
   rb_define_method(cTreeCursor, "goto_first_child_for_point",
                    tree_cursor_goto_first_child_for_point, 1);
-  rb_define_method(cTreeCursor, "copy", tree_cursor_copy, 0);
+  rb_define_method(cTreeCursor, "goto_last_child", tree_cursor_goto_last_child,
+                   0);
+  rb_define_method(cTreeCursor, "goto_next_sibling",
+                   tree_cursor_goto_next_sibling, 0);
+  rb_define_method(cTreeCursor, "goto_parent", tree_cursor_goto_parent, 0);
+  rb_define_method(cTreeCursor, "goto_previous_sibling",
+                   tree_cursor_goto_previous_sibling, 0);
+  rb_define_method(cTreeCursor, "initialize", tree_cursor_initialize, 1);
+  rb_define_method(cTreeCursor, "reset", tree_cursor_reset, 1);
+  rb_define_method(cTreeCursor, "reset_to", tree_cursor_reset_to, 1);
 }
