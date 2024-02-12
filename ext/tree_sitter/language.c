@@ -182,6 +182,17 @@ static VALUE language_equal(VALUE self, VALUE other) {
   return this == that ? Qtrue : Qfalse;
 }
 
+/**
+ * Get the next parse state. Combine this with lookahead iterators to generate
+ * completion suggestions or valid symbols in error nodes. Use
+ * {Node#grammar_symbol} for valid symbols.
+ */
+static VALUE language_next_state(VALUE self, VALUE state, VALUE symbol) {
+  uint16_t sta = (uint16_t)NUM2UINT(state);
+  uint16_t sym = (uint16_t)NUM2UINT(symbol);
+  return UINT2NUM(ts_language_next_state(SELF, sta, sym));
+}
+
 void init_language(void) {
   cLanguage = rb_define_class_under(mTreeSitter, "Language", rb_cObject);
 
@@ -191,6 +202,7 @@ void init_language(void) {
   rb_define_method(cLanguage, "symbol_count", language_symbol_count, 0);
   rb_define_method(cLanguage, "symbol_name", language_symbol_name, 1);
   rb_define_method(cLanguage, "symbol_for_name", language_symbol_for_name, 2);
+  rb_define_method(cLanguage, "next_state", language_next_state, 2);
   rb_define_method(cLanguage, "field_count", language_field_count, 0);
   rb_define_method(cLanguage, "field_name_for_id", language_field_name_for_id,
                    1);
