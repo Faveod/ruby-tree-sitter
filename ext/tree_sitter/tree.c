@@ -181,9 +181,34 @@ static VALUE tree_finalizer(VALUE _self) {
   return Qnil;
 }
 
-// FIXME: missing:
-// 1. ts_tree_root_node_with_offset
-// 1. ts_tree_included_ranges
+/**
+ * Get the root node of the syntax tree, but with its position
+ * shifted forward by the given offset.
+ *
+ * @return [Node]
+ */
+static VALUE root_node_with_offset(VALUE self, VALUE offset_bytes,
+                                   VALUE offset_extent) {
+  uint32_t bytes = NUM2UINT(offset_bytes);
+  TSPoint extent = value_to_point(offset_extent);
+  return new_node_by_val(ts_tree_root_node_with_offset(SELF, bytes, extent));
+}
+
+/**
+ * Get the array of included ranges that was used to parse the syntax tree.
+ *
+ * @return [Array<Range>]
+ */
+static VALUE included_ranges(VALUE self) {
+  uint32_t length;
+  const TSRange *ranges = ts_tree_included_ranges(SELF, &length);
+  VALUE res = rb_ary_new_capa(length);
+  for (uint32_t i = 0; i < length; i++) {
+    rb_ary_push(res, new_range(&ranges[i]));
+  }
+  return res;
+}
+
 void init_tree(void) {
   cTree = rb_define_class_under(mTreeSitter, "Tree", rb_cObject);
 
@@ -194,6 +219,8 @@ void init_tree(void) {
   rb_define_method(cTree, "root_node", tree_root_node, 0);
   rb_define_method(cTree, "language", tree_language, 0);
   rb_define_method(cTree, "edit", tree_edit, 1);
+  rb_define_method(cTree, "root_node_with_offset", root_node_with_offset, 2);
+  rb_define_method(cTree, "included_ranges", included_ranges, 0);
   rb_define_module_function(cTree, "changed_ranges", tree_changed_ranges, 2);
   rb_define_method(cTree, "print_dot_graph", tree_print_dot_graph, 1);
   rb_define_module_function(cTree, "finalizer", tree_finalizer, 0);
