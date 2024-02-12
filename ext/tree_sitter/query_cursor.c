@@ -73,13 +73,6 @@ static VALUE query_cursor_did_exceed_match_limit(VALUE self) {
 }
 
 /**
- * @return [Integer]
- */
-static VALUE query_cursor_get_match_limit(VALUE self) {
-  return UINT2NUM(ts_query_cursor_match_limit(SELF));
-}
-
-/**
  * @param limit [Integer]
  *
  * @return [nil]
@@ -90,44 +83,36 @@ static VALUE query_cursor_set_match_limit(VALUE self, VALUE limit) {
 }
 
 /**
- * @param from [Integer]
- * @param to   [Integer]
- *
- * @return [nil]
+ * @return [Integer]
  */
-static VALUE query_cursor_set_byte_range(VALUE self, VALUE from, VALUE to) {
-  ts_query_cursor_set_byte_range(SELF, NUM2UINT(from), NUM2UINT(to));
-  return Qnil;
+static VALUE query_cursor_get_match_limit(VALUE self) {
+  return UINT2NUM(ts_query_cursor_match_limit(SELF));
 }
 
 /**
- * @param from [Point]
- * @param to   [Point]
+ * Set the maximum start depth for a query cursor.
+ *
+ * This prevents cursors from exploring children nodes at a certain depth.
+ * Note if a pattern includes many children, then they will still be checked.
+ *
+ * The zero max start depth value can be used as a special behavior and
+ * it helps to destructure a subtree by staying on a node and using captures
+ * for interested parts. Note that the zero max start depth only limit a search
+ * depth for a pattern's root node but other nodes that are parts of the pattern
+ * may be searched at any depth what defined by the pattern structure.
+ *
+ * @param max_start_depth [Integer|nil] set to nil to remove the maximum start
+ * depth.
  *
  * @return [nil]
  */
-static VALUE query_cursor_set_point_range(VALUE self, VALUE from, VALUE to) {
-  ts_query_cursor_set_point_range(SELF, value_to_point(from),
-                                  value_to_point(to));
-  return Qnil;
-}
-
-/**
- * Advance to the next match of the currently running query.
- *
- * @return [Boolean] Whether there's a match.
- */
-static VALUE query_cursor_next_match(VALUE self) {
-  TSQueryMatch match;
-  if (ts_query_cursor_next_match(SELF, &match)) {
-    return new_query_match(&match);
-  } else {
-    return Qnil;
+static VALUE query_cursor_set_max_start_depth(VALUE self,
+                                              VALUE max_start_depth) {
+  uint32_t max = UINT32_MAX;
+  if (!NIL_P(max_start_depth)) {
+    max = NUM2UINT(max_start_depth);
   }
-}
-
-static VALUE query_cursor_remove_match(VALUE self, VALUE id) {
-  ts_query_cursor_remove_match(SELF, NUM2UINT(id));
+  ts_query_cursor_set_max_start_depth(SELF, max);
   return Qnil;
 }
 
@@ -158,29 +143,44 @@ static VALUE query_cursor_next_capture(VALUE self) {
 }
 
 /**
- * Set the maximum start depth for a query cursor.
+ * Advance to the next match of the currently running query.
  *
- * This prevents cursors from exploring children nodes at a certain depth.
- * Note if a pattern includes many children, then they will still be checked.
- *
- * The zero max start depth value can be used as a special behavior and
- * it helps to destructure a subtree by staying on a node and using captures
- * for interested parts. Note that the zero max start depth only limit a search
- * depth for a pattern's root node but other nodes that are parts of the pattern
- * may be searched at any depth what defined by the pattern structure.
- *
- * @param max_start_depth [Integer|nil] set to nil to remove the maximum start
- * depth.
+ * @return [Boolean] Whether there's a match.
+ */
+static VALUE query_cursor_next_match(VALUE self) {
+  TSQueryMatch match;
+  if (ts_query_cursor_next_match(SELF, &match)) {
+    return new_query_match(&match);
+  } else {
+    return Qnil;
+  }
+}
+
+static VALUE query_cursor_remove_match(VALUE self, VALUE id) {
+  ts_query_cursor_remove_match(SELF, NUM2UINT(id));
+  return Qnil;
+}
+
+/**
+ * @param from [Integer]
+ * @param to   [Integer]
  *
  * @return [nil]
  */
-static VALUE query_cursor_set_max_start_depth(VALUE self,
-                                              VALUE max_start_depth) {
-  uint32_t max = UINT32_MAX;
-  if (!NIL_P(max_start_depth)) {
-    max = NUM2UINT(max_start_depth);
-  }
-  ts_query_cursor_set_max_start_depth(SELF, max);
+static VALUE query_cursor_set_byte_range(VALUE self, VALUE from, VALUE to) {
+  ts_query_cursor_set_byte_range(SELF, NUM2UINT(from), NUM2UINT(to));
+  return Qnil;
+}
+
+/**
+ * @param from [Point]
+ * @param to   [Point]
+ *
+ * @return [nil]
+ */
+static VALUE query_cursor_set_point_range(VALUE self, VALUE from, VALUE to) {
+  ts_query_cursor_set_point_range(SELF, value_to_point(from),
+                                  value_to_point(to));
   return Qnil;
 }
 
@@ -189,18 +189,27 @@ void init_query_cursor(void) {
 
   rb_define_alloc_func(cQueryCursor, query_cursor_allocate);
 
-  /* Class methods */
-  DECLARE_ACCESSOR(cQueryCursor, query_cursor, match_limit)
+  /* Module methods */
   rb_define_module_function(cQueryCursor, "exec", query_cursor_exec, 2);
+
+  /* Class methods */
+  // Accessors
+  DECLARE_ACCESSOR(cQueryCursor, query_cursor, match_limit)
+
+  // Other
   rb_define_method(cQueryCursor, "exceed_match_limit?",
                    query_cursor_did_exceed_match_limit, 0);
+  rb_define_method(cQueryCursor, "match_limit", query_cursor_get_match_limit,
+                   0);
+  rb_define_method(cQueryCursor, "match_limit=", query_cursor_set_match_limit,
+                   1);
+  rb_define_method(cQueryCursor,
+                   "max_start_depth=", query_cursor_set_max_start_depth, 1);
+  rb_define_method(cQueryCursor, "next_capture", query_cursor_next_capture, 0);
+  rb_define_method(cQueryCursor, "next_match", query_cursor_next_match, 0);
+  rb_define_method(cQueryCursor, "remove_match", query_cursor_remove_match, 1);
   rb_define_method(cQueryCursor, "set_byte_range", query_cursor_set_byte_range,
                    2);
   rb_define_method(cQueryCursor, "set_point_range",
                    query_cursor_set_point_range, 2);
-  rb_define_method(cQueryCursor, "next_match", query_cursor_next_match, 0);
-  rb_define_method(cQueryCursor, "remove_match", query_cursor_remove_match, 1);
-  rb_define_method(cQueryCursor, "next_capture", query_cursor_next_capture, 0);
-  rb_define_method(cQueryCursor,
-                   "max_start_depth=", query_cursor_set_max_start_depth, 1);
 }
