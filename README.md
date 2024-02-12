@@ -99,7 +99,7 @@ brew install tree-sitter
 From [rubygems](https://rubygems.org/gems/ruby_tree_sitter), in your `Gemfile`:
 
 ```ruby
-gem 'ruby_tree_sitter', '~> 0.20.8.1'
+gem 'ruby_tree_sitter', '~> 0.20.9'
 ```
 
 Or manually:
