@@ -491,6 +491,72 @@ static VALUE node_eq(VALUE self, VALUE other) {
   return ts_node_eq(SELF, unwrap(other)->data) ? Qtrue : Qfalse;
 }
 
+/**
+ * Get the node's type as it appears in the grammar ignoring aliases as a
+ * null-terminated string.
+ *
+ * @return String
+ */
+VALUE node_grammar_type(VALUE self) {
+  return safe_str(ts_node_grammar_type(SELF));
+}
+
+/**
+ * Get the node's language.
+ *
+ * @return [Language]
+ */
+static VALUE node_language(VALUE self) {
+  return new_language(ts_node_language(SELF));
+}
+
+/**
+ * Get the node's type as a numerical id as it appears in the grammar ignoring
+ * aliases. This should be used in {Language#next_state} instead of
+ * {Node#symbol}.
+ *
+ * @return [Integer]
+ */
+VALUE node_grammar_symbol(VALUE self) {
+  return UINT2NUM(ts_node_grammar_symbol(SELF));
+}
+
+/**
+ * Check if the node is a syntax error.
+ *
+ * @return [Boolean]
+ */
+VALUE node_is_error(VALUE self) {
+  return ts_node_is_error(SELF) ? Qtrue : Qfalse;
+}
+
+/**
+ * Get this node's parse state.
+ *
+ * @return [Integer]
+ */
+VALUE node_parse_state(VALUE self) {
+  return UINT2NUM(ts_node_parse_state(SELF));
+}
+
+/**
+ * Get the parse state after this node.
+ *
+ * @return [Integer]
+ */
+VALUE node_next_parse_state(VALUE self) {
+  return UINT2NUM(ts_node_next_parse_state(SELF));
+}
+
+/**
+ * Get the node's number of descendants, including one for the node itself.
+ *
+ * @return [Integer]
+ */
+VALUE node_descendant_count(VALUE self) {
+  return UINT2NUM(ts_node_descendant_count(SELF));
+}
+
 void init_node(void) {
   cNode = rb_define_class_under(mTreeSitter, "Node", rb_cObject);
 
@@ -511,6 +577,13 @@ void init_node(void) {
   rb_define_method(cNode, "error?", node_has_error, 0);
   rb_define_method(cNode, "parent", node_parent, 0);
   rb_define_method(cNode, "child", node_child, 1);
+  rb_define_method(cNode, "error?", node_is_error, 0);
+  rb_define_method(cNode, "language", node_language, 0);
+  rb_define_method(cNode, "grammar_type", node_grammar_type, 0);
+  rb_define_method(cNode, "grammar_symbol", node_grammar_symbol, 0);
+  rb_define_method(cNode, "next_parse_state", node_next_parse_state, 0);
+  rb_define_method(cNode, "descendant_count", node_descendant_count, 0);
+  rb_define_method(cNode, "parse_state", node_parse_state, 0);
   rb_define_method(cNode, "field_name_for_child", node_field_name_for_child, 1);
   rb_define_method(cNode, "child_count", node_child_count, 0);
   rb_define_method(cNode, "named_child", node_named_child, 1);
