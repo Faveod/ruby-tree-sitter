@@ -146,20 +146,20 @@ static VALUE query_pattern_guaranteed_at_step(VALUE self, VALUE byte_offset) {
  *
  * @raise [IndexError] if out of range.
  *
- * @param id [Integer]
+ * @param index [Integer]
  *
  * @return [String]
  */
-static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
+static VALUE query_capture_name_for_id(VALUE self, VALUE index) {
   const TSQuery *query = SELF;
-  uint32_t index = NUM2UINT(id);
+  uint32_t idx = NUM2UINT(index);
   uint32_t range = ts_query_capture_count(query);
 
-  if (index >= range) {
-    rb_raise(rb_eIndexError, "Index %d out of range (len = %d)", index, range);
+  if (idx >= range) {
+    rb_raise(rb_eIndexError, "Index %d out of range (len = %d)", idx, range);
   } else {
     uint32_t length;
-    const char *name = ts_query_capture_name_for_id(query, index, &length);
+    const char *name = ts_query_capture_name_for_id(query, idx, &length);
     return safe_str2(name, length);
   }
 }
@@ -170,16 +170,16 @@ static VALUE query_capture_name_for_id(VALUE self, VALUE id) {
  *
  * @raise [IndexError] if out of range.
  *
- * @param id         [Integer]
- * @param capture_id [Integer]
+ * @param query_idx   [Integer]
+ * @param capture_idx [Integer]
  *
  * @return [Integer]
  */
-static VALUE query_capture_quantifier_for_id(VALUE self, VALUE id,
-                                             VALUE capture_id) {
+static VALUE query_capture_quantifier_for_id(VALUE self, VALUE query_idx,
+                                             VALUE capture_idx) {
   const TSQuery *query = SELF;
-  uint32_t pattern = NUM2UINT(id);
-  uint32_t index = NUM2UINT(capture_id);
+  uint32_t pattern = NUM2UINT(query_idx);
+  uint32_t index = NUM2UINT(capture_idx);
   uint32_t range = ts_query_capture_count(query);
 
   if (index >= range) {
