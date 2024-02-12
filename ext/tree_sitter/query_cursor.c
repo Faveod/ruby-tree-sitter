@@ -157,6 +157,33 @@ static VALUE query_cursor_next_capture(VALUE self) {
   }
 }
 
+/**
+ * Set the maximum start depth for a query cursor.
+ *
+ * This prevents cursors from exploring children nodes at a certain depth.
+ * Note if a pattern includes many children, then they will still be checked.
+ *
+ * The zero max start depth value can be used as a special behavior and
+ * it helps to destructure a subtree by staying on a node and using captures
+ * for interested parts. Note that the zero max start depth only limit a search
+ * depth for a pattern's root node but other nodes that are parts of the pattern
+ * may be searched at any depth what defined by the pattern structure.
+ *
+ * @param max_start_depth [Integer|nil] set to nil to remove the maximum start
+ * depth.
+ *
+ * @return [nil]
+ */
+static VALUE query_cursor_set_max_start_depth(VALUE self,
+                                              VALUE max_start_depth) {
+  uint32_t max = UINT32_MAX;
+  if (!NIL_P(max_start_depth)) {
+    max = NUM2UINT(max_start_depth);
+  }
+  ts_query_cursor_set_max_start_depth(SELF, max);
+  return Qnil;
+}
+
 void init_query_cursor(void) {
   cQueryCursor = rb_define_class_under(mTreeSitter, "QueryCursor", rb_cObject);
 
@@ -174,4 +201,6 @@ void init_query_cursor(void) {
   rb_define_method(cQueryCursor, "next_match", query_cursor_next_match, 0);
   rb_define_method(cQueryCursor, "remove_match", query_cursor_remove_match, 1);
   rb_define_method(cQueryCursor, "next_capture", query_cursor_next_capture, 0);
+  rb_define_method(cQueryCursor,
+                   "max_start_depth=", query_cursor_set_max_start_depth, 1);
 }
