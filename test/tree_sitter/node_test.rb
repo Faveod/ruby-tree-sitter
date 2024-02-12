@@ -142,7 +142,7 @@ describe 'child' do
   end
 
   it 'must return proper name child count' do
-    assert_equal 5, @child.named_child_count
+    assert_equal 3, @child.named_child_count
   end
 
   it 'must return proper name child' do
@@ -326,28 +326,28 @@ end
 
 describe 'fetch' do
   before do
-    @child = root.child(0).child(4)
+    @child = root.child(0)
   end
 
   it 'should return all requested keys by order' do
-    method = @child.child(0)
-    arguments = @child.child(1)
+    method = @child.child(1)
+    arguments = @child.child(2)
 
-    m, a = @child.fetch(:method, :arguments)
+    m, a = @child.fetch(:name, :parameters)
 
     assert_equal method, m
     assert_equal arguments, a
 
-    a, m = @child.fetch(:arguments, :method)
+    a, m = @child.fetch(:parameters, :name)
 
     assert_equal method, m
     assert_equal arguments, a
   end
 
   it 'should return unique keys' do
-    method = @child.child(0)
+    method = @child.child(1)
 
-    m = @child.fetch(:method, :method)
+    m = @child.fetch(:name, :name)
 
     assert_equal 1, m.length
     assert_equal method, m.first
@@ -372,10 +372,10 @@ describe 'fetch' do
   end
 
   it 'should return values, even if `nil`, for all keys when `all: true`' do
-    method = @child.child(0)
-    arguments = @child.child(1)
+    method = @child.child(1)
+    arguments = @child.child(2)
 
-    m, a, f = @child.fetch(:method, :arguments, :fake, all: true)
+    m, a, f = @child.fetch(:name, :parameters, :fake, all: true)
 
     assert_equal method, m
     assert_equal arguments, a
@@ -385,7 +385,7 @@ end
 
 describe 'fetch_all' do
   before do
-    @child = root.child(0).child(4)
+    @child = root.child(0)
   end
 
   it 'should return an array of `nil` values when asked for non-existent fields' do
@@ -399,10 +399,10 @@ describe 'fetch_all' do
   end
 
   it 'should return values, even if `nil`, for all keys' do
-    method = @child.child(0)
-    arguments = @child.child(1)
+    method = @child.child(1)
+    arguments = @child.child(2)
 
-    m, a, f = @child.fetch_all(:method, :arguments, :fake)
+    m, a, f = @child.fetch_all(:name, :parameters, :fake)
 
     assert_equal method, m
     assert_equal arguments, a
