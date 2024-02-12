@@ -4,19 +4,19 @@ set -e
 set -x
 
 case $OSTYPE in
-  (darwin*)
-      ext=dylib
-      CC=cc
-      CXX=c++
-      ;;
-  (*)
-      ext=so
-      CC=gcc
-      CXX=g++
-      ;;
+darwin*)
+	ext=dylib
+	CC=cc
+	CXX=c++
+	;;
+*)
+	ext=so
+	CC=gcc
+	CXX=g++
+	;;
 esac
 
-tstag="0.20.8"
+tstag="0.20.9"
 lang=$1
 local=tree-sitter-parsers
 repo=tree-sitter-$lang
@@ -26,34 +26,32 @@ mkdir -p "$local"
 cd "$local"
 
 if [ ! -d "$lang" ]; then
-  git clone "https://github.com/tree-sitter/$repo" "$lang"
-  cd "$lang"
-  git checkout "$(git describe --tags "$(git rev-list --tags --max-count=1)")"
-  cd ..
+	git clone "https://github.com/tree-sitter/$repo" "$lang"
+	cd "$lang"
+	git checkout "$(git describe --tags "$(git rev-list --tags --max-count=1)")"
+	cd ..
 fi
 
 clitarget="tree-sitter-$PLATFORM"
 cli="$(pwd)/$clitarget"
-if [ -n "$PLATFORM" ] && [ ! -f $clitarget ]
-then
-  # Get tree-sitter-cli
-  gz="$clitarget.gz"
-  wget "https://github.com/tree-sitter/tree-sitter/releases/download/v$tstag/$gz"
-  gunzip "$gz"
-  chmod +x "$clitarget"
-elif [ -z "$PLATFORM" ]
-then
-  # use system-wide tree-sitter-cli
-  cli="tree-sitter"
+if [ -n "$PLATFORM" ] && [ ! -f $clitarget ]; then
+	# Get tree-sitter-cli
+	gz="$clitarget.gz"
+	wget "https://github.com/tree-sitter/tree-sitter/releases/download/v$tstag/$gz"
+	gunzip "$gz"
+	chmod +x "$clitarget"
+elif [ -z "$PLATFORM" ]; then
+	# use system-wide tree-sitter-cli
+	cli="tree-sitter"
 fi
 
 cd $lang
-$cli generate 
+$cli generate
 
 if test -d "src"; then
-    cd "src"
+	cd "src"
 elif test -d "$lang/src"; then # This is the case of typescript parser.
-    cd "$lang/src"
+	cd "$lang/src"
 fi
 
 LDFLAGS='-lstdc++'
@@ -67,21 +65,21 @@ cxxfiles=$(echo *.cc *.cpp *.cxx)
 set -e
 
 for i in $cfiles; do
-  if [ -f "$i" ]; then
-    $CC $CPPFLAGS $CFLAGS -fPIC -c $i
-  fi
+	if [ -f "$i" ]; then
+		$CC $CPPFLAGS $CFLAGS -fPIC -c $i
+	fi
 done
 
 for i in $cxxfiles; do
-  if [ -f "$i" ]; then
-    $CXX $CPPFLAGS $CXXFLAGS -fPIC -c $i
-  fi
+	if [ -f "$i" ]; then
+		$CXX $CPPFLAGS $CXXFLAGS -fPIC -c $i
+	fi
 done
 
 if test -n "$cxxfiles"; then
-  LD=$CXX
+	LD=$CXX
 else
-  LD=$CC
+	LD=$CC
 fi
 
 $LD $LDFLAGS -shared *.o -o $out
