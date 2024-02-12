@@ -64,51 +64,6 @@ VALUE new_tree(TSTree *ptr) {
 DATA_FROM_VALUE(TSTree *, tree)
 
 /**
- * Create a shallow copy of the syntax tree. This is very fast.
- *
- * You need to copy a syntax tree in order to use it on more than one thread at
- * a time, as syntax trees are not thread safe.
- *
- * @return [Tree]
- */
-static VALUE tree_copy(VALUE self) { return new_tree(ts_tree_copy(SELF)); }
-
-/**
- * Get the root node of the syntax tree.
- *
- * @return [Node]
- */
-static VALUE tree_root_node(VALUE self) {
-  return new_node_by_val(ts_tree_root_node(SELF));
-}
-
-/**
- * Get the language that was used to parse the syntax tree.
- *
- * @return [Language]
- */
-static VALUE tree_language(VALUE self) {
-  return new_language(ts_tree_language(SELF));
-}
-
-/**
- * Edit the syntax tree to keep it in sync with source code that has been
- * edited.
- *
- * You must describe the edit both in terms of byte offsets and in terms of
- * (row, column) coordinates.
- *
- * @param edit [InputEdit]
- *
- * @return [nil]
- */
-static VALUE tree_edit(VALUE self, VALUE edit) {
-  TSInputEdit in = value_to_input_edit(edit);
-  ts_tree_edit(SELF, &in);
-  return Qnil;
-}
-
-/**
  * Compare an old edited syntax tree to a new syntax tree representing the same
  * document, returning an array of ranges whose syntactic structure has changed.
  *
@@ -141,6 +96,75 @@ static VALUE tree_changed_ranges(VALUE _self, VALUE old_tree, VALUE new_tree) {
   return res;
 }
 
+static VALUE tree_finalizer(VALUE _self) {
+  VALUE rc = rb_cv_get(cTree, "@@rc");
+  VALUE keys = rb_funcall(rc, rb_intern("keys"), 0);
+  long len = RARRAY_LEN(keys);
+
+  for (long i = 0; i < len; ++i) {
+    VALUE curr = RARRAY_AREF(keys, i);
+    unsigned int val = NUM2UINT(rb_hash_lookup(rc, curr));
+    if (val > 0) {
+      ts_tree_delete((TSTree *)NUM2ULONG(curr));
+    }
+
+    rb_hash_delete(rc, curr);
+  }
+
+  return Qnil;
+}
+
+/**
+ * Create a shallow copy of the syntax tree. This is very fast.
+ *
+ * You need to copy a syntax tree in order to use it on more than one thread at
+ * a time, as syntax trees are not thread safe.
+ *
+ * @return [Tree]
+ */
+static VALUE tree_copy(VALUE self) { return new_tree(ts_tree_copy(SELF)); }
+
+/**
+ * Edit the syntax tree to keep it in sync with source code that has been
+ * edited.
+ *
+ * You must describe the edit both in terms of byte offsets and in terms of
+ * (row, column) coordinates.
+ *
+ * @param edit [InputEdit]
+ *
+ * @return [nil]
+ */
+static VALUE tree_edit(VALUE self, VALUE edit) {
+  TSInputEdit in = value_to_input_edit(edit);
+  ts_tree_edit(SELF, &in);
+  return Qnil;
+}
+
+/**
+ * Get the array of included ranges that was used to parse the syntax tree.
+ *
+ * @return [Array<Range>]
+ */
+static VALUE included_ranges(VALUE self) {
+  uint32_t length;
+  const TSRange *ranges = ts_tree_included_ranges(SELF, &length);
+  VALUE res = rb_ary_new_capa(length);
+  for (uint32_t i = 0; i < length; i++) {
+    rb_ary_push(res, new_range(&ranges[i]));
+  }
+  return res;
+}
+
+/**
+ * Get the language that was used to parse the syntax tree.
+ *
+ * @return [Language]
+ */
+static VALUE tree_language(VALUE self) {
+  return new_language(ts_tree_language(SELF));
+}
+
 /**
  * Write a DOT graph describing the syntax tree to the given file.
  *
@@ -163,22 +187,13 @@ static VALUE tree_print_dot_graph(VALUE self, VALUE file) {
   return Qnil;
 }
 
-static VALUE tree_finalizer(VALUE _self) {
-  VALUE rc = rb_cv_get(cTree, "@@rc");
-  VALUE keys = rb_funcall(rc, rb_intern("keys"), 0);
-  long len = RARRAY_LEN(keys);
-
-  for (long i = 0; i < len; ++i) {
-    VALUE curr = RARRAY_AREF(keys, i);
-    unsigned int val = NUM2UINT(rb_hash_lookup(rc, curr));
-    if (val > 0) {
-      ts_tree_delete((TSTree *)NUM2ULONG(curr));
-    }
-
-    rb_hash_delete(rc, curr);
-  }
-
-  return Qnil;
+/**
+ * Get the root node of the syntax tree.
+ *
+ * @return [Node]
+ */
+static VALUE tree_root_node(VALUE self) {
+  return new_node_by_val(ts_tree_root_node(SELF));
 }
 
 /**
@@ -187,26 +202,11 @@ static VALUE tree_finalizer(VALUE _self) {
  *
  * @return [Node]
  */
-static VALUE root_node_with_offset(VALUE self, VALUE offset_bytes,
-                                   VALUE offset_extent) {
+static VALUE tree_root_node_with_offset(VALUE self, VALUE offset_bytes,
+                                        VALUE offset_extent) {
   uint32_t bytes = NUM2UINT(offset_bytes);
   TSPoint extent = value_to_point(offset_extent);
   return new_node_by_val(ts_tree_root_node_with_offset(SELF, bytes, extent));
-}
-
-/**
- * Get the array of included ranges that was used to parse the syntax tree.
- *
- * @return [Array<Range>]
- */
-static VALUE included_ranges(VALUE self) {
-  uint32_t length;
-  const TSRange *ranges = ts_tree_included_ranges(SELF, &length);
-  VALUE res = rb_ary_new_capa(length);
-  for (uint32_t i = 0; i < length; i++) {
-    rb_ary_push(res, new_range(&ranges[i]));
-  }
-  return res;
 }
 
 void init_tree(void) {
@@ -214,16 +214,19 @@ void init_tree(void) {
 
   rb_undef_alloc_func(cTree);
 
+  /* Module methods */
+  rb_define_module_function(cTree, "changed_ranges", tree_changed_ranges, 2);
+  rb_define_module_function(cTree, "finalizer", tree_finalizer, 0);
+
   /* Class methods */
   rb_define_method(cTree, "copy", tree_copy, 0);
-  rb_define_method(cTree, "root_node", tree_root_node, 0);
-  rb_define_method(cTree, "language", tree_language, 0);
   rb_define_method(cTree, "edit", tree_edit, 1);
-  rb_define_method(cTree, "root_node_with_offset", root_node_with_offset, 2);
   rb_define_method(cTree, "included_ranges", included_ranges, 0);
-  rb_define_module_function(cTree, "changed_ranges", tree_changed_ranges, 2);
+  rb_define_method(cTree, "language", tree_language, 0);
   rb_define_method(cTree, "print_dot_graph", tree_print_dot_graph, 1);
-  rb_define_module_function(cTree, "finalizer", tree_finalizer, 0);
+  rb_define_method(cTree, "root_node", tree_root_node, 0);
+  rb_define_method(cTree, "root_node_with_offset", tree_root_node_with_offset,
+                   2);
 
   // Reference-count created trees
   VALUE rc = rb_hash_new();
