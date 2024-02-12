@@ -116,8 +116,8 @@ class NodeTest < Minitest::Test
       1 ++ x
     MATH
 
-    assert_predicate(tree.root_node, :error?)
-    refute_predicate(tree.root_node.first.first, :error?)
+    refute_predicate(tree.root_node, :error?)
+    assert_predicate(tree.root_node.first.children[2], :error?)
   end
 
   def test_find_node_returns_the_first_node_that_matches_the_query

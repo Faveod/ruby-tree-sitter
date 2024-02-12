@@ -69,11 +69,11 @@ module Utils
            left: (number)             | 9
            ("*")                      | *
            right: ("(")               | (
-           (subtraction
+           right: (subtraction
             left: (number)            | 10
             ("-")                     | -
             right: (number))          | 11.1
-           (")"))))                   | )
+           right: (")"))))            | )
       SEXPR
     end
   end
