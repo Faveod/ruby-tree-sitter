@@ -4,5 +4,5 @@ module TreeSitter
   # The version of the tree-sitter library.
   TREESITTER_VERSION = '0.20.9'
   # The current version of the gem.
-  VERSION = "#{TREESITTER_VERSION}.3".freeze
+  VERSION = '1.0.0'
 end
