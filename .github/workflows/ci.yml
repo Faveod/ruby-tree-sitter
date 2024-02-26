@@ -143,12 +143,12 @@ jobs:
       - name: downloaded pre-compiled parsers
         run: |
           mkdir -p tree-sitter-parsers
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.0/libtree-sitter-embedded-template-${{ matrix.platform.target }}.${{ matrix.platform.ext }} -O tree-sitter-parsers/libtree-sitter-embedded-template.${{ matrix.platform.ext }}
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.0/libtree-sitter-html-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-html.${{ matrix.platform.ext }}
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.0/libtree-sitter-javascript-${{ matrix.platform.target }}.${{ matrix.platform.ext }}        -O tree-sitter-parsers/libtree-sitter-javascript.${{ matrix.platform.ext }}
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.0/libtree-sitter-json-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-json.${{ matrix.platform.ext }}
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.0/libtree-sitter-ruby-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-ruby.${{ matrix.platform.ext }}
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.0/libtree-sitter-javascript-${{ matrix.platform.target }}.${{ matrix.platform.ext }}        -O tree-sitter-parsers/libtree-sitter-javascript.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-embedded-template-${{ matrix.platform.target }}.${{ matrix.platform.ext }} -O tree-sitter-parsers/libtree-sitter-embedded-template.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-html-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-html.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-javascript-${{ matrix.platform.target }}.${{ matrix.platform.ext }}        -O tree-sitter-parsers/libtree-sitter-javascript.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-json-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-json.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-ruby-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-ruby.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-javascript-${{ matrix.platform.target }}.${{ matrix.platform.ext }}        -O tree-sitter-parsers/libtree-sitter-javascript.${{ matrix.platform.ext }}
       - run: bin/setup
       - name: compile
         env:
