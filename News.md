@@ -1,6 +1,6 @@
 # News
 
-## next
+## v1.0.0
 
 - Support for v0.20.9.
 - Integration of the TreeStand gem https://github.com/Shopify/tree_stand/.
