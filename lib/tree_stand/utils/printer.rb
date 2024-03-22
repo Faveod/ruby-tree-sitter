@@ -33,7 +33,7 @@ module TreeStand
             next
           end
 
-          io << "#{line.sexpr}#{' ' * (@ralign - line.sexpr.size)}| #{line.text}\n"
+          io << "#{line.sexpr}#{' ' * [(@ralign - line.sexpr.size), 0].max}| #{line.text}\n"
         end
 
         io
