@@ -15,7 +15,7 @@ group :development, :test do
   gem 'ruby_memcheck', '~> 1.0'
   gem 'tapioca', '~> 0.11.1', require: false
   gem 'webrick'
-  gem 'yard', '~> 0.9.28'
+  gem 'yard', '~> 0.9.36'
 end
 
 group :test do
