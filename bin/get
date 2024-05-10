@@ -16,11 +16,11 @@ darwin*)
 	;;
 esac
 
-tstag="0.20.9"
+tstag="0.22.6"
 lang=$1
-local=tree-sitter-parsers
-repo=tree-sitter-$lang
-out=../libtree-sitter-$lang.$ext
+local="$PWD/tree-sitter-parsers"
+repo="tree-sitter-$lang"
+out="$local/libtree-sitter-$lang.$ext"
 
 mkdir -p "$local"
 cd "$local"
@@ -47,39 +47,4 @@ fi
 
 cd $lang
 $cli generate
-
-if test -d "src"; then
-	cd "src"
-elif test -d "$lang/src"; then # This is the case of typescript parser.
-	cd "$lang/src"
-fi
-
-LDFLAGS='-lstdc++'
-CPPFLAGS='-I/usr/include -I/usr/local/include -I/opt/include -I/opt/local/include'
-CFLAGS='-std=c99'
-CXXFLAGS=
-
-set +e
-cfiles=$(echo *.c)
-cxxfiles=$(echo *.cc *.cpp *.cxx)
-set -e
-
-for i in $cfiles; do
-	if [ -f "$i" ]; then
-		$CC $CPPFLAGS $CFLAGS -fPIC -c $i
-	fi
-done
-
-for i in $cxxfiles; do
-	if [ -f "$i" ]; then
-		$CXX $CPPFLAGS $CXXFLAGS -fPIC -c $i
-	fi
-done
-
-if test -n "$cxxfiles"; then
-	LD=$CXX
-else
-	LD=$CC
-fi
-
-$LD $LDFLAGS -shared *.o -o $out
+$cli build --output $out
