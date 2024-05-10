@@ -2,7 +2,7 @@
 
 module TreeSitter
   # The version of the tree-sitter library.
-  TREESITTER_VERSION = '0.20.9'
+  TREESITTER_VERSION = '0.22.6'
   # The current version of the gem.
   VERSION = '1.0.0'
 end

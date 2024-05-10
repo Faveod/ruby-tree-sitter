@@ -10,7 +10,7 @@ jobs:
         ruby: [3.0, 3.1, 3.2, 3.3]
         platform:
           - { os: ubuntu, target: linux-x64 }
-          - { os: macos,  target: macos-x64 }
+          - { os: macos,  target: macos-arm64 }
     runs-on: ${{ matrix.platform.os }}-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,7 +22,7 @@ jobs:
         run: |
           git clone https://github.com/tree-sitter/tree-sitter
           cd tree-sitter
-          git checkout tags/v0.20.9
+          git checkout tags/v0.22.6
           make
           sudo make install
           sudo rm /usr/local/lib/libtree-sitter.a
@@ -30,15 +30,14 @@ jobs:
         if: ${{ matrix.platform.os == 'ubuntu' }}
         run: |
           sudo ldconfig -v
-      - run: bin/setup
-      - name: compile
+      - name: setup
         env:
           PLATFORM: ${{ matrix.platform.target }}
+        run: bin/setup javascript json ruby
+      - name: compile
         run: |
           bundle exec rake compile
       - name: test
-        env:
-          PLATFORM: ${{ matrix.platform.target }}
         run: |
           bundle exec rake test
       - name: package native gem
@@ -71,20 +70,19 @@ jobs:
         run: |
           git clone https://github.com/tree-sitter/tree-sitter
           cd tree-sitter
-          git checkout tags/v0.20.9
+          git checkout tags/v0.22.6
           make
           sudo make install
           sudo rm /usr/local/lib/libtree-sitter.a
           sudo ldconfig -v
-      - run: bin/setup
-      - name: compile
+      - name: setup
         env:
           PLATFORM: linux-x64
+        run: bin/setup javascript json ruby
+      - name: compile
         run: |
           bundle exec rake compile
       - name: test
-        env:
-          PLATFORM: linux-x64
         run: |
           bundle exec rake test
       - name: package native gem
@@ -132,7 +130,7 @@ jobs:
         ruby: [3.0, 3.1, 3.2, 3.3]
         platform:
           - { os: ubuntu, target: linux-x64, ext: so    }
-          - { os: macos,  target: macos-x64, ext: dylib }
+          - { os: macos,  target: macos-arm64, ext: dylib }
     runs-on: ${{ matrix.platform.os }}-latest
     steps:
       - uses: actions/checkout@v3
@@ -143,16 +141,14 @@ jobs:
       - name: downloaded pre-compiled parsers
         run: |
           mkdir -p tree-sitter-parsers
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-embedded-template-${{ matrix.platform.target }}.${{ matrix.platform.ext }} -O tree-sitter-parsers/libtree-sitter-embedded-template.${{ matrix.platform.ext }}
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-html-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-html.${{ matrix.platform.ext }}
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-javascript-${{ matrix.platform.target }}.${{ matrix.platform.ext }}        -O tree-sitter-parsers/libtree-sitter-javascript.${{ matrix.platform.ext }}
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-json-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-json.${{ matrix.platform.ext }}
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-ruby-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-ruby.${{ matrix.platform.ext }}
-          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.1/libtree-sitter-javascript-${{ matrix.platform.target }}.${{ matrix.platform.ext }}        -O tree-sitter-parsers/libtree-sitter-javascript.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.2/libtree-sitter-embedded-template-${{ matrix.platform.target }}.${{ matrix.platform.ext }} -O tree-sitter-parsers/libtree-sitter-embedded-template.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.2/libtree-sitter-html-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-html.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.2/libtree-sitter-javascript-${{ matrix.platform.target }}.${{ matrix.platform.ext }}        -O tree-sitter-parsers/libtree-sitter-javascript.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.2/libtree-sitter-json-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-json.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.2/libtree-sitter-ruby-${{ matrix.platform.target }}.${{ matrix.platform.ext }}              -O tree-sitter-parsers/libtree-sitter-ruby.${{ matrix.platform.ext }}
+          wget https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.2/libtree-sitter-javascript-${{ matrix.platform.target }}.${{ matrix.platform.ext }}        -O tree-sitter-parsers/libtree-sitter-javascript.${{ matrix.platform.ext }}
       - run: bin/setup
       - name: compile
-        env:
-          PLATFORM: ${{ matrix.platform.target }}
         run: |
           bundle exec rake compile -- --disable-sys-libs
       - name: test

@@ -1,5 +1,9 @@
 # News
 
+# v1.1.0
+
+- Support for v0.20.9.
+
 ## v1.0.0
 
 - Support for v0.20.9.
