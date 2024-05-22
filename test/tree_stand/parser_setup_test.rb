@@ -5,7 +5,7 @@ require 'test_helper'
 class ParserSetupTest < Minitest::Test
   def test_can_parse_a_document
     parser = TreeSitter::Parser.new.tap do |p|
-      p.language = TreeSitter::Language.load('math', 'tree-sitter-parsers/math.so')
+      p.language = TreeSitter::Language.load('math', "tree-sitter-parsers/math.#{TreeSitter.ext}")
     end
 
     tree = parser.parse_string(nil, <<~MATH)

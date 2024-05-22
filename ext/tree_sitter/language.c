@@ -32,7 +32,7 @@ VALUE new_language(const TSLanguage *language) {
  * with this gem.
  *
  * @param name [String] the parser's name.
- * @param path [String] the parser's shared library (so, dylib) path on disk.
+ * @param path [String, Pathname] the parser's shared library (so, dylib) path on disk.
  *
  * @return [Language]
  */
