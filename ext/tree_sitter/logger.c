@@ -154,9 +154,9 @@ static void logger_initialize_stderr(logger_t *logger) {
  *
  * You can provide your proper backend. You have to make sure that it
  * exposes a +printf+, +puts+, or +write+ (lookup is done in that specific
- * order). {StringIO} is a perfect candidate.
+ * order). {::StringIO} is a perfect candidate.
  *
- * You can also provide a format ({String}) if your backend supports a +printf+.
+ * You can also provide a format ({::String}) if your backend supports a +printf+.
  *
  * @example
  *   backend = StringIO.new

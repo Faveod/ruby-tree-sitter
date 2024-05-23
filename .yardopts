@@ -2,7 +2,5 @@
 --exclude ext/tree_sitter/.*
 -
 README.md
-docs/Development.md
-docs/Notes.md
-docs/SIGSEGV.md
 LICENSE
+docs/*

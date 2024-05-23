@@ -208,7 +208,7 @@ static VALUE parser_set_logger(VALUE self, VALUE logger) {
  *    same arguments. Or you can start parsing from scratch by first calling
  *    {Parser#reset}.
  * 3. Parsing was cancelled using a cancellation flag that was set by an
- *    earlier call to {Parsert#cancellation_flag=}. You can resume parsing
+ *    earlier call to {Parser#cancellation_flag=}. You can resume parsing
  *    from where the parser left out by calling {Parser#parse} again with
  *    the same arguments.
  *
