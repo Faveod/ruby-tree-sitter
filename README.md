@@ -69,8 +69,7 @@ This gem is a binding for `tree-sitter`. It doesn't have a version of
 
 You must install `tree-sitter` and make sure that their dynamic library is
 accessible from `$PATH`, or build the gem with `--disable-sys-libs`, which will
-download the latest tagged `tree-sitter` and build against it (see [Build from
-source](docs/Contributing.md#build-from-source) .)
+download the latest tagged `tree-sitter` and build against it (see [Build from source](docs/Contributing.md#build-from-source) .)
 
 You can either install `tree-sitter` from source or through your go-to package manager.
 
@@ -139,8 +138,7 @@ bundle config set build.ruby_tree_sitter --disable-sys-libs
 If you don't want to install from `rubygems`, `git`, or if you don't want to
 compile on install, then download a native gem from this repository's
 [releases](https://github.com/Faveod/ruby-tree-sitter/releases), or you can
-compile it yourself (see [Build from
-source](docs/Contributing.md#build-from-source) .)
+compile it yourself (see [Build from source](docs/Contributing.md#build-from-source) .)
 
 In that case, you'd have to point your `Gemfile` to the `gem` as such:
 
@@ -177,7 +175,7 @@ See `examples` directory.
 
 ## Development
 
-See [`docs/README.md`](docs/Contributing.md).
+See [`docs/Contributing.md`](docs/Contributing.md).
 
 ## 🚧 👷‍♀️ Notes 👷 🚧
 
@@ -192,7 +190,7 @@ don't copy them left and right, and then expect them to work without
 `SEGFAULT`ing and creating a black-hole in your living-room.  Assume that you
 have to work locally with them. If you get a `SEGFAULT`, you can debug the
 native `C` code using `gdb`.  You can read more on `SEGFAULT`s
-[here](docs/SIGSEGV.md), and debugging [here](docs/Contributing.md#Debugging).
+[here](docs/SIGSEGV.md), and debugging [here](docs/Contributing#Debugging.md).
 
 That said, we do aim at providing an idiomatic `Ruby` interface.  It should also
 provide a _safer_ interface, where you don't have to worry about when and how
