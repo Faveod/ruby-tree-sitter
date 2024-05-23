@@ -16,6 +16,9 @@ Gemspec/RequireMFA:
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
 
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
 Lint/UnusedMethodArgument:
   Enabled: false
 
