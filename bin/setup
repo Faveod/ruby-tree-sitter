@@ -3,6 +3,21 @@ set -euo pipefail
 IFS=$'\n\t'
 set -vx
 
+# TODO: migrate this to bin/get
+
+case $OSTYPE in
+darwin*)
+	ext=dylib
+	CC=cc
+	CXX=c++
+	;;
+*)
+	ext=so
+	CC=gcc
+	CXX=g++
+	;;
+esac
+
 bundle install
 
 if [[ ! -d tmp/tree-sitter-math ]]; then
@@ -13,11 +28,11 @@ fi
 cd tmp/tree-sitter-math
 
 mkdir -p target
-gcc -shared -o target/parser.so -fPIC src/parser.c -I./src
+$CC -shared -o "target/parser.$ext" -fPIC src/parser.c -I./src
 
 cd ../..
 mkdir -p tree-sitter-parsers
-cp tmp/tree-sitter-math/target/parser.so tree-sitter-parsers/math.so
+cp "tmp/tree-sitter-math/target/parser.$ext" "tree-sitter-parsers/math.$ext"
 
 for lang in "$@"
 do
