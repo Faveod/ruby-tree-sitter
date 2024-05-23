@@ -5,7 +5,7 @@ at_exit { GC.start }
 require 'bundler/setup'
 require 'tree_sitter'
 require 'tree_stand'
-require 'debug'
+# require 'debug'
 require 'minitest/autorun'
 require 'minitest/focus'
 require 'minitest/reporters'
