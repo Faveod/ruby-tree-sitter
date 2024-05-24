@@ -166,23 +166,18 @@ module TreeSitter
     #
     # See {#fetch_all}.
     def fetch(*keys, all: false, **_kwargs)
-      dict = {}
-      keys.each.with_index do |k, i|
-        dict[k.to_s] = i
-      end
+      key_set = keys.to_set(&:to_s)
+      fields = {}
+      each_field do |f, _c|
+        fields[f] = self[f] if key_set.delete(f)
 
-      res = {}
-      each_field do |f, c|
-        if dict.key?(f)
-          res[f] = c
-          dict.delete(f)
-        end
-        break if dict.empty?
+        break if key_set.empty?
       end
-
-      res = keys.uniq.map { |k| res[k.to_s] }
-      res = res.compact if !all
-      res
+      if all
+        keys.map { |k| fields[k.to_s] }
+      else
+        keys.uniq.map { |k| fields[k.to_s] }.compact
+      end
     end
 
     # Access all named children of a node, returning `nil` for missing ones.

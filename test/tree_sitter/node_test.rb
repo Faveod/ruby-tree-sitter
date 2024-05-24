@@ -449,4 +449,21 @@ describe 'fetch_all' do
     assert_equal arguments, a
     assert_nil f
   end
+
+  it 'should retrun an array of the same size of requested keys' do
+    assert_equal [nil], @child.fetch_all(:fake)
+    assert_equal [@child.name, nil], @child.fetch_all(:name, :fake)
+    assert_equal [nil, @child.name], @child.fetch_all(:fake, :name)
+    assert_equal [nil, nil, @child.name], @child.fetch_all(:fake, :whatever, :name)
+    assert_equal [nil, nil, @child.name], @child.fetch_all(:fake, :fake, :name)
+    assert_equal [nil, @child.name, nil], @child.fetch_all(:fake, :name, :fake)
+    assert_equal [nil, @child.name, nil], @child.fetch_all(:whatever, :name, :fake)
+    assert_equal [@child.name, nil, nil], @child.fetch_all(:name, :fake, :fake)
+    assert_equal [@child.name, nil, nil], @child.fetch_all(:name, :whatever, :fake)
+    assert_equal [@child.name, @child.parameters, nil], @child.fetch_all(:name, :parameters, :fake)
+    assert_equal [@child.parameters, @child.name, nil], @child.fetch_all(:parameters, :name, :fake)
+    assert_equal [@child.parameters, nil, @child.name], @child.fetch_all(:parameters, :fake, :name)
+    assert_equal [@child.parameters, nil, @child.name, nil], @child.fetch_all(:parameters, :fake, :name, :fake)
+    assert_equal [@child.parameters, nil, @child.name, nil], @child.fetch_all(:parameters, :fake, :name, :whatever)
+  end
 end
