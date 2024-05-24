@@ -44,7 +44,13 @@ module TreeStand
 
     # These are methods defined in {TreeStand::Node} but map to something
     # in {TreeSitter::Node}, because we want a more idiomatic API.
-    THINLY_REMAPPED_METHODS = { field: :child_by_field_name }.freeze
+    THINLY_REMAPPED_METHODS = {
+      field: :child_by_field_name,
+      next: :next_sibling,
+      prev: :prev_sibling,
+      next_named: :next_named_sibling,
+      prev_named: :prev_named_sibling,
+    }.freeze
 
     # These are methods from {TreeSitter} that are thinly wrapped to create
     # {TreeStand::Node} instead.
@@ -52,11 +58,7 @@ module TreeStand
       %i[
         child
         named_child
-        next_named_sibling
-        next_sibling
         parent
-        prev_named_sibling
-        prev_sibling
       ] + THINLY_REMAPPED_METHODS.keys
     ).freeze
 
@@ -218,7 +220,7 @@ module TreeStand
     # @yieldparam child [TreeStand::Node]
     sig do
       params(block: T.nilable(T.proc.params(node: TreeStand::Node).returns(BasicObject)))
-        .returns(T::Enumerator[T::Array[T.any(Symbol, TreeStand::Node)]])
+        .returns(T::Enumerator[[Symbol, TreeStand::Node]])
     end
     def each_field(&block)
       enumerator = Enumerator.new do |yielder|
