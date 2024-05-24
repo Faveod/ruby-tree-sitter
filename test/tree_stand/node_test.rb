@@ -181,6 +181,10 @@ class NodeTest < Minitest::Test
     end
   end
 
+  def test_def_delegators
+    assert_equal(:expression, @tree.root_node.type)
+  end
+
   def test_respond_to_missing
     assert_respond_to(@tree.root_node.first, :left)
   end
