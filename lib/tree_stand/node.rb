@@ -50,6 +50,7 @@ module TreeStand
       prev: :prev_sibling,
       next_named: :next_named_sibling,
       prev_named: :prev_named_sibling,
+      field_names: :fields,
     }.freeze
 
     # These are methods from {TreeSitter} that are thinly wrapped to create
@@ -73,7 +74,6 @@ module TreeStand
     def initialize(tree, ts_node)
       @tree = tree
       @ts_node = ts_node
-      @fields = @ts_node.each_field.to_a.map(&:first)
     end
 
     # TreeSitter uses a `TreeSitter::Cursor` to iterate over matches by calling
@@ -232,6 +232,14 @@ module TreeStand
       enumerator
     end
 
+    # @example Enumerable methods
+    #   node.named.map(&:text) # => ["3", "4"]
+    alias_method :named, :each_named
+
+    # @example Enumerable methods
+    #   node.fields.map { |f, c| "#{f}: #{c}" } # => ["left: 3", "right: 4"]
+    alias_method :fields, :each_field
+
     # (see TreeStand::Visitors::TreeWalker)
     # Backed by {TreeStand::Visitors::TreeWalker}.
     #
@@ -319,7 +327,7 @@ module TreeStand
     end
 
     def thinly_wrapped?(method)
-      @fields.include?(method.to_s) || THINLY_WRAPPED_METHODS.include?(method)
+      @ts_node.fields.include?(method) || THINLY_WRAPPED_METHODS.include?(method)
     end
   end
 end
