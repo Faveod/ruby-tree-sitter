@@ -51,7 +51,7 @@ class NodeTest < Minitest::Test
     assert_equal(@tree.root_node, node.parent.parent)
   end
 
-  def test_can_enumrate_named_children
+  def test_can_enumerate_named_children
     root = @tree.root_node
     node = root.children.first
 
@@ -59,12 +59,18 @@ class NodeTest < Minitest::Test
     assert_equal([[:left, node.left], [:right, node.right]], node.each_field.to_a)
   end
 
-  def test_can_enumrate_fields
+  def test_can_enumerate_fields
     root = @tree.root_node
     node = root.children.first
 
     assert_equal([root.named_child(0)], root.each_named.to_a)
     assert_equal([node.left, node.right], node.each_named.to_a)
+  end
+
+  def test_can_call_thinly_wrapped_and_mapped
+    node = @tree.root_node.children.first
+    assert_equal(node.left, node.field(:left))
+    assert_equal(node.left, node.field('left'))
   end
 
   def test_nodes_wrap_the_document_so_they_can_reference_text
