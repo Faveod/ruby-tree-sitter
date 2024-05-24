@@ -61,7 +61,7 @@ module TreeSitter
     # @return [Node | Array<Node>]
     def [](*keys)
       case keys.length
-      when 0 then raise "#{self.class.name}##{__method__} requires a key."
+      when 0 then raise ArgumentError, "#{self.class.name}##{__method__} requires a key."
       when 1
         case k = keys.first
         when Integer then named_child(k)
