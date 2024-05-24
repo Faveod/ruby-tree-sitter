@@ -1,6 +1,12 @@
 # Ruby tree-sitter bindings
 
-[![ci](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/ci.yml/badge.svg)](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/ci.yml) [![valgrind](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/valgrind.yml/badge.svg)](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/valgrind.yml) [![asan/ubsan](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/asan.yml/badge.svg)](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/asan.yml)
+[![docs](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/publish-docs.yml/badge.svg)](https://faveod.github.io/ruby-tree-sitter)
+[![rubygems.org](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/publish.yml/badge.svg)](https://rubygems.org/gems/ruby_tree_sitter)
+[![ci](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/ci.yml/badge.svg)](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/ci.yml)
+<!--
+[![valgrind](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/valgrind.yml/badge.svg)](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/valgrind.yml)
+[![asan/ubsan](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/asan.yml/badge.svg)](https://github.com/Faveod/ruby-tree-sitter/actions/workflows/asan.yml)
+-->
 
 Ruby bindings for [tree-sitter](https://github.com/tree-sitter/tree-sitter).
 
