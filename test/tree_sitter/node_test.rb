@@ -132,6 +132,24 @@ describe 'parent' do
   end
 end
 
+describe 'named_child' do
+  before do
+    @child = root.child(0)
+  end
+
+  it 'must return proper node' do
+    assert_equal @child.named_child(0), @child.child_by_field_name('name')
+    assert_equal @child.named_child(0), @child.child_by_field_name(:name)
+    assert_equal @child.named_child(1), @child.child_by_field_name('parameters')
+    assert_equal @child.named_child(1), @child.child_by_field_name(:parameters)
+  end
+
+  it 'must raise IndexError when out of range' do
+    assert_raises(IndexError) { @child.named_child(13) }
+    assert_raises(IndexError) { @child.named_child(-13) }
+  end
+end
+
 describe 'child' do
   before do
     @child = root.child(0)
@@ -199,12 +217,10 @@ describe 'child' do
 
   it 'must raise an exception for wrong ranges' do
     child = @child.child(0)
-    assert_raises IndexError do
-      @child.descendant_for_byte_range(child.end_byte, child.start_byte)
-    end
-    assert_raises IndexError do
-      @child.named_descendant_for_byte_range(child.end_byte, child.start_byte)
-    end
+    assert_raises(IndexError) { root.child(13).parent }
+    assert_raises(IndexError) { root.child(-13).parent }
+    assert_raises(IndexError) { @child.descendant_for_byte_range(child.end_byte, child.start_byte) }
+    assert_raises(IndexError) { @child.named_descendant_for_byte_range(child.end_byte, child.start_byte) }
     assert_raises IndexError do
       p1 = TreeSitter::Point.new
       p1.row = @child.end_point.row
@@ -227,6 +243,8 @@ describe 'field_name' do
 
   it 'must return proper field name' do
     assert_equal 'name', @child.field_name_for_child(1)
+    assert_raises(IndexError) { @child.field_name_for_child(13) }
+    assert_raises(IndexError) { @child.field_name_for_child(-13) }
   end
 end
 
@@ -261,6 +279,8 @@ describe '[]' do
   it 'must return a child by field name when index is a (String | Symbol)' do
     assert_equal @child.named_child(0), @child[:name]
     assert_equal @child.named_child(0), @child['name']
+    assert_raises(RuntimeError) { @child['something'] }
+    assert_raises(RuntimeError) { @child[:something] }
   end
 
   it 'must return an array of nodes when index is an Array' do
