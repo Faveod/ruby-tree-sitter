@@ -243,6 +243,9 @@ describe 'field_name' do
 
   it 'must return proper field name' do
     assert_equal 'name', @child.field_name_for_child(1)
+  end
+
+  it 'must raise an exception for a wrong index' do
     assert_raises(IndexError) { @child.field_name_for_child(13) }
     assert_raises(IndexError) { @child.field_name_for_child(-13) }
   end
@@ -279,8 +282,16 @@ describe '[]' do
   it 'must return a child by field name when index is a (String | Symbol)' do
     assert_equal @child.named_child(0), @child[:name]
     assert_equal @child.named_child(0), @child['name']
-    assert_raises(RuntimeError) { @child['something'] }
-    assert_raises(RuntimeError) { @child[:something] }
+  end
+
+  it 'must raise an exception when index is does not exist' do
+    assert_raises(IndexError) { @child[13] }
+    assert_raises(IndexError) { @child['something'] }
+    assert_raises(IndexError) { @child[:something] }
+    assert_raises(ArgumentError) { @child[1.0] }
+    assert_raises(ArgumentError) { @child[[:name]] }
+    assert_raises(ArgumentError) { @child[[:something]] }
+    assert_raises(ArgumentError) { @child[{ name: :something }] }
   end
 
   it 'must return an array of nodes when index is an Array' do

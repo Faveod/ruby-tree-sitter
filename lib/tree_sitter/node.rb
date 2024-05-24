@@ -64,12 +64,12 @@ module TreeSitter
       when 0 then raise "#{self.class.name}##{__method__} requires a key."
       when 1
         case k = keys.first
-        when Numeric then named_child(k)
+        when Integer then named_child(k)
         when String, Symbol
-          raise "Cannot find field #{k}" unless fields.include?(k.to_sym)
+          raise IndexError, "Cannot find field #{k}. Available: #{fields}" unless fields.include?(k.to_sym)
 
           child_by_field_name(k.to_s)
-        else raise <<~ERR
+        else raise ArgumentError, <<~ERR
           #{self.class.name}##{__method__} accepts Integer and returns named child at given index,
               or a (String | Symbol) and returns the child by given field name.
         ERR
