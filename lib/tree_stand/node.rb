@@ -164,6 +164,66 @@ module TreeStand
       enumerator
     end
 
+    # Enumerate named children.
+    # @example
+    #   node.text # => "3 * 4"
+    #
+    # @example Iterate over the child nodes
+    #   node.each do |child|
+    #     print child.text
+    #   end
+    #   # prints: 34
+    #
+    # @example Enumerable methods
+    #   node.map(&:text) # => ["3", "4"]
+    #
+    # @yieldparam child [TreeStand::Node]
+    sig do
+      params(block: T.nilable(T.proc.params(node: TreeStand::Node).returns(BasicObject)))
+        .returns(T::Enumerator[TreeStand::Node])
+    end
+    def each_named(&block)
+      enumerator = Enumerator.new do |yielder|
+        @ts_node.each_named do |child|
+          yielder << TreeStand::Node.new(@tree, child)
+        end
+      end
+      enumerator.each(&block) if block_given?
+      enumerator
+    end
+
+    # Iterate of (field, child).
+    #
+    # @example
+    #   node.text # => "3 * 4"
+    #
+    # @example Iterate over the child nodes
+    #   node.each do |field, child|
+    #     puts "#{field}: #{child.text}"
+    #   end
+    #   # prints:
+    #   #  left: 3
+    #   #  right: 4
+    #
+    # @example Enumerable methods
+    #   node.fields.map { |f, c| "#{f}: #{c}" } # => ["left: 3", "right: 4"]
+    #
+    # @yieldparam field [Symbol]
+    # @yieldparam child [TreeStand::Node]
+    sig do
+      params(block: T.nilable(T.proc.params(node: TreeStand::Node).returns(BasicObject)))
+        .returns(T::Enumerator[T::Array[T.any(Symbol, TreeStand::Node)]])
+    end
+    def each_field(&block)
+      enumerator = Enumerator.new do |yielder|
+        @ts_node.each_field do |field, child|
+          yielder << [field.to_sym, TreeStand::Node.new(@tree, child)]
+        end
+      end
+      enumerator.each(&block) if block_given?
+      enumerator
+    end
+
     # (see TreeStand::Visitors::TreeWalker)
     # Backed by {TreeStand::Visitors::TreeWalker}.
     #
