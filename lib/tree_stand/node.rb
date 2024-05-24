@@ -11,15 +11,48 @@ module TreeStand
     extend Forwardable
     include Enumerable
 
+    # @!method changed?
+    #   @return [Boolean] true if a syntax node has been edited.
+    # @!method child_count
+    #   @return [Integer] the number of child nodes.
+    # @!method extra?
+    #   @return [Boolean] true if the node is *extra* (e.g. comments).
+    # @!method has_error?
+    #   @return [Boolean] true if the node is a syntax error or contains any syntax errors.
+    # @!method missing?
+    #   @return [Boolean] true if the parser inserted that node to recover from error.
+    # @!method named?
+    #   @return [Boolean] true if the node is not a literal in the grammar.
+    # @!method named_child_count
+    #   @return [Integer] the number of *named* children.
     # @!method type
     #   @return [Symbol] the type of the node in the tree-sitter grammar.
     # @!method error?
     #   @return [bool] true if the node is an error node.
     def_delegators(
       :@ts_node,
-      :type,
+      :changed?,
+      :child_count,
       :error?,
+      :extra?,
+      :has_error?,
+      :missing?,
+      :named?,
+      :named_child_count,
+      :type,
     )
+
+    # These are methods from {TreeSitter} that are thinly wrapped to create
+    # {TreeStand::Node} instead.
+    THINLY_WRAPPED_METHODS = %i[
+      child
+      named_child
+      next_named_sibling
+      next_sibling
+      parent
+      prev_named_sibling
+      prev_sibling
+    ].freeze
 
     sig { returns(TreeStand::Tree) }
     attr_reader :tree
@@ -155,15 +188,6 @@ module TreeStand
     end
 
     # @example
-    #   node.text # => "4"
-    #   node.parent.text # => "3 * 4"
-    #   node.parent.parent.text # => "1 + 3 * 4"
-    sig { returns(TreeStand::Node) }
-    def parent
-      TreeStand::Node.new(@tree, @ts_node.parent)
-    end
-
-    # @example
     #   node.text # => "3 * 4"
     #   node.to_a.map(&:text) # => ["3", "*", "4"]
     #   node.children.map(&:text) # => ["3", "*", "4"]
@@ -194,9 +218,11 @@ module TreeStand
     # @overload method_missing(method_name, *args, &block)
     #   @raise [NoMethodError]
     def method_missing(method, *args, &block)
-      return super unless @fields.include?(method.to_s)
-
-      TreeStand::Node.new(@tree, T.unsafe(@ts_node).public_send(method, *args, &block))
+      if @fields.include?(method.to_s) || THINLY_WRAPPED_METHODS.include?(method)
+        TreeStand::Node.new(@tree, T.unsafe(@ts_node).public_send(method, *args, &block))
+      else
+        super
+      end
     end
 
     sig { params(other: Object).returns(T::Boolean) }
