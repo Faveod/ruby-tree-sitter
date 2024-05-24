@@ -166,14 +166,19 @@ static VALUE node_child_by_field_id(VALUE self, VALUE field_id) {
 /**
  * Get the node's child with the given field name.
  *
- * @param field_name [String]
+ * @param field_name [String, Symbol]
  *
  * @return [Node]
  */
 static VALUE node_child_by_field_name(VALUE self, VALUE field_name) {
-  const char *name = StringValuePtr(field_name);
-  uint32_t length = (uint32_t)RSTRING_LEN(field_name);
-  return new_node_by_val(ts_node_child_by_field_name(SELF, name, length));
+  if (Qtrue == rb_funcall(self, rb_intern("field?"), 1, field_name)) {
+    VALUE field_str = rb_funcall(field_name, rb_intern("to_s"), 0);
+    const char *name = StringValuePtr(field_str);
+    uint32_t length = (uint32_t)RSTRING_LEN(field_str);
+    return new_node_by_val(ts_node_child_by_field_name(SELF, name, length));
+  } else {
+    return Qnil;
+  }
 }
 
 /**
