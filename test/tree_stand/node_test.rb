@@ -51,6 +51,22 @@ class NodeTest < Minitest::Test
     assert_equal(@tree.root_node, node.parent.parent)
   end
 
+  def test_can_enumrate_named_children
+    root = @tree.root_node
+    node = root.children.first
+
+    assert_equal([], root.each_field.to_a)
+    assert_equal([[:left, node.left], [:right, node.right]], node.each_field.to_a)
+  end
+
+  def test_can_enumrate_fields
+    root = @tree.root_node
+    node = root.children.first
+
+    assert_equal([root.named_child(0)], root.each_named.to_a)
+    assert_equal([node.left, node.right], node.each_named.to_a)
+  end
+
   def test_nodes_wrap_the_document_so_they_can_reference_text
     assert_equal(<<~MATH, @tree.root_node.text)
       1 + x * 3
