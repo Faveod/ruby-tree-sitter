@@ -45,6 +45,9 @@ module TreeStand
     # These are methods defined in {TreeStand::Node} but map to something
     # in {TreeSitter::Node}, because we want a more idiomatic API.
     THINLY_REMAPPED_METHODS = {
+      '[]': :[],
+      fetch: :fetch,
+      fetch_all: :fetch_all,
       field: :child_by_field_name,
       next: :next_sibling,
       prev: :prev_sibling,
@@ -295,9 +298,13 @@ module TreeStand
     #   @raise [NoMethodError]
     def method_missing(method, *args, &block)
       if thinly_wrapped?(method)
-        TreeStand::Node.new(
-          @tree,
-          T.unsafe(@ts_node).public_send(THINLY_REMAPPED_METHODS[method] || method, *args, &block),
+        from(
+          T.unsafe(@ts_node)
+            .public_send(
+              THINLY_REMAPPED_METHODS[method] || method,
+              *args,
+              &block
+            ),
         )
       else
         super
@@ -328,6 +335,25 @@ module TreeStand
 
     def thinly_wrapped?(method)
       @ts_node.fields.include?(method) || THINLY_WRAPPED_METHODS.include?(method)
+    end
+
+    # FIXME: Make more generic if needed in other classes.
+
+    # 1 instance of {TreeStand} from a {TreeSitter} equivalent.
+    def from_a(node)
+      node.is_a?(TreeSitter::Node) ? TreeStand::Node.new(@tree, node) : node
+    end
+
+    # {TreeSitter} instance, or a collection ({Array, Hash})
+    def from(obj)
+      case obj
+      when Array
+        obj.map { |n| from(n) }
+      when Hash
+        obj.to_h { |k, v| [from(k), from(v)] }
+      else
+        from_a(obj)
+      end
     end
   end
 end

@@ -73,6 +73,64 @@ class NodeTest < Minitest::Test
     assert_equal(node.left, node.field('left'))
   end
 
+  def test_children_access_by_index # rubocop:disable Metrics/AbcSize
+    sum = @tree.root_node.first
+
+    assert_raises(ArgumentError) { sum[] }
+    assert_raises(ArgumentError) { sum[1.0] }
+    assert_raises(ArgumentError) { sum[[]] }
+    assert_raises(ArgumentError) { sum[[1]] }
+    assert_raises(ArgumentError) { sum[{ keys: [1] }] }
+    assert_raises(ArgumentError) { sum[1.0] }
+
+    assert_equal(sum.left, sum[:left])
+    assert_equal([sum.left, sum.right], sum[:left, :right])
+    assert_equal([sum.left, sum.right, sum.right, sum.left], sum[:left, :right, :right, :left])
+    assert_equal(sum.left, sum[0])
+    assert_equal([sum.left, sum.right], sum[0, 1])
+    assert_equal([sum.left, sum.right, sum.right, sum.left], sum[0, 1, 1, 0])
+
+    assert_raises(IndexError) { sum[:whatever] }
+    assert_raises(IndexError) { sum[:left, :whatever] }
+    assert_raises(IndexError) { sum[:whatever, :left] }
+    assert_raises(IndexError) { sum[-1] }
+    assert_raises(IndexError) { sum[0, -1] }
+    assert_raises(IndexError) { sum[-1, 0] }
+    assert_raises(IndexError) { sum[13] }
+    assert_raises(IndexError) { sum[0, 13] }
+    assert_raises(IndexError) { sum[13, 0] }
+  end
+
+  def test_children_access_by_fetch # rubocop:disable Metrics/AbcSize
+    sum = @tree.root_node.first
+
+    assert_equal([], sum.fetch)
+    assert_equal([sum.left], sum.fetch(:left))
+    assert_equal([sum.left, sum.right], sum.fetch(:left, :right))
+    assert_equal([sum.left, sum.right], sum.fetch(:left, :right, :whatever))
+    assert_equal([sum.left, sum.right], sum.fetch(:left, :whatever, :right))
+    assert_equal([sum.left, sum.right], sum.fetch(:whatever, :left, :right))
+    assert_equal([sum.left, sum.right], sum.fetch(:whatever, :left, :right))
+    assert_equal([], sum.fetch(-1))
+    assert_equal([], sum.fetch(12))
+    assert_equal([], sum.fetch(0))
+    assert_equal([], sum.fetch(0, 1))
+    assert_equal([], sum.fetch(0, -1))
+    assert_equal([], sum.fetch(-1, 0))
+    assert_equal([], sum.fetch(-1, 0))
+    assert_equal([], sum.fetch(0, -1, 1))
+    assert_equal([], sum.fetch(0, 1, -1))
+    assert_equal([], sum.fetch(-1, 0, 1, -1))
+
+    assert_equal([], sum.fetch_all)
+    assert_equal([nil], sum.fetch_all(:whatever))
+    assert_equal([nil, sum.right], sum.fetch_all(:whatever, :right))
+    assert_equal([nil, sum.left, sum.right], sum.fetch_all(:whatever, :left, :right))
+    assert_equal([nil, sum.right, sum.left], sum.fetch_all(:whatever, :right, :left))
+    assert_equal([nil, sum.left, nil, sum.left], sum.fetch_all(:whatever, :left, :and, :left))
+    assert_equal([nil, sum.left, nil, sum.left, sum.right], sum.fetch_all(:whatever, :left, :and, :left, :right))
+  end
+
   def test_nodes_wrap_the_document_so_they_can_reference_text
     assert_equal(<<~MATH, @tree.root_node.text)
       1 + x * 3
