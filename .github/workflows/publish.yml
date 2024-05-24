@@ -1,4 +1,4 @@
-name: "Publish Gem"
+name: rubygems.org
 on:
   release:
     types: [published]
@@ -26,4 +26,3 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
           RELEASE_COMMAND: bin/publish
-
