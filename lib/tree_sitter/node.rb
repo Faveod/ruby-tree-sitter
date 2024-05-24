@@ -13,7 +13,7 @@ module TreeSitter
         @fields << name.to_sym if name
       end
 
-      @fields
+      @fields.to_a
     end
 
     # @param field [String, Symbol]
