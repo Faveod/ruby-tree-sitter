@@ -42,17 +42,23 @@ module TreeStand
       :type,
     )
 
+    # These are methods defined in {TreeStand::Node} but map to something
+    # in {TreeSitter::Node}, because we want a more idiomatic API.
+    THINLY_REMAPPED_METHODS = { field: :child_by_field_name }.freeze
+
     # These are methods from {TreeSitter} that are thinly wrapped to create
     # {TreeStand::Node} instead.
-    THINLY_WRAPPED_METHODS = %i[
-      child
-      named_child
-      next_named_sibling
-      next_sibling
-      parent
-      prev_named_sibling
-      prev_sibling
-    ].freeze
+    THINLY_WRAPPED_METHODS = (
+      %i[
+        child
+        named_child
+        next_named_sibling
+        next_sibling
+        parent
+        prev_named_sibling
+        prev_sibling
+      ] + THINLY_REMAPPED_METHODS.keys
+    ).freeze
 
     sig { returns(TreeStand::Tree) }
     attr_reader :tree
@@ -169,13 +175,13 @@ module TreeStand
     #   node.text # => "3 * 4"
     #
     # @example Iterate over the child nodes
-    #   node.each do |child|
+    #   node.each_named do |child|
     #     print child.text
     #   end
     #   # prints: 34
     #
     # @example Enumerable methods
-    #   node.map(&:text) # => ["3", "4"]
+    #   node.each_named.map(&:text) # => ["3", "4"]
     #
     # @yieldparam child [TreeStand::Node]
     sig do
@@ -198,7 +204,7 @@ module TreeStand
     #   node.text # => "3 * 4"
     #
     # @example Iterate over the child nodes
-    #   node.each do |field, child|
+    #   node.each_field do |field, child|
     #     puts "#{field}: #{child.text}"
     #   end
     #   # prints:
@@ -206,7 +212,7 @@ module TreeStand
     #   #  right: 4
     #
     # @example Enumerable methods
-    #   node.fields.map { |f, c| "#{f}: #{c}" } # => ["left: 3", "right: 4"]
+    #   node.each_field.map { |f, c| "#{f}: #{c}" } # => ["left: 3", "right: 4"]
     #
     # @yieldparam field [Symbol]
     # @yieldparam child [TreeStand::Node]
@@ -278,8 +284,11 @@ module TreeStand
     # @overload method_missing(method_name, *args, &block)
     #   @raise [NoMethodError]
     def method_missing(method, *args, &block)
-      if @fields.include?(method.to_s) || THINLY_WRAPPED_METHODS.include?(method)
-        TreeStand::Node.new(@tree, T.unsafe(@ts_node).public_send(method, *args, &block))
+      if thinly_wrapped?(method)
+        TreeStand::Node.new(
+          @tree,
+          T.unsafe(@ts_node).public_send(THINLY_REMAPPED_METHODS[method] || method, *args, &block),
+        )
       else
         super
       end
@@ -304,7 +313,11 @@ module TreeStand
     private
 
     def respond_to_missing?(method, *)
-      @fields.include?(method.to_s) || super
+      thinly_wrapped?(method) || super
+    end
+
+    def thinly_wrapped?(method)
+      @fields.include?(method.to_s) || THINLY_WRAPPED_METHODS.include?(method)
     end
   end
 end
