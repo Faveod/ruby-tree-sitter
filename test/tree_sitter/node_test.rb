@@ -137,6 +137,13 @@ describe 'child' do
     @child = root.child(0)
   end
 
+  it 'must know whether a field exists' do
+    assert_equal true, @child.field?('name')
+    assert_equal true, @child.field?(:name)
+    assert_equal false, @child.field?('something')
+    assert_equal false, @child.field?(:something)
+  end
+
   it 'must return proper children count' do
     assert_equal 1, root.child_count
   end
@@ -151,6 +158,9 @@ describe 'child' do
 
   it 'must return proper child by field name' do
     assert_equal @child.child(1), @child.child_by_field_name('name')
+    assert_equal @child.child(1), @child.child_by_field_name(:name)
+    assert_nil @child.child_by_field_name('something')
+    assert_nil @child.child_by_field_name(:something)
   end
 
   it 'must return proper child by field id' do

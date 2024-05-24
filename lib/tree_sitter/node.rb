@@ -16,8 +16,9 @@ module TreeSitter
       @fields
     end
 
+    # @param field [String, Symbol]
     def field?(field)
-      fields.include?(field)
+      fields.include?(field.to_sym)
     end
 
     # FIXME: These APIs (`[]` and `fetch`) need absolute fixing.
