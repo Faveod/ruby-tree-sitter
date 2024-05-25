@@ -296,13 +296,14 @@ module TreeStand
     #
     # @overload method_missing(method_name, *args, &block)
     #   @raise [NoMethodError]
-    def method_missing(method, *args, &block)
+    def method_missing(method, *args, **kwargs, &block)
       if thinly_wrapped?(method)
         from(
           T.unsafe(@ts_node)
             .public_send(
               THINLY_REMAPPED_METHODS[method] || method,
               *args,
+              **kwargs,
               &block
             ),
         )
@@ -329,7 +330,7 @@ module TreeStand
 
     private
 
-    def respond_to_missing?(method, *)
+    def respond_to_missing?(method, *_args, **_kwargs)
       thinly_wrapped?(method) || super
     end
 
