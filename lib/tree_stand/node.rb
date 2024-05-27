@@ -276,7 +276,7 @@ module TreeStand
     # wraps the parent {TreeStand::Tree #tree} and has access to the source document.
     sig { returns(String) }
     def text
-      T.must(@tree.document[@ts_node.start_byte...@ts_node.end_byte])
+      T.must(@tree.document.byteslice(@ts_node.start_byte...@ts_node.end_byte))
     end
 
     # This class overrides the `method_missing` method to delegate to the
