@@ -1,5 +1,36 @@
 # News
 
+# v1.2.0
+
+## TreeSitter
+
+- `Node#field?` accepts symbols and strings.
+- `Node#child_by_filed_name`
+  - no longer SEGFAULTs when the field name does not exist, returning `nil` instead.
+  - accepts symbols and strings.
+- `fetch` is `fetch_all` now, and `fetch_all` is removed. The API was confusing at best.
+
+## TreeStand
+
+- `Parser.language`
+  - Automatic loading of parsers if installed on the system, or in a local `tree-sitter-parsers` directory.
+  - Handle mac and linux (dylib and so).
+- Expose more thing from `TreeSitter::Node` to `TreeStand::Node`, notably:
+  ```
+  # TreeStand      TreeSitter
+    []             []
+    fetch          fetch
+    field          child_by_field_name
+    fields         each_field
+    named          each_named
+    next           next_sibling
+    prev           prev_sibling
+    next_named     next_named_sibling
+    prev_named     prev_named_sibling
+    field_names    fields
+  ```
+- `Node#text` now correctly fetches the text according to byte ranges.
+
 # v1.1.0
 
 - Support for v0.20.9.
