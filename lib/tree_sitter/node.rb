@@ -21,21 +21,9 @@ module TreeSitter
       fields.include?(field.to_sym)
     end
 
-    # FIXME: These APIs (`[]` and `fetch`) need absolute fixing.
-    # 1. The documentation with the table doesn't work.
-    # 1. The APIs are very confusing! Make them act similarly to Hash's
-    #    `fetch` and `[]`.
-    #    1. `[]` should take a single input and return nil if nothing found
-    #       (no exceptions).
-    #    1. `fetch` should should accept a single argument, potentially a
-    #       default, and raise exception if no default was provided.
-    #       Also allow for the `all:` kwarg.
-    #    1. `values_at` takes many arguments.
-    # And I don't think we can move to 1.0 without adressing them.
-    #
     # Access node's named children.
     #
-    # It's similar to {#fetch}, but differes in input type, return values, and
+    # It's similar to {#fetch}, but differs in input type, return values, and
     # the internal implementation.
     #
     # Both of these methods exist for separate use cases, but also because
@@ -140,7 +128,7 @@ module TreeSitter
 
     # Access node's named children.
     #
-    # It's similar to {#fetch}, but differes in input type, return values, and
+    # It's similar to {#[]}, but differs in input type, return values, and
     # the internal implementation.
     #
     # Both of these methods exist for separate use cases, but also because
@@ -160,34 +148,18 @@ module TreeSitter
     # uses         named_child                   | field_name_for_child
     #              child_by_field_name           |   via each_node
     #              ------------------------------+----------------------
-    # @param all [Boolean] If `true`, return an array of nodes for all the
-    # demanded keys, putting `nil` for missing ones.  If `false`, return the
-    # same array after calling `compact`. Defaults to `false`.
     #
-    # See {#fetch_all}.
-    def fetch(*keys, all: false, **_kwargs)
-      key_set = keys.to_set(&:to_s)
+    # See {#[]}.
+    def fetch(*keys)
+      keys = keys.map(&:to_s)
+      key_set = keys.to_set
       fields = {}
       each_field do |f, _c|
         fields[f] = self[f] if key_set.delete(f)
 
         break if key_set.empty?
       end
-      if all
-        keys.map { |k| fields[k.to_s] }
-      else
-        keys.uniq.map { |k| fields[k.to_s] }.compact
-      end
-    end
-
-    # Access all named children of a node, returning `nil` for missing ones.
-    #
-    # Equivalent to `fetch(…, all: true)`.
-    #
-    # See {#fetch}.
-    def fetch_all(*keys, **kwargs)
-      kwargs[:all] = true
-      fetch(*keys, **kwargs)
+      fields.values_at(*keys)
     end
   end
 end

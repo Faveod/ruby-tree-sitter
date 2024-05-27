@@ -370,100 +370,24 @@ describe 'fetch' do
     @child = root.child(0)
   end
 
-  it 'should return all requested keys by order' do
-    method = @child.child(1)
-    arguments = @child.child(2)
-
-    m, a = @child.fetch(:name, :parameters)
-
-    assert_equal method, m
-    assert_equal arguments, a
-
-    a, m = @child.fetch(:parameters, :name)
-
-    assert_equal method, m
-    assert_equal arguments, a
-  end
-
-  it 'should return unique keys' do
-    method = @child.child(1)
-
-    m = @child.fetch(:name, :name)
-
-    assert_equal 1, m.length
-    assert_equal method, m.first
-  end
-
-  it 'should return an empty array when asked for non-existent fields' do
-    b = @child.fetch(:a)
-    assert_empty b
-
-    b = @child.fetch(:b, :focus)
-    assert_empty b
-  end
-
-  it 'should return an array of `nil` values when asked for non-existent fields with `all: true`' do
-    b = @child.fetch(:d, all: true)
-    refute_empty b
-    assert b.all?(&:nil?)
-
-    b = @child.fetch(:e, :f, all: true)
-    refute_empty b
-    assert b.all?(&:nil?)
-  end
-
-  it 'should return values, even if `nil`, for all keys when `all: true`' do
-    method = @child.child(1)
-    arguments = @child.child(2)
-
-    m, a, f = @child.fetch(:name, :parameters, :fake, all: true)
-
-    assert_equal method, m
-    assert_equal arguments, a
-    assert_nil f
-  end
-end
-
-describe 'fetch_all' do
-  before do
-    @child = root.child(0)
-  end
-
-  it 'should return an array of `nil` values when asked for non-existent fields' do
-    b = @child.fetch_all(:d)
-    refute_empty b
-    assert b.all?(&:nil?)
-
-    b = @child.fetch_all(:e, :f)
-    refute_empty b
-    assert b.all?(&:nil?)
-  end
-
-  it 'should return values, even if `nil`, for all keys' do
-    method = @child.child(1)
-    arguments = @child.child(2)
-
-    m, a, f = @child.fetch_all(:name, :parameters, :fake)
-
-    assert_equal method, m
-    assert_equal arguments, a
-    assert_nil f
-  end
-
   it 'should retrun an array of the same size of requested keys' do
-    assert_equal [nil], @child.fetch_all(:fake)
-    assert_equal [@child.name, nil], @child.fetch_all(:name, :fake)
-    assert_equal [nil, @child.name], @child.fetch_all(:fake, :name)
-    assert_equal [nil, nil, @child.name], @child.fetch_all(:fake, :whatever, :name)
-    assert_equal [nil, nil, @child.name], @child.fetch_all(:fake, :fake, :name)
-    assert_equal [nil, @child.name, nil], @child.fetch_all(:fake, :name, :fake)
-    assert_equal [nil, @child.name, nil], @child.fetch_all(:whatever, :name, :fake)
-    assert_equal [@child.name, nil, nil], @child.fetch_all(:name, :fake, :fake)
-    assert_equal [@child.name, nil, nil], @child.fetch_all(:name, :whatever, :fake)
-    assert_equal [@child.name, @child.parameters, nil], @child.fetch_all(:name, :parameters, :fake)
-    assert_equal [@child.parameters, @child.name, nil], @child.fetch_all(:parameters, :name, :fake)
-    assert_equal [@child.parameters, nil, @child.name], @child.fetch_all(:parameters, :fake, :name)
-    assert_equal [@child.parameters, nil, @child.name, nil], @child.fetch_all(:parameters, :fake, :name, :fake)
-    assert_equal [@child.parameters, nil, @child.name, nil], @child.fetch_all(:parameters, :fake, :name, :whatever)
+    assert_equal [], @child.fetch
+    assert_equal [nil], @child.fetch(:fake)
+    assert_equal [@child.name, @child.name], @child.fetch(:name, :name)
+    assert_equal [@child.name, nil], @child.fetch(:name, :fake)
+    assert_equal [nil, @child.name], @child.fetch(:fake, :name)
+    assert_equal [@child.name, nil, @child.name], @child.fetch(:name, :fake, :name)
+    assert_equal [@child.name, @child.name, nil], @child.fetch(:name, :name, :fake)
+    assert_equal [nil, nil, @child.name], @child.fetch(:fake, :whatever, :name)
+    assert_equal [nil, nil, @child.name], @child.fetch(:fake, :fake, :name)
+    assert_equal [nil, @child.name, nil], @child.fetch(:fake, :name, :fake)
+    assert_equal [nil, @child.name, nil], @child.fetch(:whatever, :name, :fake)
+    assert_equal [@child.name, nil, nil], @child.fetch(:name, :fake, :fake)
+    assert_equal [@child.name, nil, nil], @child.fetch(:name, :whatever, :fake)
+    assert_equal [@child.name, @child.parameters, nil], @child.fetch(:name, :parameters, :fake)
+    assert_equal [@child.parameters, @child.name, nil], @child.fetch(:parameters, :name, :fake)
+    assert_equal [@child.parameters, nil, @child.name], @child.fetch(:parameters, :fake, :name)
+    assert_equal [@child.parameters, nil, @child.name, nil], @child.fetch(:parameters, :fake, :name, :fake)
+    assert_equal [@child.parameters, nil, @child.name, nil], @child.fetch(:parameters, :fake, :name, :whatever)
   end
 end
