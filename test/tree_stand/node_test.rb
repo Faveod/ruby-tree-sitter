@@ -10,6 +10,25 @@ class NodeTest < Minitest::Test
     MATH
   end
 
+  def test_node_text
+    parser = TreeStand::Parser.new('javascript')
+    tree = parser.parse_string(<<~MATH)
+      1 + x * 3
+    MATH
+
+    number, _, product = tree.root_node.first.first.to_a
+    assert_equal('1', number.text)
+    assert_equal('x * 3', product.text)
+
+    tree = parser.parse_string(<<~MATH)
+      1 + â * 3
+    MATH
+
+    number, _, product = tree.root_node.first.first.to_a
+    assert_equal('1', number.text)
+    assert_equal('â * 3', product.text)
+  end
+
   def test_accessors
     assert_instance_of(TreeSitter::Node, @tree.root_node.ts_node)
     assert_equal(@tree, @tree.root_node.tree)
