@@ -47,7 +47,6 @@ module TreeStand
     THINLY_REMAPPED_METHODS = {
       '[]': :[],
       fetch: :fetch,
-      fetch_all: :fetch_all,
       field: :child_by_field_name,
       next: :next_sibling,
       prev: :prev_sibling,
