@@ -140,6 +140,13 @@ static VALUE query_initialize(VALUE self, VALUE language, VALUE source) {
     SELF = res;
   }
 
+  rb_iv_set(self, "@text_predicates", rb_ary_new());
+  rb_iv_set(self, "@property_predicates", rb_ary_new());
+  rb_iv_set(self, "@property_settings", rb_ary_new());
+  rb_iv_set(self, "@general_predicates", rb_ary_new());
+
+  rb_funcall(self, rb_intern("process"), 1, source);
+
   return self;
 }
 
