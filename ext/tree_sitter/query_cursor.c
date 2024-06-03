@@ -49,12 +49,27 @@ DATA_FROM_VALUE(TSQueryCursor *, query_cursor)
  *
  * @return [QueryCursor]
  */
-static VALUE query_cursor_exec(VALUE self, VALUE query, VALUE node) {
+static VALUE query_cursor_exec_static(VALUE self, VALUE query, VALUE node) {
   VALUE res = query_cursor_allocate(cQueryCursor);
   query_cursor_t *query_cursor = unwrap(res);
   ts_query_cursor_exec(query_cursor->data, value_to_query(query),
                        value_to_node(node));
   return res;
+}
+
+/**
+ * Start running a given query on a given node.
+ *
+ * @param query [Query]
+ * @param node  [Node]
+ *
+ * @return [QueryCursor]
+ */
+static VALUE query_cursor_exec(VALUE self, VALUE query, VALUE node) {
+  query_cursor_t *query_cursor = unwrap(self);
+  ts_query_cursor_exec(query_cursor->data, value_to_query(query),
+                       value_to_node(node));
+  return self;
 }
 
 /**
@@ -190,13 +205,14 @@ void init_query_cursor(void) {
   rb_define_alloc_func(cQueryCursor, query_cursor_allocate);
 
   /* Module methods */
-  rb_define_module_function(cQueryCursor, "exec", query_cursor_exec, 2);
+  rb_define_module_function(cQueryCursor, "exec", query_cursor_exec_static, 2);
 
   /* Class methods */
   // Accessors
   DECLARE_ACCESSOR(cQueryCursor, query_cursor, match_limit)
 
   // Other
+  rb_define_method(cQueryCursor, "exec", query_cursor_exec, 2);
   rb_define_method(cQueryCursor, "exceed_match_limit?",
                    query_cursor_did_exceed_match_limit, 0);
   rb_define_method(cQueryCursor, "match_limit", query_cursor_get_match_limit,
