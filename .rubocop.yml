@@ -58,6 +58,8 @@ Style/AccessorGrouping:
 Style/GlobalVars:
   Exclude:
     - ext/tree_sitter/extconf.rb
+Style/IfUnlessModifier:
+  Enabled: false
 
 Style/Lambda:
   EnforcedStyle: literal
