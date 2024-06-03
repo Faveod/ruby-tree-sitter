@@ -151,3 +151,182 @@ describe 'querying anonymous nodes' do
     assert_nil(match)
   end
 end
+
+describe 'query predicates' do
+  it 'should handle string equality and regex matching' do
+    src = <<~MATH
+      1 + x * 3
+    MATH
+    math = TreeSitter.lang('math')
+    parser = TreeSitter::Parser.new
+    parser.language = math
+    tree = parser.parse_string(nil, src)
+    [
+      { matches: 1, captures: 0, query: '(product)' },
+      { matches: 0, captures: 0, query: '(subtraction) @subtraction' },
+
+      { matches: 1, captures: 2, query: '((sum left: (number) @l right: (_) @r) (#eq? @l "1"))' },
+      { matches: 0, captures: 0, query: '((sum left: (number) @l right: (_) @r) (#eq? @l "1 "))' },
+      { matches: 0, captures: 0, query: '((sum left: (number) @l right: (_) @r) (#eq? @l "\\\d"))' },
+      { matches: 0, captures: 0, query: '((sum left: (number) @l right: (_) @r) (#eq? @l "\\\d\\\s"))' },
+
+      { matches: 1, captures: 2, query: '((sum left: (number) @l right: (_) @r) (#not-eq? @l "1 "))' },
+      { matches: 0, captures: 0, query: '((sum left: (number) @l right: (_) @r) (#not-eq? @l "1"))' },
+      { matches: 1, captures: 2, query: '((sum left: (number) @l right: (_) @r) (#not-eq? @l "\\\d"))' },
+      { matches: 1, captures: 2, query: '((sum left: (number) @l right: (_) @r) (#not-eq? @l "\\\d\\\s\\\s"))' },
+
+      { matches: 0, captures: 0, query: '((sum left: (number) @l right: (_) @r) (#match? @l "\\\d\\\s"))' },
+      { matches: 0, captures: 0, query: '((sum left: (number) @l right: (_) @r) (#match? @l "\\\d\\\s+"))' },
+      { matches: 1, captures: 2, query: '((sum left: (number) @l right: (_) @r) (#match? @l "\\\d\\\s*"))' },
+      { matches: 1, captures: 2, query: '((sum left: (number) @l right: (_) @r) (#match? @l "\\\d\\\s?"))' },
+      { matches: 0, captures: 0, query: '((sum left: (number) @l right: (_) @r) (#match? @l "\\\d\\\s\\\s"))' },
+      { matches: 1, captures: 2, query: '((sum left: (number) @l right: (_) @r) (#match? @l "1"))' },
+      { matches: 0, captures: 0, query: '((sum left: (number) @l right: (_) @r) (#match? @l "1 "))' },
+
+      { matches: 0, captures: 0, query: '((sum left: (number) @l right: (_) @r) (#not-match? @l "1"))' },
+      { matches: 1, captures: 2, query: '((sum left: (number) @l right: (_) @r) (#not-match? @l "1 "))' },
+      { matches: 1, captures: 2, query: '((sum left: (number) @l right: (_) @r) (#not-match? @l "x+"))' },
+    ].each do |t|
+      q = TreeSitter::Query.new(math, t[:query])
+      c = TreeSitter::QueryCursor.new
+      assert_equal(
+        t[:matches],
+        c.matches(q, tree.root_node, src).each.to_a.length,
+        "bad  matches for query #{t[:query]}",
+      )
+      assert_equal(
+        t[:captures],
+        c.captures(q, tree.root_node, src).each.to_a.length,
+        "bad  captures for query #{t[:query]}",
+      )
+    end
+  end
+
+  it 'should handle `any-` predicates without quantification' do
+    src = <<~MATH
+      1 + x * 3 * 4 * 5
+    MATH
+    math = TreeSitter.lang('math')
+    parser = TreeSitter::Parser.new
+    parser.language = math
+    tree = parser.parse_string(nil, src)
+    [
+      { matches: 1, captures: 1, query: '((product) @p (#eq? @p "x * 3"))' },
+      { matches: 3, captures: 3, query: '((product) @p (#any-eq? @p "x * 3"))' },
+      { matches: 3, captures: 3, query: '((product) @p (#any-not-eq? @p "x * 3"))' },
+      { matches: 3, captures: 3, query: '((product) @p (#any-match? @p "aaaa"))' },
+      { matches: 3, captures: 3, query: '((product) @p (#any-not-match? @p "aaaa"))' },
+      { matches: 3, captures: 3, query: '((product) @p (#any-of? @p "aaaa" "xxxx"))' },
+      { matches: 2, captures: 2, query: '((product) @p (#any-of? @p "x * 3" "xxxx"))' },
+      { matches: 2, captures: 2, query: '((product) @p (#not-any-of? @p "x * 3" "xxxx"))' },
+      { matches: 3, captures: 3, query: '((product) @p (#not-any-of? @p "aaaa" "xxxx"))' },
+    ].each do |t|
+      q = TreeSitter::Query.new(math, t[:query])
+      c = TreeSitter::QueryCursor.new
+      assert_equal(
+        t[:matches],
+        c.matches(q, tree.root_node, src).each.to_a.length,
+        "bad matches for query #{t[:query]}",
+      )
+      assert_equal(
+        t[:captures],
+        c.captures(q, tree.root_node, src).each.to_a.length,
+        "bad captures for query #{t[:query]}",
+      )
+    end
+  end
+
+  it 'should handle `any-` predicates with quantification I' do
+    src = <<~MATH
+      1 + x * 3 * 4 * 5
+    MATH
+    math = TreeSitter.lang('math')
+    parser = TreeSitter::Parser.new
+    parser.language = math
+    tree = parser.parse_string(nil, src)
+    [
+      { matches: 3, captures: 3, query: '((product)+ @p (#any-eq? @p "x * 3"))' },
+      { matches: 17, captures: 3, query: '((product)? @p (#any-eq? @p "x * 3"))' },
+      { matches: 17, captures: 3, query: '((product)* @p (#any-eq? @p "x * 3"))' },
+
+      { matches: 3, captures: 3, query: '((product)+ @p (#any-match? @p "^x$"))' },
+      { matches: 17, captures: 3, query: '((product)? @p (#any-match? @p "^x$"))' },
+      { matches: 17, captures: 3, query: '((product)* @p (#any-match? @p "^x$"))' },
+
+      { matches: 3, captures: 3, query: '((product)+ @p (#any-not-eq? @p "x * 3"))' },
+      { matches: 17, captures: 3, query: '((product)? @p (#any-not-eq? @p "x * 3"))' },
+      { matches: 17, captures: 3, query: '((product)* @p (#any-not-eq? @p "x * 3"))' },
+
+      { matches: 3, captures: 3, query: '((product)+ @p (#any-not-match? @p "\\\d?"))' },
+      { matches: 17, captures: 3, query: '((product)? @p (#any-not-match? @p "\\\d?"))' },
+      { matches: 17, captures: 3, query: '((product)* @p (#any-not-match? @p "\\\d?"))' },
+
+      { matches: 2, captures: 2, query: '((product)+ @p (#any-of? @p "x * 3" "xxxx"))' },
+      { matches: 3, captures: 3, query: '((product)+ @p (#any-of? @p "aaaa" "xxxx"))' },
+      { matches: 16, captures: 2, query: '((product)? @p (#any-of? @p "x * 3" "xxxx"))' },
+      { matches: 17, captures: 3, query: '((product)? @p (#any-of? @p "aaaa" "xxxx"))' },
+      { matches: 16, captures: 2, query: '((product)* @p (#any-of? @p "x * 3" "xxxx"))' },
+      { matches: 17, captures: 3, query: '((product)* @p (#any-of? @p "aaaa" "xxxx"))' },
+
+      { matches: 3, captures: 3, query: '((product)+ @p (#any-not-of? @p "x * 3" "xxxx"))' },
+      { matches: 3, captures: 3, query: '((product)+ @p (#any-not-of? @p "aaaa" "xxxx"))' },
+      { matches: 17, captures: 3, query: '((product)? @p (#any-not-of? @p "x * 3" "xxxx"))' },
+      { matches: 17, captures: 3, query: '((product)? @p (#any-not-of? @p "aaaa" "xxxx"))' },
+      { matches: 17, captures: 3, query: '((product)* @p (#any-not-of? @p "x * 3" "xxxx"))' },
+      { matches: 17, captures: 3, query: '((product)* @p (#any-not-of? @p "aaaa" "xxxx"))' },
+    ].each do |t|
+      q = TreeSitter::Query.new(math, t[:query])
+      c = TreeSitter::QueryCursor.new
+      assert_equal(
+        t[:matches],
+        c.matches(q, tree.root_node, src).each.to_a.length,
+        "bad matches for query #{t[:query]}",
+      )
+      assert_equal(
+        t[:captures],
+        c.captures(q, tree.root_node, src).each.to_a.length,
+        "bad captures for query #{t[:query]}",
+      )
+    end
+  end
+
+  it 'should handle `any-` predicates with quantification II' do
+    src = <<~RUBY
+      [1,1,1,1,1,1]
+    RUBY
+    math = TreeSitter.lang('ruby')
+    parser = TreeSitter::Parser.new
+    parser.language = math
+    tree = parser.parse_string(nil, src)
+    [
+      { matches: 6, captures: 6, query: '((integer)+ @int (#any-eq? @int "1"))' },
+      { matches: 21, captures: 6, query: '((integer)? @int (#any-eq? @int "1"))' },
+      { matches: 21, captures: 6, query: '((integer)* @int (#any-eq? @int "1"))' },
+
+      { matches: 6, captures: 6, query: '((integer)+ @int (#any-match? @int "xxxx"))' },
+      { matches: 21, captures: 6, query: '((integer)? @int (#any-match? @int "xxxx"))' },
+      { matches: 21, captures: 6, query: '((integer)* @int (#any-match? @int "xxxx"))' },
+
+      { matches: 6, captures: 6, query: '((integer)+ @int (#any-not-eq? @int "1"))' },
+      { matches: 21, captures: 6, query: '((integer)? @int (#any-not-eq? @int "1"))' },
+      { matches: 21, captures: 6, query: '((integer)* @int (#any-not-eq? @int "1"))' },
+
+      { matches: 6, captures: 6, query: '((integer)+ @int (#any-not-match? @int "\\\d"))' },
+      { matches: 21, captures: 6, query: '((integer)? @int (#any-not-match? @int "\\\d"))' },
+      { matches: 21, captures: 6, query: '((integer)* @int (#any-not-match? @int "\\\d"))' },
+    ].each do |t|
+      q = TreeSitter::Query.new(math, t[:query])
+      c = TreeSitter::QueryCursor.new
+      assert_equal(
+        t[:matches],
+        c.matches(q, tree.root_node, src).each.to_a.length,
+        "bad matches for query #{t[:query]}",
+      )
+      assert_equal(
+        t[:captures],
+        c.captures(q, tree.root_node, src).each.to_a.length,
+        "bad captures for query #{t[:query]}",
+      )
+    end
+  end
+end
