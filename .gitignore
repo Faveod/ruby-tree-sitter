@@ -14,3 +14,5 @@ doc/
 
 tree-sitter-parsers
 log
+
+vendor/
