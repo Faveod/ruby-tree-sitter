@@ -43,7 +43,7 @@ module TreeStand
         .freeze
 
     # The default paths we use to lookup parsers when no specific
-    # {TreeStand::Config#parser_path} is {nil}.
+    # {TreeStand::Config#parser_path} is `nil`.
     # Order matters.
     LIBDIRS = [
       'tree-sitter-parsers',
@@ -180,7 +180,7 @@ module TreeStand
 
       # We know that the bindings will accept `lib`, but I don't know how to tell sorbet
       # the types in ext/tree_sitter where `load` is defined.
-      TreeSitter::Language.load(name.gsub(/-/, '_'), T.unsafe(lib))
+      TreeSitter::Language.load(name.tr('-', '_'), T.unsafe(lib))
     end
 
     # @param language [String]
