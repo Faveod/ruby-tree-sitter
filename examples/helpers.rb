@@ -22,14 +22,21 @@ module TreeSitter
 
   def self.lang name, lib = nil
     symbol = name.gsub(/-/, '_')
-    so     = "libtree-sitter-#{name}.#{ext}"
+    files = [
+        name,
+        "tree-sitter-#{name}",
+        "libtree-sitter-#{name}",
+      ].map { |v| "#{v}.#{ext}" }
 
     # Look for an existing lib installation.
-    lib ||= LIBDIRS.find { |dir|
-      dylib = dir / so
-      dylib = dir / name / so if !dylib.exist?
-      break dylib.expand_path if dylib.exist?
-    }
+    lib ||=
+      LIBDIRS
+        .product(files)
+        .find { |dir, so|
+          dylib = dir / so
+          dylib = dir / name / so if !dylib.exist?
+          break dylib.expand_path if dylib.exist?
+        }
 
     # Download if we still didn't find.
     # NOTE: we only allow .so download to tree-sitter-parsers locally.
