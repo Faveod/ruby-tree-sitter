@@ -1,5 +1,9 @@
 # News
 
+# v1.3.0
+
+- Query Predicates landed. See https://tree-sitter.github.io/tree-sitter/using-parsers#predicates.
+
 # v1.2.0
 
 ## TreeSitter
