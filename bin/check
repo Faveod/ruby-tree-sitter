@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+bundle exec rake clean compile
 bundle exec rake test
 bundle exec rubocop --config .rubocop.yml
+bundle exec srb tc
 bundle exec yard
