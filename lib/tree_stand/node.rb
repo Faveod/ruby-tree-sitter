@@ -97,19 +97,19 @@ module TreeStand
     sig { params(query_string: String).returns(T::Array[T::Hash[String, TreeStand::Node]]) }
     def query(query_string)
       ts_query = TreeSitter::Query.new(@tree.parser.ts_language, query_string)
-      ts_cursor = TreeSitter::QueryCursor.exec(ts_query, ts_node)
-      matches = []
-      while ts_match = ts_cursor.next_match
-        captures = {}
-
-        ts_match.captures.each do |ts_capture|
-          capture_name = ts_query.capture_name_for_id(ts_capture.index)
-          captures[capture_name] = TreeStand::Node.new(@tree, ts_capture.node)
+      TreeSitter::QueryCursor
+        .new
+        .matches(ts_query, @tree.ts_tree.root_node, @tree.document)
+        .map do |match|
+          match
+            .captures
+            .to_h do |cap|
+              [
+                ts_query.capture_name_for_id(cap.index),
+                TreeStand::Node.new(@tree, cap.node),
+              ]
+            end
         end
-
-        matches << captures
-      end
-      matches
     end
 
     # Returns the first captured node that matches the query string or nil if
