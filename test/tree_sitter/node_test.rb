@@ -339,6 +339,12 @@ describe 'each' do
   end
 end
 
+describe 'Enumerable' do
+  it 'should be' do
+    _(root.class.ancestors).must_be :include?, Enumerable
+  end
+end
+
 describe 'method_missing' do
   before do
     @child = root.child(0)

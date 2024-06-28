@@ -3,6 +3,8 @@
 module TreeSitter
   # Node is a wrapper around a tree-sitter node.
   class Node
+    include Enumerable
+
     # @return [Array<Symbol>] the node's named fields
     def fields
       return @fields if @fields
@@ -87,10 +89,10 @@ module TreeSitter
     # Iterate over a node's children.
     #
     # @yieldparam child [Node] the child
-    def each
+    def each(&_block)
       return enum_for __method__ if !block_given?
 
-      (0...(child_count)).each do |i|
+      (0...child_count).each do |i|
         yield child(i)
       end
     end
