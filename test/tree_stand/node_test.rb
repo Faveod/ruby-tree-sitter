@@ -199,8 +199,9 @@ class NodeTest < Minitest::Test
       (sum) @sum
     QUERY
 
-    assert_equal(1, matches.size)
-    assert_equal('1 + x * 3', matches.dig(0, 'sum').text)
+    assert_equal(2, matches.size)
+    assert_equal('1 + x * 3 + 2', matches.dig(0, 'sum').text)
+    assert_equal('1 + x * 3', matches.dig(1, 'sum').text)
   end
 
   def test_error_nodes
