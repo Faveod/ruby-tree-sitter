@@ -100,16 +100,8 @@ module TreeStand
       TreeSitter::QueryCursor
         .new
         .matches(ts_query, @tree.ts_tree.root_node, @tree.document)
-        .map do |match|
-          match
-            .captures
-            .to_h do |cap|
-              [
-                ts_query.capture_name_for_id(cap.index),
-                TreeStand::Node.new(@tree, cap.node),
-              ]
-            end
-        end
+        .each_capture_hash
+        .map { |h| h.transform_values! { |n| TreeStand::Node.new(@tree, n) } }
     end
 
     # Returns the first captured node that matches the query string or nil if

@@ -23,5 +23,17 @@ module TreeSitter
         end
       end
     end
+
+    # Iterate over all the results presented as hashes of `capture name => node`.
+    #
+    # @yieldparam match [Hash<String, TreeSitter::Node>]
+    def each_capture_hash(&_block)
+      # TODO: should we return [Array<Hash<Symbol, TreeSitter::Node]>>] instead?
+      return enum_for __method__ if !block_given?
+
+      each do |match|
+        yield match.captures.to_h { |cap| [@query.capture_name_for_id(cap.index), cap.node] }
+      end
+    end
   end
 end

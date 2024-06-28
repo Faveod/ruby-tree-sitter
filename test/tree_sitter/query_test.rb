@@ -186,6 +186,39 @@ describe 'captures and matches' do
   end
 end
 
+describe 'matches' do
+  it 'each_capture_hash should return an Enumerable of Hash<String, Node>' do
+    src = <<~MATH
+      (1 + x * 3) - (2 + y * 4)
+    MATH
+    math = TreeSitter.lang('math')
+    parser = TreeSitter::Parser.new
+    parser.language = math
+    tree = parser.parse_string(nil, src)
+    query_string = <<~QUERY
+      (sum
+        left: (number) @sum.left
+        right:
+          (product
+            left: (variable) @product.right
+            right: (number) @product.left
+          ) @product
+      ) @sum
+    QUERY
+
+    query = TreeSitter::Query.new(math, query_string)
+    matches = TreeSitter::QueryCursor.new.matches(query, tree.root_node, src).each_capture_hash
+
+    _(matches).must_be_kind_of Enumerator
+    _(matches.count).must_equal 2
+    matches.each do |m|
+      _(m).must_be_kind_of Hash
+      _(m.keys.sort).must_equal %w[product product.left product.right sum sum.left]
+      _(m.values.all? { |n| TreeSitter::Node == n.class }).must_be_equal true
+    end
+  end
+end
+
 describe 'query predicates' do
   it 'should handle string equality and regex matching' do
     src = <<~MATH
