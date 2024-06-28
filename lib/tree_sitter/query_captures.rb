@@ -3,6 +3,8 @@
 module TreeSitter
   # A sequence of {TreeSitter::QueryCapture} associated with a given {TreeSitter::QueryCursor}.
   class QueryCaptures
+    include Enumerable
+
     def initialize(cursor, query, src)
       @cursor = cursor
       @query = query
@@ -13,7 +15,7 @@ module TreeSitter
     #
     # @yieldparam match [TreeSitter::QueryMatch]
     # @yieldparam capture_index [Integer]
-    def each
+    def each(&_block)
       return enum_for __method__ if !block_given?
 
       while (capture_index, match = @cursor.next_capture)

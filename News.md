@@ -1,6 +1,7 @@
 # News
 
 - `TreeSitter::Node` is enumerable.
+- `TreeSitter::{QueryCaptures, QueryMatches}` are enumerable.
 
 # v1.3.0
 
