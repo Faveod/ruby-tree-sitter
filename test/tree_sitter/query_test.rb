@@ -152,6 +152,40 @@ describe 'querying anonymous nodes' do
   end
 end
 
+describe 'captures and matches' do
+  it 'should be enumerable' do
+    src = <<~MATH
+      1 + x * 3
+    MATH
+    math = TreeSitter.lang('math')
+    parser = TreeSitter::Parser.new
+    parser.language = math
+    tree = parser.parse_string(nil, src)
+    query_string = '(sum) @sum'
+
+    query = TreeSitter::Query.new(math, query_string)
+    matches = -> { TreeSitter::QueryCursor.new.matches(query, tree.root_node, src) }
+    captures = -> { TreeSitter::QueryCursor.new.captures(query, tree.root_node, src) }
+
+    _(matches.call.class.ancestors).must_be :include?, Enumerable
+    _(captures.call.class.ancestors).must_be :include?, Enumerable
+
+    _(matches.call.all? { |e| !e.nil? }).must_equal true
+    _(matches.call.any? { |e| !e.nil? }).must_equal true
+    _(matches.call.map { |e| e }.count).must_equal matches.call.count
+
+    _(captures.call.all? { |e| !e.nil? }).must_equal true
+    _(captures.call.any? { |e| !e.nil? }).must_equal true
+    _(captures.call.map { |e| e }.count).must_equal captures.call.count
+    # TODO: review TreeSitter::Node equality functions.
+    # The following assertions will fail now because of how [`ts_node_eq`](https://github.com/tree-sitter/tree-sitter/blob/9d1ac2139221b2e19389ca620767c537607a2f63/lib/src/node.c#L453)
+    # is implemented
+    #
+    # _(matches.().to_a.first).must_equal matches.().first
+    # _(captures.().to_a.first).must_equal captures.().first
+  end
+end
+
 describe 'query predicates' do
   it 'should handle string equality and regex matching' do
     src = <<~MATH
@@ -191,12 +225,12 @@ describe 'query predicates' do
       c = TreeSitter::QueryCursor.new
       assert_equal(
         t[:matches],
-        c.matches(q, tree.root_node, src).each.to_a.length,
+        c.matches(q, tree.root_node, src).count,
         "bad  matches for query #{t[:query]}",
       )
       assert_equal(
         t[:captures],
-        c.captures(q, tree.root_node, src).each.to_a.length,
+        c.captures(q, tree.root_node, src).count,
         "bad  captures for query #{t[:query]}",
       )
     end
@@ -225,12 +259,12 @@ describe 'query predicates' do
       c = TreeSitter::QueryCursor.new
       assert_equal(
         t[:matches],
-        c.matches(q, tree.root_node, src).each.to_a.length,
+        c.matches(q, tree.root_node, src).count,
         "bad matches for query #{t[:query]}",
       )
       assert_equal(
         t[:captures],
-        c.captures(q, tree.root_node, src).each.to_a.length,
+        c.captures(q, tree.root_node, src).count,
         "bad captures for query #{t[:query]}",
       )
     end
@@ -279,12 +313,12 @@ describe 'query predicates' do
       c = TreeSitter::QueryCursor.new
       assert_equal(
         t[:matches],
-        c.matches(q, tree.root_node, src).each.to_a.length,
+        c.matches(q, tree.root_node, src).count,
         "bad matches for query #{t[:query]}",
       )
       assert_equal(
         t[:captures],
-        c.captures(q, tree.root_node, src).each.to_a.length,
+        c.captures(q, tree.root_node, src).count,
         "bad captures for query #{t[:query]}",
       )
     end
@@ -319,12 +353,12 @@ describe 'query predicates' do
       c = TreeSitter::QueryCursor.new
       assert_equal(
         t[:matches],
-        c.matches(q, tree.root_node, src).each.to_a.length,
+        c.matches(q, tree.root_node, src).count,
         "bad matches for query #{t[:query]}",
       )
       assert_equal(
         t[:captures],
-        c.captures(q, tree.root_node, src).each.to_a.length,
+        c.captures(q, tree.root_node, src).count,
         "bad captures for query #{t[:query]}",
       )
     end
