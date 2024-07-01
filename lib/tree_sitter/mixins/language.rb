@@ -10,8 +10,7 @@ module TreeSitter
       &.map { |v| Pathname(v) }
       .freeze
 
-  # The default paths we use to lookup parsers when no specific
-  # {TreeStand::Config#parser_path} is `nil`.
+  # The default paths we use to lookup parsers.
   # Order matters.
   LIBDIRS = [
     'tree-sitter-parsers',
@@ -96,19 +95,14 @@ module TreeSitter
       #
       # @see ENV_PARSERS
       # @see LIBDIRS
-      def lib_dirs
-        [
-          *ENV_PARSERS,
-          *(TreeStand.config.parser_path ? [TreeStand.config.parser_path] : LIBDIRS),
-        ].compact
-      end
+      def lib_dirs = [*TreeSitter::ENV_PARSERS, *TreeSitter::LIBDIRS].compact
 
       # Lookup a parser by name.
       #
       # Precedence:
-      # 1. `Env['TREE_SITTER_PARSERS]`
-      # 2. {TreeStand::Config#parser_path}
-      # 3. {LIBDIRS}
+      # 1. `Env['TREE_SITTER_PARSERS]`.
+      # 2. {TreeStand::Config#parser_path} if using {TreeStand}.
+      # 3. {LIBDIRS}.
       #
       # If a {TreeStand::Config#parser_path} is `nil`, {LIBDIRS} is used.
       # If a {TreeStand::Config#parser_path} is a {::Pathname}, {LIBDIRS} is ignored.
@@ -146,11 +140,8 @@ module TreeSitter
           From ENV['TREE_SITTER_PARSERS']:
           #{pretty.call(ENV_PARSERS)}
 
-          From TreeStand.config.parser_path:
-          #{pretty.call([TreeStand.config.parser_path])}
-
           From Defaults:
-          #{pretty.call(LIBDIRS)}
+          #{pretty.call(lib_dirs)}
         MSG
       end
     end

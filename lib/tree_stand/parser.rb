@@ -43,6 +43,19 @@ module TreeStand
       end
     end
 
+    # The library directories we need to look into.
+    #
+    # @return [Array<Pathname>] the list of candidate places to use when searching for parsers.
+    #
+    # @see ENV_PARSERS
+    # @see LIBDIRS
+    def self.lib_dirs
+      [
+        *TreeSitter::ENV_PARSERS,
+        *(TreeStand.config.parser_path ? [TreeStand.config.parser_path] : TreeSitter::LIBDIRS),
+      ].compact
+    end
+
     # Parse the provided document with the TreeSitter parser.
     # @param tree [TreeStand::Tree, nil] providing the old tree will allow the
     #   parser to take advantage of incremental parsing and improve performance
