@@ -13,6 +13,11 @@ module TreeSitter
   # The default paths we use to lookup parsers.
   # Order matters.
   LIBDIRS = [
+    '.vendor/parsers',
+    '.vendor/tree-sitter-parsers',
+    'vendor/parsers',
+    'vendor/tree-sitter-parsers',
+    'parsers',
     'tree-sitter-parsers',
     '/opt/local/lib',
     '/opt/lib',
@@ -29,15 +34,20 @@ module TreeSitter
       # @example Load java from default paths
       #    # This will look for:
       #    #
+      #    #   .vendor/tree-sitter-parsers/(java/)?(libtree-sitter-)?java.{ext}
+      #    #   .vendor/parsers/(java/)?(libtree-sitter-)?java.{ext}
+      #    #   vendor/tree-sitter-parsers/(java/)?(libtree-sitter-)?java.{ext}
+      #    #   vendor/parsers/(java/)?(libtree-sitter-)?java.{ext}
+      #    #   parsers/(java/)?(libtree-sitter-)?java.{ext}
       #    #   tree-sitter-parsers/(java/)?(libtree-sitter-)?java.{ext}
       #    #   /opt/local/lib/(java/)?(libtree-sitter-)?java.{ext}
       #    #   /opt/lib/(java/)?(libtree-sitter-)?java.{ext}
       #    #   /usr/local/lib/(java/)?(libtree-sitter-)?java.{ext}
       #    #   /usr/lib/(java/)?(libtree-sitter-)?java.{ext}
       #    #
-      #    java = TreeStand::Parser.language('java')
+      #    java = TreeSitter.language('java')
       #
-      # @example Load java from a configured path
+      # @example (TreeStand) Load java from a configured path
       #    # This will look for:
       #    #
       #    #   /my/path/(java/)?(libtree-sitter-)?java.{ext}
@@ -45,7 +55,7 @@ module TreeSitter
       #    TreeStand.config.parser_path = '/my/path'
       #    java = TreeStand::Parser.language('java')
       #
-      # @example Load java from environment variables
+      # @example (TreeStand) Load java from environment variables
       #    # This will look for:
       #    #
       #    #   /my/forced/env/path/(java/)?(libtree-sitter-)?java.{ext}
@@ -59,8 +69,11 @@ module TreeSitter
       #
       # @param name [String] the name of the parser.
       #   This name is used to load the symbol from the compiled parser, replacing `-` with `_`.
+      #
       # @return [TreeSitter:language] a language object to use in your parsers.
+      #
       # @raise [RuntimeError] if the parser was not found.
+      #
       # @see search_for_lib
       def language(name)
         lib = search_for_lib(name)
