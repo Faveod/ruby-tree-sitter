@@ -9,6 +9,8 @@ require 'set'
 require 'tree_sitter/tree_sitter'
 require 'tree_sitter/version'
 
+require 'tree_sitter/mixins/language'
+
 require 'tree_sitter/node'
 require 'tree_sitter/query'
 require 'tree_sitter/query_captures'
