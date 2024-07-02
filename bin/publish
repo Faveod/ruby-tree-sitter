@@ -1,7 +1,0 @@
-#! /usr/bin/env sh
-set -e
-
-find pkg -name "*.gem" | grep "ruby_tree_sitter.*mri-3.2" | while read packaged_gem ; do
-  echo "Publishing $packaged_gem"
-  gem push "$packaged_gem"
-done
