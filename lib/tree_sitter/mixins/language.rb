@@ -108,7 +108,7 @@ module TreeSitter
       #
       # @see ENV_PARSERS
       # @see LIBDIRS
-      def lib_dirs = [*TreeSitter::ENV_PARSERS, *TreeSitter::LIBDIRS].compact
+      def lib_dirs = [*TreeSitter::ENV_PARSERS, *TreeSitter::LIBDIRS]
 
       # Lookup a parser by name.
       #
