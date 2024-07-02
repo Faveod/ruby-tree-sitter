@@ -18,6 +18,7 @@ darwin*)
 	;;
 esac
 
+bundle config set --local path vendor
 bundle install
 
 if [[ ! -d tmp/tree-sitter-math ]]; then
