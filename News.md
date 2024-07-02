@@ -5,6 +5,9 @@
 - `TreeStand::Node` now supports query predicates from `TreeSitter`.
 - `TreeSitter::QueryMatches` now has a `each_capture_hash` method returning an `Enumerator<Hash<String, Node>>`,
   the rough equivalent of what `TreeStand::Node#query` returns.
+- TreeSitter and TreeStand now share the same parser (`dylib` or `so`) loading mechanism:
+  - `TreeSitter.language('language')` or `TreeSitter.lang('language')`
+  - `TreeStand::Parser.new('language')`
 
 # v1.3.0
 
