@@ -25,12 +25,18 @@ out="$local/libtree-sitter-$lang.$ext"
 mkdir -p "$local"
 cd "$local"
 
-if [ ! -d "$lang" ]; then
-	git clone "https://github.com/tree-sitter/$repo" "$lang"
-	cd "$lang"
-	git checkout "$(git describe --tags "$(git rev-list --tags --max-count=1)")"
-	cd ..
+if [ -d "$lang" ]; then
+    cd "$lang"
+    git reset --hard HEAD
+else
+    mkdir "$lang"
+    cd "$lang"
+    git init
+    git remote add origin "https://github.com/tree-sitter/$repo"
 fi
+
+git fetch origin --depth 1 "$checkout"
+git reset --hard FETCH_HEAD
 
 clitarget="tree-sitter-$PLATFORM"
 cli="$(pwd)/$clitarget"
@@ -45,6 +51,6 @@ elif [ -z "$PLATFORM" ]; then
 	cli="tree-sitter"
 fi
 
-cd $lang
+cd "$local/$lang"
 $cli generate
 $cli build --output $out
