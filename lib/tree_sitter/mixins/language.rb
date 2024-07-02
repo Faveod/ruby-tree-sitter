@@ -79,7 +79,7 @@ module TreeSitter
         lib = search_for_lib(name)
 
         if lib.nil?
-          raise <<~MSG
+          raise <<~MSG.chomp
             Failed to load a parser for #{name}.
 
             #{search_lib_message}
@@ -148,7 +148,7 @@ module TreeSitter
               .join("\n")
           end
         }
-        <<~MSG
+        <<~MSG.chomp
           From ENV['TREE_SITTER_PARSERS']:
           #{pretty.call(ENV_PARSERS)}
 
