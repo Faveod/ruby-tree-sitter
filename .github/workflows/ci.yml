@@ -14,35 +14,27 @@ jobs:
     runs-on: ${{ matrix.platform.os }}-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: extractions/setup-just@v1
       - name: setup ruby ${{ matrix.ruby }}
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
       - name: build and install tree-sitter
-        run: |
-          git clone https://github.com/tree-sitter/tree-sitter
-          cd tree-sitter
-          git checkout tags/v0.22.6
-          make
-          sudo make install
-          sudo rm /usr/local/lib/libtree-sitter.a
+        run: just setup-ts
       - name: ldconfig
         if: ${{ matrix.platform.os == 'ubuntu' }}
-        run: |
-          sudo ldconfig -v
+        run: sudo ldconfig -v
       - name: setup
         env:
           PLATFORM: ${{ matrix.platform.target }}
-        run: bin/setup javascript json ruby
+        run: just setup
       - name: compile
-        run: |
-          bundle exec rake compile
+        run: just compile
       - name: test
-        run: |
-          bundle exec rake test
+        run: just test
       - name: package native gem
         run: |
-          rake native gem
+          just gem-native
           for file in pkg/*.gem; do mv $file ${file%.*}-mri-${{ matrix.ruby }}.gem; done;
       - name: release
         if: github.event_name != 'pull_request'
@@ -62,32 +54,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: extractions/setup-just@v1
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2
+          ruby-version: 3.3
       - name: build and install tree-sitter
-        run: |
-          git clone https://github.com/tree-sitter/tree-sitter
-          cd tree-sitter
-          git checkout tags/v0.22.6
-          make
-          sudo make install
-          sudo rm /usr/local/lib/libtree-sitter.a
-          sudo ldconfig -v
+        run: just setup-ts
+      - name: ldconfig
+        run: sudo ldconfig -v
       - name: setup
         env:
           PLATFORM: linux-x64
-        run: bin/setup javascript json ruby
+        run: just setup
       - name: compile
-        run: |
-          bundle exec rake compile
+        run: just compile
       - name: test
-        run: |
-          bundle exec rake test
+        run: just test
       - name: package native gem
-        run: |
-          rake gem
+        run: just gem
       - name: release
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v1
@@ -103,25 +88,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: extractions/setup-just@v1
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3
           bundler-cache: true
       - name: Lint
-        run: bundle exec rubocop --config .rubocop.yml
+        run: just lint
 
   typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: extractions/setup-just@v1
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3
           bundler-cache: true
       - name: Typecheck
-        run: bundle exec srb tc
+        run: just tc
 
   disable-sys-libs:
     strategy:
@@ -134,21 +121,21 @@ jobs:
     runs-on: ${{ matrix.platform.os }}-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: extractions/setup-just@v1
       - name: setup ruby ${{ matrix.ruby }}
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
       - name: downloaded pre-compiled parsers
+        run: just dl-parsers ${{ matrix.platform.target }}
+      - name: setup
         run: |
-          curl -o tree-sitter-parsers.zip -L https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.4/tree-sitter-parsers-3.3-${{ matrix.platform.target }}.zip
-          unzip tree-sitter-parsers.zip
-      - run: bin/setup
+          just setup-bundler
+          just setup-parsers # this will only download math.
       - name: compile
-        run: |
-          bundle exec rake compile -- --disable-sys-libs
+        run: just compile-no-sys
       - name: test
-        run: |
-          bundle exec rake test
+        run: just test
       - name: fresh project on PR or tag
         if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/')
         env:
