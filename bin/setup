@@ -18,8 +18,6 @@ darwin*)
 	;;
 esac
 
-bundle install
-
 if [[ ! -d tmp/tree-sitter-math ]]; then
   mkdir -p tmp
   git -C tmp/ clone --depth=1 https://github.com/DerekStride/tree-sitter-math.git
