@@ -126,14 +126,13 @@ module TreeSitter
           "libtree-sitter-#{name}",
         ].map { |v| "#{v}.#{ext}" }
 
-        res = lib_dirs
+        lib_dirs
           .product(files)
           .find do |dir, so|
             path = dir / so
             path = dir / name / so if !path.exist?
             break path.expand_path if path.exist?
           end
-        res.is_a?(Array) ? nil : res
       end
 
       # Generates a string message on where parser lookup happens.
