@@ -53,7 +53,7 @@ module TreeStand
       [
         *TreeSitter::ENV_PARSERS,
         *(TreeStand.config.parser_path ? [TreeStand.config.parser_path] : TreeSitter::LIBDIRS),
-      ].compact
+      ]
     end
 
     # Parse the provided document with the TreeSitter parser.
