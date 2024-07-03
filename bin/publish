@@ -1,5 +1,5 @@
 #! /usr/bin/env sh
-set -euxo pipefail
+set -e
 
 find pkg -name "*.gem" | grep "ruby_tree_sitter.*mri" | while read packaged_gem; do
   echo "Publishing $packaged_gem"
