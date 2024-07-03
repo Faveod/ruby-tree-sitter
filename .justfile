@@ -52,13 +52,7 @@ lint-fix:
 
 [group('publish')]
 publish:
-  #! /usr/bin/env sh
-  set -euxo pipefail
-
-  find pkg -name "*.gem" | grep "ruby_tree_sitter.*mri" | while read packaged_gem; do
-    echo "Publishing $packaged_gem"
-    gem push "$packaged_gem"
-  done
+  bin/publish
 
 [group('setup')]
 setup:
@@ -70,6 +64,7 @@ setup-bundler:
   bundle config set --local path vendor
   bundle install
 
+[group('setup')]
 [group('tree-sitter')]
 setup-ts:
   #!/usr/bin/env bash
