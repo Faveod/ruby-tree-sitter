@@ -70,18 +70,6 @@ setup-bundler:
   bundle config set --local path vendor
   bundle install
 
-[group('setup')]
-setup-parsers *parsers:
-  bin/setup {{parsers}}
-
-[group('lint')]
-tc:
-  bundle exec srb tc
-
-[group('test')]
-test *args:
-  bundle exec rake test {{ if args == '' { '' } else { '-- ' + args } }}
-
 [group('tree-sitter')]
 setup-ts:
   #!/usr/bin/env bash
@@ -100,4 +88,16 @@ setup-ts:
   make
   sudo make install
   sudo rm /usr/local/lib/libtree-sitter.a
+
+[group('setup')]
+setup-parsers *parsers:
+  bin/setup {{parsers}}
+
+[group('lint')]
+tc:
+  bundle exec srb tc
+
+[group('test')]
+test *args:
+  bundle exec rake test {{ if args == '' { '' } else { '-- ' + args } }}
 
