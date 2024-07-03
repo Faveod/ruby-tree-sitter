@@ -5,9 +5,6 @@ VERSION_FILE := LIB / GEM_NAME / 'version.rb'
 VERSION := shell("ruby -r ./" + VERSION_FILE  + " -e 'puts TreeSitter::VERSION'")
 
 EXEC := 'bundle exec'
-RAKE := EXEC + ' rake'
-IRB := EXEC + ' irb'
-RUBY := EXEC + ' ruby'
 
 default: check
 
@@ -16,15 +13,15 @@ check: test lint doc-stats tc
 
 [group('compile')]
 clean:
-  {{RAKE}} clean
+  bundle exec rake clean
 
 [group('compile')]
 compile:
-  {{RAKE}} clean compile
+  bundle exec rake clean compile
 
 [group('compile')]
 compile-no-sys:
-  {{RAKE}} clean compile -- --disable-sys-libs
+  bundle exec rake clean compile -- --disable-sys-libs
 
 [group('tree-sitter')]
 dl-parsers platform:
@@ -33,27 +30,27 @@ dl-parsers platform:
 
 [group('doc')]
 doc:
-  {{EXEC}} yard
+  bundle exec yard
 
 [group('doc')]
 doc-stats:
-  {{EXEC}} yard stats --list-undoc
+  bundle exec yard stats --list-undoc
 
 [group('gem')]
 gem:
-  {{RAKE}} gem
+  bundle exec rake gem
 
 [group('gem')]
 gem-native:
-  {{RAKE}} native gem
+  bundle exec rake native gem
 
 [group('lint')]
 lint:
-  {{EXEC}} rubocop --config .rubocop.yml
+  bundle exec rubocop --config .rubocop.yml
 
 [group('lint')]
 lint-fix:
-  {{EXEC}} rubocop --config .rubocop.yml -A
+  bundle exec rubocop --config .rubocop.yml -A
 
 [group('setup')]
 setup:
@@ -71,11 +68,11 @@ setup-parsers *parsers:
 
 [group('lint')]
 tc:
-  {{EXEC}} srb tc
+  bundle exec srb tc
 
 [group('test')]
 test *args:
-  {{RAKE}} test {{ if args == '' { '' } else { '-- ' + args } }}
+  bundle exec rake test {{ if args == '' { '' } else { '-- ' + args } }}
 
 [group('tree-sitter')]
 setup-ts:
