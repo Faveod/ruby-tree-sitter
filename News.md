@@ -1,5 +1,11 @@
 # News
 
+# v1.4.1
+
+v1.4.0 had issues publishing to [rubygems.org](https://rubygems.org/gems/ruby_tree_sitter).
+
+This version is identical to the previous one.
+
 # v1.4.0
 
 - `TreeSitter::Node` is enumerable.
