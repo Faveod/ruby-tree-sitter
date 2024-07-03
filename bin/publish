@@ -1,7 +1,9 @@
 #! /usr/bin/env sh
 set -e
 
-find pkg -name "*.gem" | grep "ruby_tree_sitter.*mri" | while read packaged_gem; do
+# We need to filter 1 type of ruby versions because rubygems.org doesn't allow
+# multiple push of the same version.
+find pkg -name "*.gem" | grep "ruby_tree_sitter.*mri-3.3" | while read packaged_gem; do
   echo "Publishing $packaged_gem"
   gem push "$packaged_gem"
 done
