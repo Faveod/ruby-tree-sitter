@@ -1,5 +1,8 @@
 # News
 
+# v1.4.2
+
+- Remove sorbet's `T.unsafe`. This prevented `TreeSitter.language` to function outside of `TreeStand`.
 # v1.4.1
 
 v1.4.0 had issues publishing to [rubygems.org](https://rubygems.org/gems/ruby_tree_sitter).
