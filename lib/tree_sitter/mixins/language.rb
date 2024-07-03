@@ -88,7 +88,7 @@ module TreeSitter
 
         # We know that the bindings will accept `lib`, but I don't know how to tell sorbet
         # the types in ext/tree_sitter where `load` is defined.
-        TreeSitter::Language.load(name.tr('-', '_'), T.unsafe(lib))
+        TreeSitter::Language.load(name.tr('-', '_'), lib)
       end
 
       # The platform-specific extension of the parser.
