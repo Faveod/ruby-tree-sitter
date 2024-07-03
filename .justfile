@@ -4,8 +4,6 @@ LIB_FILE := LIB / GEM_NAME + '.rb'
 VERSION_FILE := LIB / GEM_NAME / 'version.rb'
 VERSION := shell("ruby -r ./" + VERSION_FILE  + " -e 'puts TreeSitter::VERSION'")
 
-EXEC := 'bundle exec'
-
 default: check
 
 [group('test')]

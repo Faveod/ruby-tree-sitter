@@ -1,5 +1,7 @@
 # News
 
+# v1.4.0
+
 - `TreeSitter::Node` is enumerable.
 - `TreeSitter::{QueryCaptures, QueryMatches}` are enumerable.
 - `TreeStand::Node` now supports query predicates from `TreeSitter`.
