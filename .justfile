@@ -50,6 +50,16 @@ lint:
 lint-fix:
   bundle exec rubocop --config .rubocop.yml -A
 
+[group('publish')]
+publish:
+  #! /usr/bin/env sh
+  set -euxo pipefail
+
+  find pkg -name "*.gem" | grep "ruby_tree_sitter.*mri" | while read packaged_gem; do
+    echo "Publishing $packaged_gem"
+    gem push "$packaged_gem"
+  done
+
 [group('setup')]
 setup:
   @just setup-bundler
