@@ -200,4 +200,8 @@ To See a full list of the ruby-specific APIs, see [here](lib/README.md).
 
 ## Sponsors
 
-<img src="img/faveod.jpg" width="75%">
+- <a href="https://faveod.com">https://faveod.com</a>
+
+<a href="https://faveod.com">
+  <img src="img/faveod.jpg" width="66%" />
+</a>
