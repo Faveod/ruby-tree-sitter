@@ -1,5 +1,10 @@
 # News
 
+- Cross-compilation support is dropped because it doesn't work with `--disable-sys-lib`.
+  We need a better understanding of rake-compiler-dock and rake-compiler.
+  _v1.4.2 is especially broken_.
+  **Skip all v1.4**.
+
 # v1.4.2
 
 - Remove sorbet's `T.unsafe`. This prevented `TreeSitter.language` to function outside of `TreeStand`.
