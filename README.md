@@ -25,6 +25,10 @@ require 'tree_sitter'
 
 parser = TreeSitter::Parser.new
 language = TreeSitter::Language.load('javascript', 'path/to/libtree-sitter-javascript.{so,dylib}')
+# Or simply
+language = TreeSitter.lang('javascript')
+# Which will try to look in your local directory and the system for installed parsers.
+# See TreeSitter::Mixin::Language#lib_dirs
 
 src = "[1, null]"
 
