@@ -19,6 +19,7 @@ module TreeSitter
     'vendor/tree-sitter-parsers',
     'parsers',
     'tree-sitter-parsers',
+    '.',
     '/opt/local/lib',
     '/opt/lib',
     '/usr/local/lib',
