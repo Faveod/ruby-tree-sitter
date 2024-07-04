@@ -1,17 +1,35 @@
 # frozen_string_literal: true
 
+require 'rake/extensiontask'
 require 'rake/testtask'
-
-begin
-  require 'rake/extensiontask'
-rescue LoadError
-  abort <<-ERROR
-  rake-compiler is missing; TreeSitter depends on rake-compiler to build the C wrapping code.
-  Install it by running `gem i rake-compiler`
-  ERROR
-end
-
 require 'ruby_memcheck'
+
+
+# FIXME: ld: unknown -soname
+# that's a bug in tree-sitter's makefile: it only checks for OS type and
+# not compiler type, so when we're cross-building it blows in our face
+#     x86_64-darwin
+#     arm64-darwin
+# However, these don't work at all with tree-sitter:
+#     x64-mingw-ucrt
+#     x64-mingw32
+#     x86-mingw32
+# And here, bundler is segfaulting
+#     x86-linux-gnu
+#     x86-linux-musl
+#
+PLATFORMS = %w[
+  aarch64-linux-gnu
+  aarch64-linux-musl
+  arm-linux-gnu
+  arm-linux-musl
+  x86_64-linux-gnu
+  x86_64-linux-musl
+].freeze
+
+CROSS_RUBIES = %w[3.3.0 3.2.0 3.1.0 3.0.0].freeze
+
+ENV['RUBY_CC_VERSION'] = CROSS_RUBIES.join(':') if !ENV['RUBY_CC_VERSION']
 
 gemspec = Gem::Specification.load('tree_sitter.gemspec')
 
@@ -20,62 +38,18 @@ end
 
 Rake::ExtensionTask.new('tree_sitter', gemspec) do |task|
   task.lib_dir = 'lib/tree_sitter'
+  task.cross_compile = true
+  task.cross_platform = PLATFORMS
 end
 
-# FIXME: Native gem production and --disable-sys-libs are not working together
-# correctly, that's why they're disabled for now.
-#
-# cross_rubies = [
-#   '3.2.0',
-#   '3.1.0',
-#   '3.0.0',
-#   '2.7.0',
-# ].freeze
-#
-# cross_platforms = [
-#   'x64-mingw32',
-#   'x64-mingw-ucrt',
-#   'x86-linux',
-#   'x86_64-linux',
-#   'aarch64-linux',
-#   #
-#   # FIXME: ld: unknown -soname
-#   # that's a bug in tree-sitter's makefile: it only checks for OS type and
-#   # not compiler type, so when we're cross-building it blows in our face
-#   #
-#   'x86_64-darwin',
-#   'arm64-darwin',
-# ].freeze
-#
-# ENV['RUBY_CC_VERSION'] = cross_rubies.join(':') if !ENV['RUBY_CC_VERSION']
-# Rake::ExtensionTask.new('tree_sitter', gemspec) do |r|
-#   r.lib_dir = 'lib/tree_sitter'
-#   require 'rake_compiler_dock'
-#   r.cross_compile = true
-#   r.cross_platform = cross_platforms
-#   r.cross_compiling do |spec|
-#     spec.files.reject! { |file| /(\.gz)$|(\.zip)$|(\.tar)$/ =~ File.basename(file) }
-#   end
-# end
-#
-# desc 'Build native gems'
-# task 'gem:native' do
-#   cross_platforms.each do |plat|
-#     RakeCompilerDock.sh(
-#       "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem",
-#       platform: plat,
-#     )
-#   end
-# end
-#
-# cross_platforms.each do |plat|
-#   task "gem:#{plat}" do
-#     RakeCompilerDock.sh(
-#       "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem",
-#       platform: plat,
-#     )
-#   end
-# end
+task 'gem:native' do
+  require 'rake_compiler_dock'
+  sh "bundle package --all"   # Avoid repeated downloads of gems by using gem files from the host.
+  PLATFORMS.each do |plat|
+    RakeCompilerDock.sh "bundle --local && RUBY_CC_VERSION='#{ENV['RUBY_CC_VERSION']}' bundle exec rake native:#{plat} gem -- --disable-sys-libs", platform: plat
+  end
+  RakeCompilerDock.sh "bundle --local && rake java gem", rubyvm: :jruby
+end
 
 task :clean do
   require 'fileutils'
