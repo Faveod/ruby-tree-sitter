@@ -1,5 +1,7 @@
 # News
 
+# v1.5.0
+
 - Cross-compilation support is dropped because it doesn't work with `--disable-sys-lib`.
   We need a better understanding of rake-compiler-dock and rake-compiler.
   _v1.4.2 is especially broken_.
