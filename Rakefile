@@ -15,60 +15,67 @@ require 'ruby_memcheck'
 
 gemspec = Gem::Specification.load('tree_sitter.gemspec')
 
-cross_rubies = [
-  '3.2.0',
-  '3.1.0',
-  '3.0.0',
-  '2.7.0',
-].freeze
-
-cross_platforms = [
-  'x64-mingw32',
-  'x64-mingw-ucrt',
-  'x86-linux',
-  'x86_64-linux',
-  'aarch64-linux',
-  #
-  # FIXME: ld: unknown -soname
-  # that's a bug in tree-sitter's makefile: it only checks for OS type and
-  # not compiler type, so when we're cross-building it blows in our face
-  #
-  'x86_64-darwin',
-  'arm64-darwin',
-].freeze
-
-ENV['RUBY_CC_VERSION'] = cross_rubies.join(':') if !ENV['RUBY_CC_VERSION']
-Rake::ExtensionTask.new('tree_sitter', gemspec) do |r|
-  r.lib_dir = 'lib/tree_sitter'
-  require 'rake_compiler_dock'
-  r.cross_compile = true
-  r.cross_platform = cross_platforms
-  r.cross_compiling do |spec|
-    spec.files.reject! { |file| /(\.gz)$|(\.zip)$|(\.tar)$/ =~ File.basename(file) }
-  end
+Gem::PackageTask.new(gemspec) do |task|
 end
 
-Gem::PackageTask.new(gemspec) do |pkg|
+Rake::ExtensionTask.new('tree_sitter', gemspec) do |task|
+  task.lib_dir = 'lib/tree_sitter'
 end
 
-desc 'Build native gems'
-task 'gem:native' do
-  cross_platforms.each do |plat|
-    RakeCompilerDock.sh(
-      "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem",
-      platform: plat,
-    )
-  end
-end
-
-cross_platforms.each do |plat|
-  task "gem:#{plat}" do
-    RakeCompilerDock.sh(
-      "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem",
-      platform: plat,
-    )
-  end
-end
+# FIXME: Native gem production and --disable-sys-libs are not working together
+# correctly, that's why they're disabled for now.
+#
+# cross_rubies = [
+#   '3.2.0',
+#   '3.1.0',
+#   '3.0.0',
+#   '2.7.0',
+# ].freeze
+#
+# cross_platforms = [
+#   'x64-mingw32',
+#   'x64-mingw-ucrt',
+#   'x86-linux',
+#   'x86_64-linux',
+#   'aarch64-linux',
+#   #
+#   # FIXME: ld: unknown -soname
+#   # that's a bug in tree-sitter's makefile: it only checks for OS type and
+#   # not compiler type, so when we're cross-building it blows in our face
+#   #
+#   'x86_64-darwin',
+#   'arm64-darwin',
+# ].freeze
+#
+# ENV['RUBY_CC_VERSION'] = cross_rubies.join(':') if !ENV['RUBY_CC_VERSION']
+# Rake::ExtensionTask.new('tree_sitter', gemspec) do |r|
+#   r.lib_dir = 'lib/tree_sitter'
+#   require 'rake_compiler_dock'
+#   r.cross_compile = true
+#   r.cross_platform = cross_platforms
+#   r.cross_compiling do |spec|
+#     spec.files.reject! { |file| /(\.gz)$|(\.zip)$|(\.tar)$/ =~ File.basename(file) }
+#   end
+# end
+#
+# desc 'Build native gems'
+# task 'gem:native' do
+#   cross_platforms.each do |plat|
+#     RakeCompilerDock.sh(
+#       "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem",
+#       platform: plat,
+#     )
+#   end
+# end
+#
+# cross_platforms.each do |plat|
+#   task "gem:#{plat}" do
+#     RakeCompilerDock.sh(
+#       "gem update --system --no-document && bundle && bundle exec rake clean && bundle exec rake native:#{plat} gem",
+#       platform: plat,
+#     )
+#   end
+# end
 
 task :clean do
   require 'fileutils'

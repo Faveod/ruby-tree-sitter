@@ -9,49 +9,52 @@ on:
     - master
 
 jobs:
-  native-gems:
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: [3.0, 3.1, 3.2, 3.3]
-        platform:
-          - { os: ubuntu, target: linux-x64 }
-          - { os: macos,  target: macos-arm64 }
-    runs-on: ${{ matrix.platform.os }}-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: extractions/setup-just@v1
-      - name: setup ruby ${{ matrix.ruby }}
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-      - name: build and install tree-sitter
-        run: just setup-ts
-      - name: ldconfig
-        if: ${{ matrix.platform.os == 'ubuntu' }}
-        run: sudo ldconfig -v
-      - name: setup
-        env:
-          PLATFORM: ${{ matrix.platform.target }}
-        run: just setup
-      - name: compile
-        run: just compile
-      - name: test
-        run: just test
-      - name: package native gem
-        run: |
-          just gem-native
-          for file in pkg/*.gem; do mv $file ${file%.*}-mri-${{ matrix.ruby }}.gem; done;
-      - name: release
-        if: github.event_name != 'pull_request'
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref }}-${{ steps.vars.outputs.sha_short }}
-          draft: true
-          files: |
-            ./pkg/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # FIXME: Native gem production and --disable-sys-libs are not working together
+  # correctly, that's why they're disabled for now.
+  #
+  # native-gems:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       ruby: [3.0, 3.1, 3.2, 3.3]
+  #       platform:
+  #         - { os: ubuntu, target: linux-x64 }
+  #         - { os: macos,  target: macos-arm64 }
+  #   runs-on: ${{ matrix.platform.os }}-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: extractions/setup-just@v1
+  #     - name: setup ruby ${{ matrix.ruby }}
+  #       uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: ${{ matrix.ruby }}
+  #     - name: build and install tree-sitter
+  #       run: just setup-ts
+  #     - name: ldconfig
+  #       if: ${{ matrix.platform.os == 'ubuntu' }}
+  #       run: sudo ldconfig -v
+  #     - name: setup
+  #       env:
+  #         PLATFORM: ${{ matrix.platform.target }}
+  #       run: just setup
+  #     - name: compile
+  #       run: just compile
+  #     - name: test
+  #       run: just test
+  #     - name: package native gem
+  #       run: |
+  #         just gem-native
+  #         for file in pkg/*.gem; do mv $file ${file%.*}-mri-${{ matrix.ruby }}.gem; done;
+  #     - name: release
+  #       if: github.event_name != 'pull_request'
+  #       uses: softprops/action-gh-release@v1
+  #       with:
+  #         tag_name: ${{ github.ref }}-${{ steps.vars.outputs.sha_short }}
+  #         draft: true
+  #         files: |
+  #           ./pkg/*
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # - We need this seperate step for now to avoid duplicate uploads on release
   # - We're not testing here also because it's been taken care of in the previous
