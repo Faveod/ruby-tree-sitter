@@ -42,6 +42,10 @@ gem:
 gem-native:
   bundle exec rake native gem
 
+[group('gem')]
+gem-cross:
+  bundle exec rake gem:native
+
 [group('lint')]
 lint:
   bundle exec rubocop --config .rubocop.yml
