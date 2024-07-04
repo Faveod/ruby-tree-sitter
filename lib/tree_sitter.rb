@@ -2,7 +2,13 @@
 
 require 'set'
 
-require 'tree_sitter/tree_sitter'
+begin
+  RUBY_VERSION =~ /(\d+\.\d+)/
+  require "tree_sitter/#{Regexp.last_match(1)}/tree_sitter"
+rescue LoadError
+  require 'tree_sitter/tree_sitter'
+end
+
 require 'tree_sitter/version'
 
 require 'tree_sitter/mixins/language'
