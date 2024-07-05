@@ -1,0 +1,38 @@
+name: Cross Compile
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  native-gems:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: extractions/setup-just@v1
+      - name: setup ruby 3.3
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+      - name: build and install tree-sitter
+        run: just setup-ts
+      - name: setup
+        run: just setup-bundler
+      - name: compile
+        run: just compile
+      - name: package native gem # TODO: and test them
+        run: just gem-cross
+      - name: release
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}-${{ steps.vars.outputs.sha_short }}
+          draft: true
+          files: |
+            ./pkg/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
