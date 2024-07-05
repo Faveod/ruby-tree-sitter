@@ -34,7 +34,7 @@ jobs:
       - name: package native gem
         run: just gem
       - name: release
-        if: github.event_name != 'pull_request'
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}-${{ steps.vars.outputs.sha_short }}
