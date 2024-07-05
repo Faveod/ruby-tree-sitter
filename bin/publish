@@ -1,12 +1,15 @@
 #! /usr/bin/env sh
-set -e
+set -ex
 
 # FIXME: Whenever cross-compilarion is active again, we need to restore the proper
 # gem publishing filters, notably: grep "ruby_tree_sitter.*mri-3.3"
 #
 # We need to filter 1 type of ruby versions because rubygems.org doesn't allow
 # multiple push of the same version.
-find pkg -name "*.gem" | while read packaged_gem; do
+
+version=$(ruby -r ./lib/tree_sitter/version.rb -e 'puts TreeSitter::VERSION')
+
+find pkg -name "ruby_tree_sitter-$version.gem" | while read packaged_gem; do
   echo "Publishing $packaged_gem"
   gem push "$packaged_gem"
 done
