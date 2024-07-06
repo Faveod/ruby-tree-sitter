@@ -26,6 +26,8 @@ end
 #    System lib vs Downloaded lib    #
 # ################################## #
 
+repo = TreeSitter::Repo.new
+
 dir_include, dir_lib =
   if system_tree_sitter?
     [
@@ -33,7 +35,6 @@ dir_include, dir_lib =
       %w[/opt/lib /opt/local/lib /usr/lib /usr/local/lib],
     ]
   else
-    repo = TreeSitter::Repo.new
     if !repo.download
       msg = <<~MSG
 
@@ -53,14 +54,14 @@ dir_include, dir_lib =
     repo.include_and_lib_dirs
   end
 
+dir_config('tree-sitter', dir_include&.first, dir_lib&.first)
+
 # ################################## #
 #          Generate Makefile         #
 # ################################## #
 
-header = find_header('tree_sitter/api.h', *dir_include)
-library = find_library('tree-sitter',   # libtree-sitter
-                       'ts_parser_new', # a symbol
-                       *dir_lib)
+header = find_header('tree_sitter/api.h')
+library = find_library('tree-sitter', 'ts_parser_new')
 
 if !header || !library
   abort <<~MSG
@@ -144,6 +145,5 @@ cflags.concat %w[-std=c99 -fPIC -Wall]
 append_cflags(cflags)
 append_ldflags(ldflags)
 
-dir_config('tree-sitter')
 create_header
 create_makefile('tree_sitter/tree_sitter')
