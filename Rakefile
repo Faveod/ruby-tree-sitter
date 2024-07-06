@@ -39,6 +39,7 @@ Rake::ExtensionTask.new('tree_sitter', gemspec) do |task|
   task.lib_dir = 'lib/tree_sitter'
   task.cross_compile = true
   task.cross_platform = PLATFORMS
+  task.cross_config_options << '--enable-cross-build'
 end
 
 task 'gem:native' do
