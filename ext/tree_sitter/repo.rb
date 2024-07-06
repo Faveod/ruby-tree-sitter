@@ -29,7 +29,9 @@ module TreeSitter
     def compile
       # We need to clean because the same folder is used over and over
       # by rake-compiler-dock
-      sh "cd #{src} && make clean && make"
+      ar = RbConfig::MAKEFILE_CONFIG['AR']
+      ar = " AR=#{ar}" if ar
+      sh "cd #{src} && make clean &&#{ar} make"
     end
 
     def exe?(name)
@@ -67,6 +69,13 @@ module TreeSitter
         .children
         .filter { |f| /\.(dylib|so)/ =~ f.basename.to_s }
         .each(&:unlink)
+    end
+
+    def patch
+      root = Pathname.new(File.expand_path(__dir__)).realpath.parent.parent
+      patch = root / 'patches' / 'cross-compile.patch'
+
+      sh "patch --forward #{src / 'Makefile'} #{patch}"
     end
 
     def sh(cmd)

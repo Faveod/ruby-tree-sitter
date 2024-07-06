@@ -4,19 +4,13 @@ require 'rake/extensiontask'
 require 'rake/testtask'
 require 'ruby_memcheck'
 
-# FIXME: ld: unknown -soname
-# that's a bug in tree-sitter's makefile: it only checks for OS type and
-# not compiler type, so when we're cross-building it blows in our face
-#     x86_64-darwin
-#     arm64-darwin
-# However, these don't work at all with tree-sitter:
+# NOTE: tree-sitter does not support:
 #     x64-mingw-ucrt
 #     x64-mingw32
 #     x86-mingw32
-# And here, bundler is segfaulting
-#     x86-linux-gnu
-#     x86-linux-musl
 #
+# NOTE: bundler is segfaulting on:
+#     x86-linux-gnu
 PLATFORMS = %w[
   aarch64-linux-gnu
   aarch64-linux-musl
@@ -24,6 +18,9 @@ PLATFORMS = %w[
   arm-linux-musl
   x86_64-linux-gnu
   x86_64-linux-musl
+  x86-linux-musl
+  arm64-darwin
+  x86_64-darwin
 ].freeze
 
 CROSS_RUBIES = %w[3.3.0 3.2.0 3.1.0 3.0.0].freeze
