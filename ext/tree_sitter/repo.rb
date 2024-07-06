@@ -59,7 +59,7 @@ module TreeSitter
     end
 
     def include_and_lib_dirs
-      [[src / 'lib' / 'include'], [src.to_s]]
+      [[(src / 'lib' / 'include').to_s], [src.to_s]]
     end
 
     def keep_static_lib
