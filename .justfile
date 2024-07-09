@@ -7,7 +7,7 @@ VERSION := shell("ruby -r ./" + VERSION_FILE  + " -e 'puts TreeSitter::VERSION'"
 default: check
 
 [group('test')]
-check: clean compile test lint doc-stats tc
+check: compile test lint doc-stats tc
 
 [group('compile')]
 clean:
