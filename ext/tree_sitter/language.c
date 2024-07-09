@@ -54,7 +54,7 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
     dlclose(lib);
     rb_raise(rb_eRuntimeError,
              "Could not load symbol `%s' from library `%s'.\nReason:%s",
-             StringValueCStr(name), StringValueCStr(path), err);
+             StringValueCStr(name), path_cstr, err);
   }
 
   TSLanguage *lang = make_ts_language();
@@ -63,7 +63,7 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
     rb_raise(rb_eRuntimeError,
              "TSLanguage = NULL for language `%s' in library `%s'.\nCall your "
              "local TSLanguage supplier.",
-             StringValueCStr(name), StringValueCStr(path));
+             StringValueCStr(name), path_cstr);
   }
 
   uint32_t version = ts_language_version(lang);
@@ -71,7 +71,7 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
     rb_raise(rb_eRuntimeError,
              "Language %s (v%d) from `%s' is old.\nMinimum supported ABI: "
              "v%d.\nCurrent ABI: v%d.",
-             StringValueCStr(name), version, StringValueCStr(path),
+             StringValueCStr(name), version, path_cstr,
              TREE_SITTER_MIN_COMPATIBLE_LANGUAGE_VERSION,
              TREE_SITTER_LANGUAGE_VERSION);
   }

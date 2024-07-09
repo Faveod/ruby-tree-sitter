@@ -21,21 +21,29 @@ root = tree.root_node
 # parsers.   They are not reliable and we should expect them to break when these
 # parsers evolve.
 
+ruby_path =
+  if p = ENV.fetch('TREE_SITTER_PARSERS', nil)
+    Pathname(p) / "libtree-sitter-ruby.#{TreeSitter.ext}"
+  else
+    downloaded = Pathname('tree-sitter-parsers') / "libtree-sitter-ruby.#{TreeSitter.ext}"
+    if downloaded.exist?
+      downloaded
+    else
+      Pathname('tree-sitter-parsers') / 'ruby' / "libtree-sitter-ruby.#{TreeSitter.ext}"
+    end
+  end
+
 describe 'language' do
   it 'must be able to load a library from `Pathname` (or any object that has `to_s`)' do
-    path =
-      if p = ENV.fetch('TREE_SITTER_PARSERS', nil)
-        Pathname(p) / "libtree-sitter-ruby.#{TreeSitter.ext}"
-      else
-        downloaded = Pathname('tree-sitter-parsers') / "libtree-sitter-ruby.#{TreeSitter.ext}"
-        if downloaded.exist?
-          downloaded
-        else
-          Pathname('tree-sitter-parsers') / 'ruby' / "libtree-sitter-ruby.#{TreeSitter.ext}"
-        end
-      end
-    ll = TreeSitter::Language.load('ruby', path)
-    assert ll.field_count.positive?
+    _(TreeSitter::Language.load('ruby', ruby_path).field_count).must_be :positive?
+  end
+
+  it 'must throw an exception when the library is not found' do
+    _ { TreeSitter::Language.load('ruby', Pathname('tmp/none')) }.must_raise RuntimeError
+  end
+
+  it 'must throw an exception when the name is not correctly found' do
+    _ { TreeSitter::Language.load('nada', ruby_path) }.must_raise RuntimeError
   end
 
   it 'must return symbol count' do
