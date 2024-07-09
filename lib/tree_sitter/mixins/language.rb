@@ -68,6 +68,9 @@ module TreeSitter
       #    TreeStand.config.parser_path = '/my/path'
       #    java = TreeStand::Parser.language('java')
       #
+      # @note the name is case sensitive, but library lookup is not: if your parser is defined as `COBOL`,
+      #   then you have to call `language('COBOL')`, but the parser can be `cobol.so/COBOL.so/…`.
+      #
       # @param name [String] the name of the parser.
       #   This name is used to load the symbol from the compiled parser, replacing `-` with `_`.
       #
@@ -121,11 +124,12 @@ module TreeSitter
       # If a {TreeStand::Config#parser_path} is `nil`, {LIBDIRS} is used.
       # If a {TreeStand::Config#parser_path} is a {::Pathname}, {LIBDIRS} is ignored.
       def search_for_lib(name)
-        files = [
-          name,
-          "tree-sitter-#{name}",
-          "libtree-sitter-#{name}",
-        ].map { |v| "#{v}.#{ext}" }
+        files =
+          [name, name.upcase, name.downcase]
+            .flat_map do |n|
+              base = "#{n}.#{ext}"
+              [base, "tree-sitter-#{base}", "libtree-sitter-#{base}"]
+            end
 
         lib_dirs
           .product(files)
