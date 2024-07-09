@@ -126,6 +126,7 @@ module TreeSitter
       def search_for_lib(name)
         files =
           [name, name.upcase, name.downcase]
+            .uniq
             .flat_map do |n|
               base = "#{n}.#{ext}"
               [base, "tree-sitter-#{base}", "libtree-sitter-#{base}"]
