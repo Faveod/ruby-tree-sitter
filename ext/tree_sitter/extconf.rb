@@ -51,7 +51,6 @@ dir_include, dir_lib =
     ENV.store('CC', RbConfig::CONFIG['CC'])
     repo.patch
     repo.compile
-    repo.keep_static_lib
     repo.include_and_lib_dirs
   end
 

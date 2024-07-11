@@ -31,7 +31,7 @@ module TreeSitter
       # by rake-compiler-dock
       ar = RbConfig::MAKEFILE_CONFIG['AR']
       ar = " AR=#{ar}" if ar
-      sh "cd #{src} && make clean &&#{ar} make"
+      sh "cd #{src} && make clean &&#{ar} make libtree-sitter.a"
     end
 
     def exe?(name)
@@ -62,13 +62,6 @@ module TreeSitter
 
     def include_and_lib_dirs
       [[(src / 'lib' / 'include').to_s], [src.to_s]]
-    end
-
-    def keep_static_lib
-      src
-        .children
-        .filter { |f| /\.(dylib|so)/ =~ f.basename.to_s }
-        .each(&:unlink)
     end
 
     def patch
