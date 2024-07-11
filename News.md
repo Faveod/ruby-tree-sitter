@@ -1,5 +1,17 @@
 # News
 
+- Cross-compilation is now working for most targets:
+  + `aarch64-linux-gnu`
+  + `aarch64-linux-musl`
+  + `arm-linux-gnu`
+  + `arm-linux-musl`
+  + `x86_64-linux-gnu`
+  + `x86_64-linux-musl`
+  + `x86-linux-musl`
+  + `arm64-darwin`
+  + `x86_64-darwin`
+  We now produce fat native gems so you don't have to install tree-sitter on your machine,
+  and not even compile it if you don't need to.
 # v1.5.1
 
 - Language loading, e.g. `TreeSitter.lang`, is now case insensitive for path lookup only:
