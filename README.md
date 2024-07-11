@@ -119,7 +119,7 @@ brew install tree-sitter
 From [rubygems](https://rubygems.org/gems/ruby_tree_sitter), in your `Gemfile`:
 
 ```ruby
-gem 'ruby_tree_sitter', '~> 1.0'
+gem 'ruby_tree_sitter', '~> 1.6'
 ```
 
 Or manually:
@@ -134,18 +134,19 @@ Or from `git` sources, which will compile on installation:
 gem 'ruby_tree_sitter', git: 'https://github.com/Faveod/ruby-tree-sitter'
 ```
 
-### Disable system libraries
+### Enable system libraries
 
-To install with `--disable-sys-lib`, you can either:
+To install with `--enable-sys-libs`, you can either:
 
 ```sh
-gem install ruby_tree_sitter -- --disable-sys-libs
+gem install ruby_tree_sitter --platform=ruby -- --enable-sys-libs
 ```
 
 Or via bundle:
 
 ```sh
-bundle config set build.ruby_tree_sitter --disable-sys-libs
+bundle config force_ruby_platform true
+bundle config set build.ruby_tree_sitter --enable-sys-libs
 ```
 
 ### No compilation
@@ -173,16 +174,6 @@ You will have to install parsers yourself, either by:
 1. Downloading a pre-built binary from
    [Faveod/tree-sitter-parsers](https://github.com/Faveod/tree-sitter-parsers)
    which supports numerous architectures.
-
-### A note on static vs dynamic linking
-
-This extension will statically link against a downloaded version of
-`tree-sitter` when you use the `--disable-sys-lib`.  So any installed version of
-`tree-sitter` will not be loaded.
-
-The native gems are also statically linked.
-
-All other methods will dynamically link against the installed `tree-sitter`.
 
 ## Examples
 

@@ -15,7 +15,7 @@ cflags = []
 ldflags = []
 
 def system_tree_sitter?
-  enable_config('sys-libs', true)
+  enable_config('sys-libs', false)
 end
 
 def env_var_on?(var)

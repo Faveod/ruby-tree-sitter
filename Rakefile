@@ -46,7 +46,7 @@ task 'gem:native' do
     RakeCompilerDock.sh <<~CMD, platform: plat
       bundle --local && \\
         RUBY_CC_VERSION='#{ENV.fetch('RUBY_CC_VERSION', nil)}' \\
-          bundle exec rake native:#{plat} gem -- --disable-sys-libs
+          bundle exec rake native:#{plat} gem
     CMD
   end
 end

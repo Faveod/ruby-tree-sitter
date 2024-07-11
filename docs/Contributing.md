@@ -29,10 +29,10 @@ git clone https://github.com/Faveod/ruby-tree-sitter
 bin/setup
 ```
 
-If you chose not to bother with `tree-sitter` installation:
+If you chose to use the `system-wide/installed tree-sitter`:
 
 ```sh
-bundle exec rake compile -- --disable-sys-libs
+bundle exec rake compile -- --enable-sys-libs
 ```
 
 ## Testing
