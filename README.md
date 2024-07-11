@@ -68,12 +68,23 @@ TreeStand provides an idiomatic Ruby interface to work with tree-sitter parsers.
 
 ## Dependencies
 
-This gem is a binding for `tree-sitter`. It doesn't have a version of
-`tree-sitter` baked in it by default.
+This gem is a binding for `tree-sitter`, and comes with a pre-built version
+of `tree-sitter` bundled with it, so you can start using it without any
+special configuration.
 
-You must install `tree-sitter` and make sure that their dynamic library is
-accessible from `$PATH`, or build the gem with `--disable-sys-libs`, which will
-download the latest tagged `tree-sitter` and build against it (see [Build from source](docs/Contributing.md#build-from-source) .)
+We support the following platforms:
+
+- `aarch64-linux-gnu`
+- `aarch64-linux-musl`
+- `arm-linux-gnu`
+- `arm-linux-musl`
+- `x86_64-linux-gnu`
+- `x86_64-linux-musl`
+- `x86-linux-musl`
+- `arm64-darwin`
+- `x86_64-darwin`
+
+(see [Build from source](docs/Contributing.md#build-from-source)).
 
 You can either install `tree-sitter` from source or through your go-to package manager.
 
