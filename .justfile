@@ -14,12 +14,9 @@ clean:
   bundle exec rake clean
 
 [group('compile')]
-compile:
-  bundle exec rake clean compile
-
-[group('compile')]
-compile-no-sys:
-  bundle exec rake clean compile -- --disable-sys-libs
+compile *args:
+  @just clean
+  bundle exec rake compile {{ if args == '' { '' } else { '-- ' + args } }}
 
 [group('tree-sitter')]
 dl-parsers platform:
@@ -54,6 +51,21 @@ lint:
 lint-fix:
   bundle exec rubocop --config .rubocop.yml -A
 
+[group('develop')]
+[group('test')]
+nm:
+  #!/usr/bin/env bash
+  ruby_version=$(ruby -e 'print RUBY_VERSION')
+  extension='so'
+  if [[ "$(uname)" == 'Darwin' ]]; then
+      extension='bundle'
+  fi
+  find ./tmp \
+    -type f \
+    -path "*/${ruby_version}/*" \
+    -name "tree_sitter.${extension}" \
+    -exec nm -gu {} \; \
+
 [group('publish')]
 publish:
   bin/publish
@@ -72,7 +84,7 @@ setup-bundler:
 [group('tree-sitter')]
 setup-ts:
   #!/usr/bin/env bash
-  set -euxo pipefail
+  set -euo pipefail
   if [ -d tree-sitter ]; then
     cd tree-sitter
     git reset --hard HEAD
@@ -85,8 +97,8 @@ setup-ts:
   git fetch origin --depth 1 v0.22.6
   git reset --hard FETCH_HEAD
   make
-  sudo make install
-  sudo rm /usr/local/lib/libtree-sitter.a
+  echo "now you can:"
+  echo "  $ cd tree-sitter && make install"
 
 [group('setup')]
 setup-parsers *parsers:
@@ -99,4 +111,3 @@ tc:
 [group('test')]
 test *args:
   bundle exec rake test {{ if args == '' { '' } else { '-- ' + args } }}
-
