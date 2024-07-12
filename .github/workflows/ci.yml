@@ -6,43 +6,65 @@ on:
   pull_request:
     branches: [master]
 
-  # - We need this seperate step for now to avoid duplicate uploads on release
-  # - We're not testing here also because it's been taken care of in the previous
-  #   step
 jobs:
-  install-only-gem:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        ruby: [3.0, 3.1, 3.2, 3.3]
+        platform:
+          - { os: ubuntu, target: linux-x64, extension: so }
+          - { os: macos, target: macos-arm64, extension: bundle }
+        sys-libs:
+          - disable
+          - enable
+    runs-on: ${{ matrix.platform.os }}-latest
     steps:
       - uses: actions/checkout@v3
       - uses: extractions/setup-just@v1
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3
+          ruby-version: ${{ matrix.ruby }}
       - name: build and install tree-sitter
-        run: just setup-ts
+        if: matrix.sys-libs == 'enable'
+        run: |
+          just setup-ts
+          cd tree-sitter && sudo make install
+          sudo rm /usr/local/lib/libtree-sitter.a # to guarantee dynamic linking
       - name: ldconfig
+        if: matrix.sys-libs == 'enable' && matrix.platform.os == 'ubuntu'
         run: sudo ldconfig -v
-      - name: setup
+      - name: setup and compile all parsers
         env:
-          PLATFORM: linux-x64
+          PLATFORM: ${{ matrix.platform.target }}
         run: just setup
       - name: compile
-        run: just compile
-      - name: test
+        run: just compile --${{ matrix.sys-libs }}-sys-libs
+      - name: verify --enable-sys-libs (dynamic linking)
+        if: matrix.sys-libs == 'enable'
+        run: just nm | grep -q ts_parser_new
+      - name: verify --disable-sys-libs (static linking)
+        if: matrix.sys-libs != 'enable'
+        run: |
+          if just nm | grep -q ts_parser_new; then
+            false
+          else
+            true
+          fi;
+      - name: test compiled parsers
         run: just test
-      - name: package native gem
+      - name: delete compiled parsers
+        run: rm -r tree-sitter-parsers && ls -lah
+      - name: download pre-compiled parsers
+        run: just dl-parsers ${{ matrix.platform.target }}
+      - name: install math
+        run: just setup-parsers
+      - name: test downloaded parsers
+        run: just test
+      - name: package gem
         run: just gem
-      - name: release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref }}-${{ steps.vars.outputs.sha_short }}
-          draft: true
-          files: |
-            ./pkg/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: package native gem
+        run: just gem-native
 
   lint-ruby:
     runs-on: ubuntu-latest
@@ -69,40 +91,3 @@ jobs:
           bundler-cache: true
       - name: Typecheck
         run: just tc
-
-  disable-sys-libs:
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: [3.0, 3.1, 3.2, 3.3]
-        platform:
-          - { os: ubuntu, target: linux-x64, ext: so    }
-          - { os: macos,  target: macos-arm64, ext: dylib }
-    runs-on: ${{ matrix.platform.os }}-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: extractions/setup-just@v1
-      - name: setup ruby ${{ matrix.ruby }}
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-      - name: downloaded pre-compiled parsers
-        run: just dl-parsers ${{ matrix.platform.target }}
-      - name: setup
-        run: |
-          just setup-bundler
-          just setup-parsers # this will only download math.
-      - name: compile
-        run: just compile-no-sys
-      - name: test
-        run: just test
-      - name: fresh project on PR or tag
-        if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/')
-        env:
-           BRANCH: HEAD
-        run: bin/ci-test-project
-      - name: fresh project when not a PR
-        if: github.event_name != 'pull_request'
-        env:
-           BRANCH: ${{ github.ref_name }}
-        run: bin/ci-test-project
