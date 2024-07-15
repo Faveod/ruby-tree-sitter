@@ -100,9 +100,14 @@ module TreeSitter
     def sources_from_git
       return false if !exe?(:git)
 
-      sh "git clone #{url[:git]} #{src}"
-      sh "cd #{src} && git checkout tags/v#{version}"
-
+      sh <<~SHELL.chomp
+        mkdir #{src} \\
+        && cd #{src} \\
+        && git init \\
+        && git remote add origin "#{url[:git]}" \\
+        && git fetch origin --depth 1 tags/v#{version} \\
+        && git reset --hard FETCH_HEAD
+      SHELL
       true
     end
 
