@@ -7,6 +7,7 @@ gemspec
 group :development, :test do
   gem 'bundler', '~> 2.3'
   gem 'debug', '~> 1.9', require: false
+  gem 'gemstash', require: false
   gem 'rake', '~> 13.2'
   gem 'rake-compiler', '~> 1.2'
   gem 'rake-compiler-dock', '~> 1.5'

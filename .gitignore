@@ -4,15 +4,15 @@
 *.lock
 *.log
 *.so
-.yardoc
-pkg/*
-tmp/*
-docs/*
 
-doc/
+logs
+
 /.yardoc
-
-tree-sitter-parsers
-log
-
-vendor/
+/doc
+/docs
+/log
+/pkg
+/tmp
+/tree-sitter
+/tree-sitter-parsers
+/vendor

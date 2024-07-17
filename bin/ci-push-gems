@@ -1,0 +1,27 @@
+#! /usr/bin/env bash
+set -exuo pipefail
+IFS=$'\n\t'
+
+bundle exec gemstash start &
+key=$(bundle exec gemstash authorize | awk '{print $NF}')
+bundle exec gemstash authorize fetch push yank --key "$key"
+
+version="$(ruby -r ./lib/tree_sitter/version.rb -e 'puts TreeSitter::VERSION')"
+
+find pkg -name "ruby_tree_sitter-$version-*.gem" | while read gem; do
+  platform=$(gem specification "$gem" | grep 'platform:' | awk '{print $NF}')
+  sql_query="SELECT DISTINCT versions.number
+  FROM versions
+  JOIN rubygems ON rubygems.id = versions.rubygem_id
+  WHERE versions.number = '$version'
+    AND versions.platform = '$platform'
+    AND rubygems.name = 'ruby_tree_sitter';"
+  installed_version=$(sqlite3 ~/.gemstash/gemstash.db "$sql_query")
+
+  if test "$installed_version" == "$version"; then
+    echo "$gem is already in gemstash. Skipping …"
+  else
+    echo "Publishing $gem to gemstash."
+    GEM_HOST_API_KEY="$key" gem push --host http://localhost:9292/private $gem
+  fi
+done
