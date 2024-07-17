@@ -17,7 +17,6 @@ Gem::Specification.new do |spec|
   spec.version       = TreeSitter::VERSION
 
   spec.metadata = {
-    'allowed_push_host' => 'https://rubygems.org',
     'homepage_uri' => spec.homepage,
     'source_code_uri' => spec.homepage,
     'changelog_uri' => spec.homepage,

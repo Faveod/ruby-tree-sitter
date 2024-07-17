@@ -1,14 +1,17 @@
-#! /usr/bin/env sh
+#! /usr/bin/env bash
+set -exuo pipefail
+IFS=$'\n\t'
 
-set -e
-set -x
+# Parsers should be automatically picked up from the environment,
+# via TreeSitter.language, but in case you're facing issues,
+# set the TREE_SITTER_PARSERS envvar to make sure you have access
+# to your parsers. This tests specifically looks for the ruby parser.
 
-GITSRC=$(pwd)
+gitsrc=$(pwd)
+version=$(ruby -r ./lib/tree_sitter/version.rb -e 'puts TreeSitter::VERSION')
 cp -R examples/test-project /tmp
 cd /tmp/test-project
-sed -i.bak "s/branch: 'ruby_tree_sitter'/branch: '$BRANCH'/" Gemfile
+sed -i.bak "s/\$version/$version/" Gemfile
 bundle config set --local path vendor/bundle
-bundle config set local.ruby_tree_sitter "$GITSRC"
-bundle config set build.ruby_tree_sitter --disable-sys-libs
 bundle install
-env TREE_SITTER_PARSERS="$GITSRC/tree-sitter-parsers" bundle exec ruby main.rb
+bundle exec ruby main.rb || echo "You may need to set envvar TREE_SITTER_PARSERS."

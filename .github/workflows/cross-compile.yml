@@ -8,8 +8,6 @@ on:
 
 jobs:
   native-gems:
-    strategy:
-      fail-fast: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -24,8 +22,14 @@ jobs:
         run: just setup-bundler
       - name: compile
         run: just compile
-      - name: package native gem # TODO: and test them
+      - name: package cross-compiled gems
         run: just gem-cross
+      - name: download pre-compiled parsers
+        run: just dl-parsers linux-x64 # TODO: test on a mac?
+      - name: test cross-compiled gems
+        run: just gem-cross-test
+      - name: package platform-agnostic gem
+        run: just gem
       - name: release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1

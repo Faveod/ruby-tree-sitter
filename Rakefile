@@ -16,11 +16,11 @@ PLATFORMS = %w[
   aarch64-linux-musl
   arm-linux-gnu
   arm-linux-musl
+  arm64-darwin
+  x86-linux-musl
+  x86_64-darwin
   x86_64-linux-gnu
   x86_64-linux-musl
-  x86-linux-musl
-  arm64-darwin
-  x86_64-darwin
 ].freeze
 
 CROSS_RUBIES = %w[3.3.0 3.2.0 3.1.0 3.0.0].freeze
@@ -41,11 +41,11 @@ end
 
 task 'gem:native' do
   require 'rake_compiler_dock'
-  sh 'bundle package --all' # Avoid repeated downloads of gems by using gem files from the host.
   PLATFORMS.each do |plat|
     RakeCompilerDock.sh <<~CMD, platform: plat
-      bundle --local && \\
-        RUBY_CC_VERSION='#{ENV.fetch('RUBY_CC_VERSION', nil)}' \\
+      bundle config set --local cache_all true \\
+      && bundle package --all-platforms \\
+      && RUBY_CC_VERSION='#{ENV.fetch('RUBY_CC_VERSION', nil)}' \\
           bundle exec rake native:#{plat} gem
     CMD
   end

@@ -43,6 +43,11 @@ gem-native:
 gem-cross:
   bundle exec rake gem:native
 
+[group('gem')]
+[group('test')]
+gem-cross-test:
+  bin/ci-push-gems && bin/ci-test-project
+
 [group('lint')]
 lint:
   bundle exec rubocop --config .rubocop.yml
@@ -77,6 +82,7 @@ setup:
 
 [group('setup')]
 setup-bundler:
+  bundle config set --local cache_all true
   bundle config set --local path vendor
   bundle install
 
