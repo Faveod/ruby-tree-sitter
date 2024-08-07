@@ -12,10 +12,7 @@ def ext
 end
 
 parser = TreeSitter::Parser.new
-language = TreeSitter::Language.load(
-  'ruby',
-  Pathname(ENV['TREE_SITTER_PARSERS']) / "libtree-sitter-ruby.#{ext}"
-)
+language = TreeSitter.language('ruby')
 parser.language = language
 src = "puts 'x = 42'"
 tree = parser.parse_string(nil, src)
