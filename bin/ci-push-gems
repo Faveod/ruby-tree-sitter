@@ -2,11 +2,30 @@
 set -exuo pipefail
 IFS=$'\n\t'
 
-bundle exec gemstash start &
+if bundle exec gemstash status; then
+    echo "Gemstash is already up."
+else
+    echo "Gemstash is not running. Starting ..."
+    bundle exec gemstash start &
+fi
 key=$(bundle exec gemstash authorize | awk '{print $NF}')
 bundle exec gemstash authorize fetch push yank --key "$key"
 
 version="$(ruby -r ./lib/tree_sitter/version.rb -e 'puts TreeSitter::VERSION')"
+
+# There's a bug in gemstash that would place the db in the local working dir
+# instead of ~/.gemstash, and it will have its name escaped for html, like
+# %2FUsers%2fstackmystack%2F.gemstash%2Fgemstash.db
+if test -s ~/.gemstash/gemstash.db; then
+    gemstash_db=~/.gemstash/gemstash.db
+else
+    gemstash_db=$(find . -maxdepth 1 -type f -name "*gemstash.db" -size +0c -print -quit)
+
+    if test -z "$gemstash_db"; then
+        echo "Error: No valid gemstash.db file found."
+        exit 1
+    fi
+fi
 
 find pkg -name "ruby_tree_sitter-$version-*.gem" | while read gem; do
   platform=$(gem specification "$gem" | grep 'platform:' | awk '{print $NF}')
@@ -16,7 +35,8 @@ find pkg -name "ruby_tree_sitter-$version-*.gem" | while read gem; do
   WHERE versions.number = '$version'
     AND versions.platform = '$platform'
     AND rubygems.name = 'ruby_tree_sitter';"
-  installed_version=$(sqlite3 ~/.gemstash/gemstash.db "$sql_query")
+
+  installed_version=$(sqlite3 "$gemstash_db" "$sql_query")
 
   if test "$installed_version" == "$version"; then
     echo "$gem is already in gemstash. Skipping …"
