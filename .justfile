@@ -41,7 +41,7 @@ gem-native:
 
 [group('gem')]
 gem-cross:
-  bundle exec rake gem:native
+  bundle exec rake gem:cross
 
 [group('gem')]
 [group('test')]
