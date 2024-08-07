@@ -39,7 +39,7 @@ Rake::ExtensionTask.new('tree_sitter', gemspec) do |task|
   task.cross_config_options << '--enable-cross-build'
 end
 
-task 'gem:native' do
+task 'gem:cross' do
   require 'rake_compiler_dock'
   PLATFORMS.each do |plat|
     RakeCompilerDock.sh <<~CMD, platform: plat
