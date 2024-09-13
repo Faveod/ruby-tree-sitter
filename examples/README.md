@@ -12,12 +12,12 @@ bundle exec ruby examples/01-json.rb
 
 These examples are meant to showcase the use of the API.
 
-The examples will automatically download and build the language parsers via
-`bin/get`.
+Make sure to run `bin/setup` which uses
+[`tsdl`](https://github.com/stackmystack/tsdl).
 
 ## Specific language?
 
-Edit the scripts and call 
+Edit the scripts and call
 
 ```ruby
 language = load(name, lib)

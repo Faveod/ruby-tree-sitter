@@ -14,8 +14,8 @@ require_relative '../examples/helpers'
 
 Minitest::Reporters.use!
 
+PARSERS_INSTALL_PATH = (Pathname('vendor') / 'parsers').freeze
+
 TreeStand.configure do
-  config.parser_path = File.expand_path(
-    File.join(__dir__, '..', 'tree-sitter-parsers'),
-  )
+  config.parser_path = PARSERS_INSTALL_PATH.expand_path
 end

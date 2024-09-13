@@ -20,7 +20,7 @@ compile *args:
 
 [group('tree-sitter')]
 dl-parsers platform:
-  curl -o tree-sitter-parsers.zip -L https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.4/tree-sitter-parsers-3.3-{{platform}}.zip
+  curl -o tree-sitter-parsers.zip -L https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.8/tree-sitter-parsers-3.8-{{platform}}.zip
   unzip tree-sitter-parsers.zip
 
 [group('doc')]
@@ -78,7 +78,7 @@ publish:
 [group('setup')]
 setup:
   @just setup-bundler
-  @just setup-parsers javascript json ruby
+  @just setup-parsers
 
 [group('setup')]
 setup-bundler:
@@ -107,8 +107,8 @@ setup-ts:
   echo "  $ cd tree-sitter && make install"
 
 [group('setup')]
-setup-parsers *parsers:
-  bin/setup {{parsers}}
+setup-parsers:
+  bin/setup
 
 [group('lint')]
 tc:

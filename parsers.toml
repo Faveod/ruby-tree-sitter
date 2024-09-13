@@ -1,0 +1,11 @@
+build-dir = "vendor/parsers/build"
+out-dir = "vendor/parsers"
+tree-sitter-version = "0.22.6"
+
+[parsers]
+embedded-template = "0.21.0"
+html = "0.20.4"
+javascript = "0.21.4"
+json = "0.21.0"
+math = { ref = "ed50340a0c331b5b2559fa69d8c530b2aca4d309", from = "https://github.com/DerekStride/tree-sitter-math" }
+ruby = "0.21.0"
