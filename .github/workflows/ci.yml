@@ -54,7 +54,7 @@ jobs:
       - name: test compiled parsers
         run: just test
       - name: delete compiled parsers
-        run: rm -r tree-sitter-parsers && ls -lah
+        run: rm -r vendor/parsers && ls -lah
       - name: download pre-compiled parsers
         run: just dl-parsers ${{ matrix.platform.target }}
       - name: install math

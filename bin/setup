@@ -1,38 +1,37 @@
-#!/usr/bin/env bash
-set -euo pipefail
-IFS=$'\n\t'
-set -vx
+#! /usr/bin/env ruby
 
-# TODO: migrate this to bin/get
+# frozen_string_literal: true
 
-case $OSTYPE in
-darwin*)
-	ext=dylib
-	CC=cc
-	CXX=c++
-	;;
-*)
-	ext=so
-	CC=gcc
-	CXX=g++
-	;;
-esac
+require 'pathname'
 
-if [[ ! -d tmp/tree-sitter-math ]]; then
-  mkdir -p tmp
-  git -C tmp/ clone --depth=1 https://github.com/DerekStride/tree-sitter-math.git
-fi
+os = `uname`.strip
+arch = `uname -m`.strip
 
-cd tmp/tree-sitter-math
+PLATFORM =
+  case os
+  in 'Linux'
+    case arch
+    in 'aarch64' then 'linux-arm64'
+    in 'x86_64' then 'linux-x64'
+    in 'i386' then 'linux-x86'
+    else; 'linux-arm'
+    end
+  in 'Darwin'
+    case arch
+    in 'arm64' then 'macos-arm64'
+    in 'x86_64' then 'macos-x64'
+    end
+  end.freeze
 
-mkdir -p target
-$CC -shared -o "target/parser.$ext" -fPIC src/parser.c -I./src
+TSDL_URL = "https://github.com/stackmystack/tsdl/releases/latest/download/tsdl-#{PLATFORM}.gz".freeze
+TSDL_GZ = (Pathname('vendor') / 'tsdl.gz').freeze
+TSDL_OUT = TSDL_GZ.sub_ext('').freeze
 
-cd ../..
-mkdir -p tree-sitter-parsers
-cp "tmp/tree-sitter-math/target/parser.$ext" "tree-sitter-parsers/math.$ext"
-
-for lang in "$@"
-do
-  bin/get $lang
-done
+if TSDL_OUT.exist?
+  puts `#{TSDL_OUT} selfupdate`
+else
+  puts `curl -L #{TSDL_URL} -o #{TSDL_GZ}`
+  puts `gunzip #{TSDL_GZ}`
+  puts `chmod +x #{TSDL_OUT}`
+end
+puts `#{TSDL_OUT} build`

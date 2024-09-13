@@ -1,9 +1,8 @@
 # Unit testing
 
 Since we don't have languages bundled in ruby gems, we have to load the dynamic
-libraries from disk.
-
-We're using the `bin/get` scripts to do so.
+libraries from disk. Make sure to run `bin/setup` which uses
+[`tsdl`](https://github.com/stackmystack/tsdl).
 
 Since not all languages have a Makefile in their root dir, and we don't want to
 mess with copying Makefiles, we're going to rely on languages that do have a

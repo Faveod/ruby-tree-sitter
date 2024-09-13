@@ -25,12 +25,7 @@ ruby_path =
   if p = ENV.fetch('TREE_SITTER_PARSERS', nil)
     Pathname(p) / "libtree-sitter-ruby.#{TreeSitter.ext}"
   else
-    downloaded = Pathname('tree-sitter-parsers') / "libtree-sitter-ruby.#{TreeSitter.ext}"
-    if downloaded.exist?
-      downloaded
-    else
-      Pathname('tree-sitter-parsers') / 'ruby' / "libtree-sitter-ruby.#{TreeSitter.ext}"
-    end
+    PARSERS_INSTALL_PATH / "libtree-sitter-ruby.#{TreeSitter.ext}"
   end
 
 describe 'language' do
