@@ -1,13 +1,13 @@
 diff --git a/Makefile b/Makefile
-index e021e87..fb9d2ef 100644
+index 70cc7b1..66cb6f2 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -30,7 +30,7 @@ SONAME_MINOR := $(word 2,$(subst ., ,$(VERSION)))
+@@ -34,7 +34,7 @@ SONAME_MAJOR := $(word 1,$(subst ., ,$(VERSION)))
+ SONAME_MINOR := $(word 2,$(subst ., ,$(VERSION)))
+
  # OS-specific bits
- ifeq ($(OS),Windows_NT)
- 	$(error "Windows is not supported")
--else ifeq ($(shell uname),Darwin)
-+else ifeq ($(findstring darwin, $(shell $(CC) -dumpmachine)), darwin)
+-ifeq ($(shell uname),Darwin)
++ifeq ($(findstring darwin, $(shell $(CC) -dumpmachine)), darwin)
  	SOEXT = dylib
- 	SOEXTVER_MAJOR = $(SONAME_MAJOR).dylib
- 	SOEXTVER = $(SONAME_MAJOR).$(SONAME_MINOR).dylib
+ 	SOEXTVER_MAJOR = $(SONAME_MAJOR).$(SOEXT)
+ 	SOEXTVER = $(SONAME_MAJOR).$(SONAME_MINOR).$(SOEXT)
