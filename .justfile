@@ -3,6 +3,7 @@ LIB := 'lib'
 LIB_FILE := LIB / GEM_NAME + '.rb'
 VERSION_FILE := LIB / GEM_NAME / 'version.rb'
 VERSION := shell("ruby -r ./" + VERSION_FILE  + " -e 'puts TreeSitter::VERSION'")
+TS_PARSER_VERSION := '4.0'
 
 default: check
 
@@ -20,7 +21,7 @@ compile *args:
 
 [group('tree-sitter')]
 dl-parsers platform:
-  curl -o tree-sitter-parsers.zip -L https://github.com/Faveod/tree-sitter-parsers/releases/download/v3.8/tree-sitter-parsers-3.8-{{platform}}.zip
+  curl -o tree-sitter-parsers.zip -L https://github.com/Faveod/tree-sitter-parsers/releases/download/v{{TS_PARSER_VERSION}}/tree-sitter-parsers-{{TS_PARSER_VERSION}}-{{platform}}.zip
   unzip tree-sitter-parsers.zip
 
 [group('doc')]
