@@ -1,0 +1,68 @@
+name: Automatic tree-sitter version bump
+
+on:
+  schedule:
+    - cron: "23 1 * * *"
+
+jobs:
+  check_release:
+    name: Check latest release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Get the previous release tag from local project
+        id: previous_release
+        run: |
+          PREVIOUS_RELEASE=$(ruby -r ./lib/tree_sitter/version.rb -e 'puts TreeSitter::TREESITTER_VERSION')
+          echo "version=$PREVIOUS_RELEASE" >> "$GITHUB_OUTPUT"
+
+      - name: Get the latest release tag from the external repo
+        id: latest_release
+        run: |
+          LATEST_RELEASE=$(curl -s https://api.github.com/repos/tree-sitter/tree-sitter/releases/latest | jq -r .tag_name | sed 's/^v//')
+          echo "version=$LATEST_RELEASE" >> "$GITHUB_OUTPUT"
+          echo "branch=tree-sitter-bump-to-$LATEST_RELEASE" >> "$GITHUB_OUTPUT"
+
+      - name: Check if branch exists
+        id: latest_release_branch
+        run: |
+          git pull
+          if git show-ref --verify --quiet refs/heads/${{ steps.latest_release.outputs.branch }}; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compare release versions
+        id: check_versions
+        run: |
+          if [ "${{ steps.previous_release.outputs.version }}" != "${{ steps.latest_release.outputs.version }}" ]; then
+            echo "New release found"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No new release"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update version if changed
+        if: steps.check_versions.outputs.changed == 'true'
+        run: |
+          sed -i "s/^\([[:space:]]*\)TREESITTER_VERSION = '.*'/\1TREESITTER_VERSION = '${{ steps.latest_release.outputs.version }}'/"  lib/tree_sitter/version.rb
+
+      - name: Create pull request
+        if: steps.check_versions.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          base: ${{ github.event.repository.default_branch }}
+          branch: ${{ steps.latest_release.outputs.branch }}
+          commit-message: "tree-sitter: bump to ${{ steps.latest_release.outputs.version }}"
+          committer: github-actions[bot] <github-actions[bot]@github.com>
+          delete-branch: true
+          draft: always-true
+          signoff: false
+          title: "Bump tree-sitter to ${{ steps.latest_release.outputs.version }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
