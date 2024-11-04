@@ -12,6 +12,6 @@ version=$(ruby -r ./lib/tree_sitter/version.rb -e 'puts TreeSitter::VERSION')
 cp -R examples/test-project /tmp
 cd /tmp/test-project
 sed -i.bak "s/\$version/$version/" Gemfile
-bundle config set --local path vendor/bundle
+bundle config set --local path vendor
 bundle install
 bundle exec ruby main.rb || echo "You may need to set envvar TREE_SITTER_PARSERS."

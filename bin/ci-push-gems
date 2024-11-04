@@ -2,6 +2,9 @@
 set -exuo pipefail
 IFS=$'\n\t'
 
+bundle config set --local path vendor
+bundle install
+
 if bundle exec gemstash status; then
     echo "Gemstash is already up."
 else
