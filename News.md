@@ -1,5 +1,11 @@
 # News
 
+# [unreleaseed]
+
+# v1.8.0 (06-11-2024)
+
+- Use tree-sitter v0.24.3.
+
 # v1.7.0
 
 - Use tree-sitter v0.23.0.
