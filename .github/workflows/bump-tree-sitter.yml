@@ -51,6 +51,7 @@ jobs:
         if: steps.check_versions.outputs.changed == 'true'
         run: |
           sed -i "s/^\([[:space:]]*\)TREESITTER_VERSION = '.*'/\1TREESITTER_VERSION = '${{ steps.latest_release.outputs.version }}'/"  lib/tree_sitter/version.rb
+          sed -i -E "s/(tree-sitter-version = \").*\"/\1${{ steps.latest_release.outputs.version }}\"/" parsers.toml
 
       - name: Create pull request
         if: steps.check_versions.outputs.changed == 'true'
