@@ -3,7 +3,7 @@ LIB := 'lib'
 LIB_FILE := LIB / GEM_NAME + '.rb'
 VERSION_FILE := LIB / GEM_NAME / 'version.rb'
 VERSION := shell("ruby -r ./" + VERSION_FILE  + " -e 'puts TreeSitter::VERSION'")
-TS_PARSER_VERSION := '4.0'
+TS_PARSER_VERSION := '4.2'
 
 default: check
 
