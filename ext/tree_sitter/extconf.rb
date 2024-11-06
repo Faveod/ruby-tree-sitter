@@ -49,7 +49,6 @@ dir_include, dir_lib =
     # We need to make sure we're selecting the proper toolchain.
     # Especially needed for corss-compilation.
     ENV.store('CC', RbConfig::CONFIG['CC'])
-    repo.patch
     repo.compile
     repo.include_and_lib_dirs
   end
