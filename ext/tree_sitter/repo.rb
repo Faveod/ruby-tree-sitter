@@ -64,13 +64,6 @@ module TreeSitter
       [[(src / 'lib' / 'include').to_s], [src.to_s]]
     end
 
-    def patch
-      root = Pathname.new(File.expand_path(__dir__)).realpath.parent.parent
-      patch = root / 'patches' / 'cross-compile.patch'
-
-      sh "patch --forward #{src / 'Makefile'} #{patch}"
-    end
-
     def sh(cmd)
       return if system(cmd)
 
