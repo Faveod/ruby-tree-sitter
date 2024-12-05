@@ -2,6 +2,8 @@
 
 # [unreleaseed]
 
+# v1.9.1 (05-12-2024)
+
 - Add custom errors for language loading:
   ```md
   - LanguageLoadError
