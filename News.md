@@ -2,6 +2,8 @@
 
 # [unreleaseed]
 
+# v1.10.0 (10-12-2024)
+
 - Make `TreeSitter::TreeSitterError < Exception` instead of `StandardErorr`;
   we don't want them to be handled by default `rescue`.
 
