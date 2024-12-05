@@ -42,7 +42,8 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
   void *lib = dlopen(path_cstr, RTLD_NOW);
   const char *err = dlerror();
   if (err != NULL) {
-    rb_raise(rb_eRuntimeError,
+    VALUE parser_not_found = rb_const_get(mTreeSitter, rb_intern("ParserNotFoundError"));
+    rb_raise(parser_not_found,
              "Could not load shared library `%s'.\nReason: %s", path_cstr, err);
   }
 
@@ -52,7 +53,8 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
   err = dlerror();
   if (err != NULL) {
     dlclose(lib);
-    rb_raise(rb_eRuntimeError,
+    VALUE symbol_not_found = rb_const_get(mTreeSitter, rb_intern("SymbolNotFoundError"));
+    rb_raise(symbol_not_found,
              "Could not load symbol `%s' from library `%s'.\nReason:%s",
              StringValueCStr(name), path_cstr, err);
   }
@@ -60,7 +62,8 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
   TSLanguage *lang = make_ts_language();
   if (lang == NULL) {
     dlclose(lib);
-    rb_raise(rb_eRuntimeError,
+    VALUE language_load_error = rb_const_get(mTreeSitter, rb_intern("LanguageLoadError"));
+    rb_raise(language_load_error,
              "TSLanguage = NULL for language `%s' in library `%s'.\nCall your "
              "local TSLanguage supplier.",
              StringValueCStr(name), path_cstr);
@@ -68,7 +71,8 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
 
   uint32_t version = ts_language_version(lang);
   if (version < TREE_SITTER_MIN_COMPATIBLE_LANGUAGE_VERSION) {
-    rb_raise(rb_eRuntimeError,
+    VALUE version_error = rb_const_get(mTreeSitter, rb_intern("ParserVersionError"));
+    rb_raise(version_error,
              "Language %s (v%d) from `%s' is old.\nMinimum supported ABI: "
              "v%d.\nCurrent ABI: v%d.",
              StringValueCStr(name), version, path_cstr,

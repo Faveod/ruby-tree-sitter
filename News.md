@@ -2,6 +2,14 @@
 
 # [unreleaseed]
 
+- Add custom errors for language loading:
+  ```md
+  - LanguageLoadError
+  - ParserNotFoundError
+  - ParserVersionError
+  - SymbolNotFoundError
+  ```
+
 # v1.9.0 (21-11-2024)
 
 - Use tree-sitter v0.24.4.
