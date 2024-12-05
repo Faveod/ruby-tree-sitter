@@ -5,6 +5,10 @@ module TreeSitter
   class TreeSitterError < StandardError
   end
 
+  # Raised when query creation fails.
+  class QueryCreationError < TreeSitterError
+  end
+
   # Raised when the language symbol is found, but loading it returns nothing.
   class LanguageLoadError < TreeSitterError
   end

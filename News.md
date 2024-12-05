@@ -9,6 +9,7 @@
   - ParserVersionError
   - SymbolNotFoundError
   ```
+- Add custom `QueryCreationError` for query creation.
 
 # v1.9.0 (21-11-2024)
 
