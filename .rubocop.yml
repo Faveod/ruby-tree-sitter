@@ -30,6 +30,9 @@ Lint/EmptyBlock:
     - test/**/*
     - Rakefile
 
+Lint/InheritException:
+  Enabled: false
+
 Metrics/AbcSize:
   Max: 29
 
