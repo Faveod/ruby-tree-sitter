@@ -29,16 +29,21 @@ ruby_path =
   end
 
 describe 'language' do
+  it 'must raise a TreeSitter::ParserNotFoundError when a parser is not found' do
+    _ { TreeSitter.lang('rubyyyyyyyyyy') }.must_raise TreeSitter::ParserNotFoundError
+    _ { TreeSitter::Language.load('rubyyyyyyyyyy', ruby_path) }.must_raise TreeSitter::SymbolNotFoundError
+  end
+
   it 'must be able to load a library from `Pathname` (or any object that has `to_s`)' do
     _(TreeSitter::Language.load('ruby', ruby_path).field_count).must_be :positive?
   end
 
   it 'must throw an exception when the library is not found' do
-    _ { TreeSitter::Language.load('ruby', Pathname('tmp/none')) }.must_raise RuntimeError
+    _ { TreeSitter::Language.load('ruby', Pathname('tmp/none')) }.must_raise TreeSitter::ParserNotFoundError
   end
 
   it 'must throw an exception when the name is not correctly found' do
-    _ { TreeSitter::Language.load('nada', ruby_path) }.must_raise RuntimeError
+    _ { TreeSitter::Language.load('nada', ruby_path) }.must_raise TreeSitter::SymbolNotFoundError
   end
 
   it 'must return symbol count' do
@@ -66,7 +71,7 @@ describe 'language' do
   end
 
   it 'must return field symbol type' do
-    assert_equal TreeSitter::SymbolType::AUXILIARY, ruby.symbol_type(0)
+    assert_equal TreeSitter::SymbolType::REGULAR, ruby.symbol_type(1)
   end
 
   it 'must be of correct version' do

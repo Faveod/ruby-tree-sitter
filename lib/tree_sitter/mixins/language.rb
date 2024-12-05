@@ -83,7 +83,7 @@ module TreeSitter
         lib = search_for_lib(name)
 
         if lib.nil?
-          raise <<~MSG.chomp
+          raise ::TreeSitter::ParserNotFoundError, <<~MSG.chomp
             Failed to load a parser for #{name}.
 
             #{search_lib_message}
