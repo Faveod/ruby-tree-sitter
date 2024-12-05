@@ -2,7 +2,7 @@
 
 module TreeSitter
   # Base tree-sitter error.
-  class TreeSitterError < StandardError
+  class TreeSitterError < Exception
   end
 
   # Raised when query creation fails.
