@@ -26,6 +26,10 @@ combined = "#{pattern} #{capture}"
 # NOTE: It' still unclear to me what a captured string is.
 
 describe 'pattern/capture/string' do
+  it 'must raise an exception when query creation fails' do
+    _ { TreeSitter::Query.new(ruby, '(stupid query') }.must_raise TreeSitter::QueryCreationError
+  end
+
   it 'must return an Integer for pattern count' do
     query = TreeSitter::Query.new(ruby, pattern)
     assert_equal 1, query.pattern_count
