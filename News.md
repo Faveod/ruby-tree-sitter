@@ -2,6 +2,8 @@
 
 # [unreleaseed]
 
+- Use tree-sitter v0.24.5.
+
 # v1.10.0 (10-12-2024)
 
 - Make `TreeSitter::TreeSitterError < Exception` instead of `StandardErorr`;
