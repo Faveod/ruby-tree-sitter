@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: extractions/setup-just@v1
-      - name: setup ruby 3.3
+      - name: setup ruby 3.2
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3
