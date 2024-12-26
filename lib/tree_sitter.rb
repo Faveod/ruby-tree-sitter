@@ -23,6 +23,8 @@ require 'tree_sitter/query_matches'
 require 'tree_sitter/query_predicate'
 require 'tree_sitter/text_predicate_capture'
 
+require 'oppen'
+
 # TreeSitter is a Ruby interface to the tree-sitter parsing library.
 module TreeSitter
   extend Mixins::Language

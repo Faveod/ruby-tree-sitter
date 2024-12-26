@@ -163,5 +163,47 @@ module TreeSitter
       end
       fields.values_at(*keys)
     end
+
+    # Pretty-prints the node's sexp.
+    #
+    # The default call to {to_s} or {to_string} calls tree-sitter's
+    # `ts_node_string`. It's displayed on a single line, so reading a rich node
+    # becomes tiresome.
+    #
+    # This provides a better sexpr where you can control the "screen" width to
+    # decide when to break.
+    #
+    # @param indent [Integer] indentation for nested nodes.
+    # @param width [Integer] the screen's width.
+    #
+    # @return [String] the pretty-printed sexpr.
+    def sexpr(indent: 2, width: 120)
+      sexpr_recur(indent: indent, width: width).output
+    end
+
+    # Helper function for {sexpr}.
+    #
+    # @!visibility private
+    def sexpr_recur(indent: 2, width: 120, out: nil)
+      out ||= Oppen::Wadler.new(width: width)
+      out.group(indent) {
+        out.text "(#{type}"
+        out.breakable if child_count.positive?
+        each.with_index do |child, index|
+          if field_name = field_name_for_child(index)
+            out.text "#{field_name}:"
+            out.group(indent) {
+              out.breakable
+              child.sexpr_recur(indent: indent, width: width, out: out)
+            }
+          else
+            child.sexpr_recur(indent: indent, width: width, out: out)
+          end
+          out.breakable if index < child_count - 1
+        end
+        out.text ')'
+      }
+      out
+    end
   end
 end
