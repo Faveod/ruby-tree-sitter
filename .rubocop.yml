@@ -58,6 +58,9 @@ Style/Alias:
 Style/AccessorGrouping:
   Enabled: false
 
+Style/BlockDelimiters:
+  Enabled: false
+
 Style/GlobalVars:
   Exclude:
     - ext/tree_sitter/extconf.rb

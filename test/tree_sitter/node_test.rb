@@ -396,4 +396,24 @@ describe 'fetch' do
     assert_equal [@child.parameters, nil, @child.name, nil], @child.fetch(:parameters, :fake, :name, :fake)
     assert_equal [@child.parameters, nil, @child.name, nil], @child.fetch(:parameters, :fake, :name, :whatever)
   end
+
+  describe 'sexpr' do
+    it 'should print a proper sexpr' do
+      assert_equal root.sexpr, <<~SEXPR.chomp
+        (program
+          (method
+            (def)
+            name: (identifier)
+            parameters: (method_parameters (() (identifier) (,) (identifier) ()))
+            body:
+              (body_statement
+                (assignment left: (identifier) (=) right: (binary left: (identifier) operator: (*) right: (identifier)))
+                (call
+                  method: (identifier)
+                  arguments: (argument_list (call receiver: (identifier) operator: (.) method: (identifier))))
+                (return (return) (argument_list (identifier))))
+            (end)))
+      SEXPR
+    end
+  end
 end
