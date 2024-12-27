@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.files         = %w[LICENSE README.md tree_sitter.gemspec]
   spec.files        += Dir.glob('ext/**/*.{c,h,rb}')
   spec.files        += Dir.glob('lib/**/*.rb')
+  spec.bindir        = 'exe'
   spec.require_paths = ['lib']
 
   spec.add_dependency 'sorbet-runtime'
