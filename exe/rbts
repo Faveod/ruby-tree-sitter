@@ -2,17 +2,17 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require 'logger'
-require 'optparse'
-require 'tree_stand'
 require 'tree_stand/cli'
-
-$stdout.sync = $stderr.sync = true
 
 program = TreeStand::Cli::Options.new
 OptionParser.new do |parser|
   program.define_options(parser)
-  parser.on('-w', '--[no-]watch', "use watch(1) to continuously print matches, by default entr is used if it's available", TrueClass) do |watch|
+  parser.on(
+    '-w',
+    '--[no-]watch',
+    "use watch(1) to continuously print matches, by default entr is used if it's available",
+    TrueClass,
+  ) do |watch|
     program.watch = watch
   end
 
@@ -32,7 +32,7 @@ def entr_cmd(source, query, parser)
     'exe/print_matches',
     '--source', source,
     '--query', query,
-    '--parser', parser,
+    '--parser', parser
   ].join(' ')
 end
 
@@ -45,7 +45,7 @@ def watch_cmd(source, query, parser)
 end
 
 def main(program)
-  cmd = if system('which', 'entr') && !program.watch
+  cmd = if !program.watch && system('which', 'entr')
     entr_cmd(program.source_file, program.query_file, program.parser_file)
   else
     watch_cmd(program.source_file, program.query_file, program.parser_file)
