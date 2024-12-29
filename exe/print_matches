@@ -5,78 +5,21 @@ require 'bundler/setup'
 require 'logger'
 require 'optparse'
 require 'tree_stand'
+require 'tree_stand/cli'
 
 $stdout.sync = $stderr.sync = true
-def level = ENV.fetch('LOG_LEVEL', Logger::INFO)
-def progname = File.basename($PROGRAM_NAME)
-def logger = @logger ||= Logger.new($stderr, level: level, progname: progname)
-def options = @options ||= {}
 
-def error_no_file(filepath, message, code)
-  return filepath if File.exist?(filepath)
-
-  error!(message, code)
+program = TreeStand::Cli::Options.new
+OptionParser.new do |parser|
+  program.define_options(parser)
+  parser.parse!(ARGV)
 end
+program.check!
 
-def error!(message, code = 1)
-  logger.error(message)
-  exit(code)
-end
-
-OptionParser.new do |o|
-  o.banner = "usage: exe/#{progname} [options]"
-  o.on('-v', '--verbose', 'Enable verbose logging') { logger.level -= 1 }
-
-  o.on('-s', '--source SOURCE', 'The filepath to the source code to be parsed') do |source|
-    error_no_file(File.expand_path(source), "Source file not found: #{source}", 1)
-  end
-  o.on('-q', '--query QUERY', 'The filepath to the query to be run against the source code') do |query|
-    error_no_file(File.expand_path(query), "Query file not found: #{query}", 2)
-  end
-  o.on('-p', '--parser PARSER', 'The parser to use to parse the source code') do |parser|
-    error_no_file(File.expand_path(parser), "Parser file not found: #{parser}", 3)
-  end
-end.parse!(ARGV, into: options)
-
-logger.debug("options=#{options}")
-
-if options.empty?
-  logger.error('No options provided, --source, --query, and --parser are required.')
-  exit(14)
-end
-
-unless options[:source]
-  logger.error('No source file provided, specify with --source')
-  exit(15)
-end
-
-unless options[:query]
-  logger.error('No query file provided, specify with --query')
-  exit(16)
-end
-
-unless options[:parser]
-  logger.error('No parser file provided, specify with --parser')
-  exit(17)
-end
-
-# Scope issues with options being a method on #configure using instance_eval
-parser_path = File.dirname(options[:parser])
-
-TreeStand.configure do
-  config.parser_path = parser_path
-end
-
-def source = @source ||= File.read(options[:source])
-def query = @query ||= File.read(options[:query])
-def parser = @parser ||= TreeStand::Parser.new(File.extname(options[:source]).delete_prefix('.'))
-
-def main
-  tree = parser.parse_string(source)
-
-  tree.query(query).each do |match|
+def main(program)
+  program.tree.query(program.query).each do |match|
     pp match.transform_values(&:text)
   end
 end
 
-main
+main(program)

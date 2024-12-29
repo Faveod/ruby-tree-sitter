@@ -5,95 +5,54 @@ require 'bundler/setup'
 require 'logger'
 require 'optparse'
 require 'tree_stand'
-require 'debug'
+require 'tree_stand/cli'
 
-def level = ENV.fetch('LOG_LEVEL', Logger::INFO)
-def progname = File.basename($PROGRAM_NAME)
-def logger = @logger ||= Logger.new($stderr, level: level, progname: progname)
-def options = @options ||= {}
+$stdout.sync = $stderr.sync = true
 
-def error_no_file(filepath, message, code)
-  return filepath if File.exist?(filepath)
-
-  error!(message, code)
-end
-
-def error!(message, code = 1)
-  logger.error(message)
-  exit(code)
-end
-
-OptionParser.new do |o|
-  o.banner = "usage: exe/#{progname} [options]"
-  o.on('-v', '--verbose', 'Enable verbose logging') { logger.level -= 1 }
-  o.on('-w', '--[no-]watch', "use watch(1) to continuously print matches, by default entr is used if it's available",
-       TrueClass)
-
-  o.on('-s', '--source SOURCE', 'The filepath to the source code to be parsed') do |source|
-    error_no_file(File.expand_path(source), "Source file not found: #{source}", 1)
+program = TreeStand::Cli::Options.new
+OptionParser.new do |parser|
+  program.define_options(parser)
+  parser.on('-w', '--[no-]watch', "use watch(1) to continuously print matches, by default entr is used if it's available", TrueClass) do |watch|
+    program.watch = watch
   end
-  o.on('-q', '--query QUERY', 'The filepath to the query to be run against the source code') do |query|
-    error_no_file(File.expand_path(query), "Query file not found: #{query}", 2)
-  end
-  o.on('-p', '--parser PARSER', 'The parser to use to parse the source code') do |parser|
-    error_no_file(File.expand_path(parser), "Parser file not found: #{parser}", 3)
-  end
-end.parse!(ARGV, into: options)
 
-logger.debug("options=#{options}")
-
-if options.empty?
-  logger.error('No options provided, --source, --query, and --parser are required.')
-  exit(4)
+  parser.parse!(ARGV)
 end
-
-unless options[:source]
-  logger.error('No source file provided, specify with --source')
-  exit(5)
-end
-
-unless options[:query]
-  logger.error('No query file provided, specify with --query')
-  exit(6)
-end
-
-unless options[:parser]
-  logger.error('No parser file provided, specify with --parser')
-  exit(7)
-end
+program.check!
 
 # ls -1 SOURCE QUERY |
 #   entr -c exe/print_matches
 #     --source SOURCE
 #     --query QUERY
 #     --parser PARSER
-def entr_cmd
+def entr_cmd(source, query, parser)
   [
-    'ls', '-1', options[:source], options[:query], '|',
+    'ls', '-1', source, query, '|',
     'entr', '-c',
     'exe/print_matches',
-    '--source', options[:source],
-    '--query', options[:query],
-    '--parser', options[:parser]
+    '--source', source,
+    '--query', query,
+    '--parser', parser,
   ].join(' ')
 end
 
 # watch 'exe/print_matches --source SOURCE --query QUERY --parser PARSER'
-def watch_cmd
+def watch_cmd(source, query, parser)
   [
     'watch',
-    "'exe/print_matches --source #{options[:source]} --query #{options[:query]} --parser #{options[:parser]}'",
+    "'exe/print_matches --source #{source} --query #{query} --parser #{parser}'",
   ].join(' ')
 end
 
-def main
-  if system('which', 'entr') && !options[:watch]
-    logger.debug("Running `#{entr_cmd}`")
-    exec(entr_cmd)
+def main(program)
+  cmd = if system('which', 'entr') && !program.watch
+    entr_cmd(program.source_file, program.query_file, program.parser_file)
   else
-    logger.debug("Running `#{watch_cmd}`")
-    exec(watch_cmd)
+    watch_cmd(program.source_file, program.query_file, program.parser_file)
   end
+
+  program.logger.debug("Running `#{cmd}`")
+  exec(cmd)
 end
 
-main
+main(program)
