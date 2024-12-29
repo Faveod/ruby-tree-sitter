@@ -10,6 +10,8 @@ require 'zeitwerk'
 loader = Zeitwerk::Loader.for_gem
 loader.ignore("#{__dir__}/tree_sitter")
 loader.ignore("#{__dir__}/tree_sitter.rb")
+loader.ignore("#{__dir__}/tree_stand/cli")
+loader.ignore("#{__dir__}/tree_stand/cli.rb")
 loader.setup
 
 # TreeStand is a high-level Ruby wrapper for {https://tree-sitter.github.io/tree-sitter tree-sitter} bindings. It makes
