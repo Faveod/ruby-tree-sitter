@@ -2,12 +2,7 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require 'logger'
-require 'optparse'
-require 'tree_stand'
 require 'tree_stand/cli'
-
-$stdout.sync = $stderr.sync = true
 
 program = TreeStand::Cli::Options.new
 OptionParser.new do |parser|

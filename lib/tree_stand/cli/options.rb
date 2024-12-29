@@ -3,6 +3,7 @@
 
 module TreeStand
   module Cli
+    # @!visibility private
     class Options
       attr_accessor :source_file, :query_file, :parser_file, :watch
 
@@ -13,21 +14,23 @@ module TreeStand
         @progname = progname
       end
 
+      # @!visibility private
       def define_options(parser)
         parser.banner = "usage: exe/#{progname} [options]"
         parser.on('-v', '--verbose', 'Enable verbose logging') { logger.level -= 1 }
 
-        parser.on('-s', '--source SOURCE', 'The filepath to the source code to be parsed') do |source|
-          self.source_file = error_no_file(File.expand_path(source), "Source file not found: #{source}", 1)
+        parser.on('-s', '--source SOURCE', 'The filepath to the source code to be parsed') do |filepath|
+          self.source_file = error_no_file(File.expand_path(filepath), "Source file not found: #{filepath}", 1)
         end
-        parser.on('-q', '--query QUERY', 'The filepath to the query to be run against the source code') do |query|
-          self.query_file = error_no_file(File.expand_path(query), "Query file not found: #{query}", 2)
+        parser.on('-q', '--query QUERY', 'The filepath to the query to be run against the source code') do |filepath|
+          self.query_file = error_no_file(File.expand_path(filepath), "Query file not found: #{filepath}", 2)
         end
-        parser.on('-p', '--parser PARSER', 'The parser to use to parse the source code') do |parser|
-          self.parser_file = error_no_file(File.expand_path(parser), "Parser file not found: #{parser}", 3)
+        parser.on('-p', '--parser PARSER', 'The parser to use to parse the source code') do |filepath|
+          self.parser_file = error_no_file(File.expand_path(filepath), "Parser file not found: #{filepath}", 3)
         end
       end
 
+      # @!visibility private
       def check!
         error!('No source file provided, specify with --source', 4) unless source_file
         error!('No query file provided, specify with --query', 5) unless query_file
@@ -40,9 +43,13 @@ module TreeStand
         end
       end
 
+      # @!visibility private
       def source = @source ||= File.read(source_file)
+      # @!visibility private
       def query = @query ||= File.read(query_file)
+      # @!visibility private
       def parser = @parser ||= TreeStand::Parser.new(File.extname(source_file).delete_prefix('.'))
+      # @!visibility private
       def tree = @tree ||= parser.parse_string(source)
 
       private
@@ -60,4 +67,3 @@ module TreeStand
     end
   end
 end
-
