@@ -463,5 +463,53 @@ describe 'fetch' do
             (end)))                       |
       SEXPR
     end
+
+    it 'should print a vertical sexpr without sources' do
+      assert_equal root.sexpr(vertical: true), <<~SEXPR.chomp
+        (program
+          (method
+            (def)
+            name:
+              (identifier)
+            parameters:
+              (method_parameters
+                (()
+                (identifier)
+                (,)
+                (identifier)
+                ()))
+            body:
+              (body_statement
+                (assignment
+                  left:
+                    (identifier)
+                  (=)
+                  right:
+                    (binary
+                      left:
+                        (identifier)
+                      operator:
+                        (*)
+                      right:
+                        (identifier)))
+                (call
+                  method:
+                    (identifier)
+                  arguments:
+                    (argument_list
+                      (call
+                        receiver:
+                          (identifier)
+                        operator:
+                          (.)
+                        method:
+                          (identifier))))
+                (return
+                  (return)
+                  (argument_list
+                    (identifier))))
+            (end)))
+      SEXPR
+    end
   end
 end
