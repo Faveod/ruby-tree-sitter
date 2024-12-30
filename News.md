@@ -2,6 +2,13 @@
 
 # [unreleaseed]
 
+- Use tree-sitter v0.24.5.
+
+# v1.10.0 (10-12-2024)
+
+- Make `TreeSitter::TreeSitterError < Exception` instead of `StandardErorr`;
+  we don't want them to be handled by default `rescue`.
+
 # v1.9.1 (05-12-2024)
 
 - Add custom errors for language loading:

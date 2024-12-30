@@ -39,7 +39,9 @@ jobs:
       - name: Compare release versions
         id: check_versions
         run: |
-          if [ "${{ steps.previous_release.outputs.version }}" != "${{ steps.latest_release.outputs.version }}" ]; then
+          if [ "${{ steps.previous_release.outputs.version }}" != "${{ steps.latest_release.outputs.version }}" ] \
+             && [ "${{ steps.latest_release_branch.outputs.exists }}" != 'false' ]
+          then
             echo "New release found"
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
