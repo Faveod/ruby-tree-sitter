@@ -184,79 +184,58 @@ module TreeSitter
     #   the screen's width.
     # @param source   [Nil|String]
     #   display source on the margin if not `nil`.
-    # @param vertical [Boolean]
+    # @param vertical [Nil|Boolean]
     #   fit as much sexpr on a single line if `false`, else, go vertical.
     #   This is always `true` if `source` is not `nil`.
     #
     # @return [String] the pretty-printed sexpr.
-    def sexpr(indent: 2, width: 120, source: nil, vertical: false)
-      if source
-        res = sexpr_recur_source(indent: indent, width: width, source: source).output
-        max_width = 0
-        res
-          .lines
-          .map { |line|
-            extracted = line.scan(LINE_ANNOTATION).flatten.first || ''
-            base = line.gsub(LINE_ANNOTATION, '').rstrip
-            max_width = [max_width, base.length].max
-            [base, extracted]
-          }
-          .map { |base, extracted|
-            "#{base}#{' ' * (max_width - base.length + 1)}|#{extracted}"
-          }
-          .join("\n")
-      else
-        sexpr_recur(indent: indent, width: width, vertical: vertical).output
-      end
+    def sexpr(indent: 2, width: 120, source: nil, vertical: nil)
+      res =
+        sexpr_recur(
+          indent: indent,
+          width: width,
+          source: source,
+          vertical: !source.nil? || !!vertical,
+        ).output
+      return res if source.nil?
+
+      max_width = 0
+      res
+        .lines
+        .map { |line|
+          extracted = line.scan(LINE_ANNOTATION).flatten.first || ''
+          base = line.gsub(LINE_ANNOTATION, '').rstrip
+          max_width = [max_width, base.length].max
+          [base, extracted]
+        }
+        .map { |base, extracted|
+          "#{base}#{' ' * (max_width - base.length + 1)}|#{extracted}"
+        }
+        .join("\n")
     end
 
     # Helper function for {sexpr}.
     #
     # @!visibility private
-    def sexpr_recur(indent: 2, width: 120, out: nil, vertical: false)
+    def sexpr_recur(indent: 2, width: 120, out: nil, source: nil, vertical: false)
       out ||= Oppen::Wadler.new(width: width)
       out.group(indent) {
         out.text "(#{type}"
+        if source.is_a?(String) && named? && child_count.zero?
+          out.text "@{#{source.byteslice(start_byte...end_byte)}}", width: 0
+        end
         brk(out, vertical) if child_count.positive?
         each.with_index do |child, index|
           if field_name = field_name_for_child(index)
             out.text "#{field_name}:"
             out.group(indent) {
               brk(out, vertical)
-              child.sexpr_recur(indent: indent, width: width, out: out, vertical: vertical)
+              child.sexpr_recur(indent: indent, width: width, out: out, vertical: vertical, source: source)
             }
           else
-            child.sexpr_recur(indent: indent, width: width, out: out, vertical: vertical)
+            child.sexpr_recur(indent: indent, width: width, out: out, vertical: vertical, source: source)
           end
           brk(out, vertical) if index < child_count - 1
-        end
-        out.text ')'
-      }
-      out
-    end
-
-    # Helper function for {sexpr}.
-    #
-    # @!visibility private
-    def sexpr_recur_source(indent: 2, width: 120, out: nil, source: nil)
-      out ||= Oppen::Wadler.new(width: width, config: Oppen::Config.wadler)
-      out.group(indent) {
-        out.text "(#{type}"
-        if source.is_a?(String) && named? && child_count.zero?
-          out.text "@{#{source.byteslice(start_byte...end_byte)}}", width: 0
-        end
-        out.break if child_count.positive?
-        each.with_index do |child, index|
-          if field_name = field_name_for_child(index)
-            out.text "#{field_name}:"
-            out.group(indent) {
-              out.break
-              child.sexpr_recur_source(indent: indent, width: width, out: out, source: source)
-            }
-          else
-            child.sexpr_recur_source(indent: indent, width: width, out: out, source: source)
-          end
-          out.break if index < child_count - 1
         end
         out.text ')'
       }
