@@ -175,6 +175,20 @@ You will have to install parsers yourself, either by:
    [Faveod/tree-sitter-parsers](https://github.com/Faveod/tree-sitter-parsers)
    which supports numerous architectures.
 
+### Utilities
+
+`ruby_tree_sitter` ships with some useful utility programs to help work with parsers & queries.
+
+#### `rbts`
+
+```sh
+$ rbts --source SOURCE --query QUERY --parser PARSER
+```
+
+Watches a source and a query file and prints the matches when one of the files are updated. Uses [entr](https://github.com/eradman/entr), if available, otherwise [watch(1)](https://man7.org/linux/man-pages/man1/watch.1.html) is used by default or if --watch is specified.
+
+See `rbts --help` for more information.
+
 ## Examples
 
 See `examples` directory.
