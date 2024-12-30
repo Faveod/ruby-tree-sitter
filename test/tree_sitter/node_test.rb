@@ -415,5 +415,53 @@ describe 'fetch' do
             (end)))
       SEXPR
     end
+
+    it 'should print a sexpr with sources on the margins' do
+      assert_equal root.sexpr(source: program), <<~SEXPR.chomp
+        (program                          |
+          (method                         |
+            (def)                         |
+            name:                         |
+              (identifier)                |mul
+            parameters:                   |
+              (method_parameters          |
+                (()                       |
+                (identifier)              |a
+                (,)                       |
+                (identifier)              |b
+                ()))                      |
+            body:                         |
+              (body_statement             |
+                (assignment               |
+                  left:                   |
+                    (identifier)          |res
+                  (=)                     |
+                  right:                  |
+                    (binary               |
+                      left:               |
+                        (identifier)      |a
+                      operator:           |
+                        (*)               |
+                      right:              |
+                        (identifier)))    |b
+                (call                     |
+                  method:                 |
+                    (identifier)          |puts
+                  arguments:              |
+                    (argument_list        |
+                      (call               |
+                        receiver:         |
+                          (identifier)    |res
+                        operator:         |
+                          (.)             |
+                        method:           |
+                          (identifier)))) |inspect
+                (return                   |
+                  (return)                |
+                  (argument_list          |
+                    (identifier))))       |res
+            (end)))                       |
+      SEXPR
+    end
   end
 end
