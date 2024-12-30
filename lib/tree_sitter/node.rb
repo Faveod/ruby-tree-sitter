@@ -164,6 +164,11 @@ module TreeSitter
       fields.values_at(*keys)
     end
 
+    # Regex for line annotation extraction from sexpr with source.
+    #
+    # @!visibility private
+    LINE_ANNOTATION = /@\{([^}]*)\}/
+
     # Pretty-prints the node's sexp.
     #
     # The default call to {to_s} or {to_string} calls tree-sitter's
@@ -173,12 +178,30 @@ module TreeSitter
     # This provides a better sexpr where you can control the "screen" width to
     # decide when to break.
     #
-    # @param indent [Integer] indentation for nested nodes.
-    # @param width [Integer] the screen's width.
+    # @param indent  [Integer] indentation for nested nodes.
+    # @param width   [Integer] the screen's width.
+    # @param source  [Nil|String] display source on the margin if not {Nil}.
     #
     # @return [String] the pretty-printed sexpr.
-    def sexpr(indent: 2, width: 120)
-      sexpr_recur(indent: indent, width: width).output
+    def sexpr(indent: 2, width: 120, source: nil)
+      if source
+        res = sexpr_recur_source(indent: indent, width: width, source: source).output
+        max_width = 0
+        res
+          .lines
+          .map { |line|
+            extracted = line.scan(LINE_ANNOTATION).flatten.first || ''
+            base = line.gsub(LINE_ANNOTATION, '').rstrip
+            max_width = [max_width, base.length].max
+            [base, extracted]
+          }
+          .map { |base, extracted|
+            "#{base}#{' ' * (max_width - base.length + 1)}|#{extracted}"
+          }
+          .join("\n")
+      else
+        sexpr_recur(indent: indent, width: width).output
+      end
     end
 
     # Helper function for {sexpr}.
@@ -200,6 +223,34 @@ module TreeSitter
             child.sexpr_recur(indent: indent, width: width, out: out)
           end
           out.breakable if index < child_count - 1
+        end
+        out.text ')'
+      }
+      out
+    end
+
+    # Helper function for {sexpr}.
+    #
+    # @!visibility private
+    def sexpr_recur_source(indent: 2, width: 120, out: nil, source: nil)
+      out ||= Oppen::Wadler.new(width: width, config: Oppen::Config.wadler)
+      out.group(indent) {
+        out.text "(#{type}"
+        if source.is_a?(String) && named? && child_count.zero?
+          out.text "@{#{source.byteslice(start_byte...end_byte)}}", width: 0
+        end
+        out.break if child_count.positive?
+        each.with_index do |child, index|
+          if field_name = field_name_for_child(index)
+            out.text "#{field_name}:"
+            out.group(indent) {
+              out.break
+              child.sexpr_recur_source(indent: indent, width: width, out: out, source: source)
+            }
+          else
+            child.sexpr_recur_source(indent: indent, width: width, out: out, source: source)
+          end
+          out.break if index < child_count - 1
         end
         out.text ')'
       }
