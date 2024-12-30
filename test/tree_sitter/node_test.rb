@@ -399,7 +399,7 @@ describe 'fetch' do
 
   describe 'sexpr' do
     it 'should print a proper sexpr when vertical is nil' do
-      assert_equal root.sexpr, <<~SEXPR.chomp
+      assert_equal <<~SEXPR.chomp, root.sexpr
         (program
           (method
             (def)
@@ -417,7 +417,7 @@ describe 'fetch' do
     end
 
     it 'should print a proper sexpr when vertical is false' do
-      assert_equal root.sexpr(vertical: false), <<~SEXPR.chomp
+      assert_equal <<~SEXPR.chomp, root.sexpr(vertical: false)
         (program
           (method
             (def)
@@ -431,11 +431,11 @@ describe 'fetch' do
                   arguments: (argument_list (call receiver: (identifier) operator: (.) method: (identifier))))
                 (return (return) (argument_list (identifier))))
             (end)))
-    SEXPR
+      SEXPR
     end
 
     it 'should print a sexpr with sources on the margins' do
-      assert_equal root.sexpr(source: program), <<~SEXPR.chomp
+      assert_equal <<~SEXPR.chomp, root.sexpr(source: program)
         (program                          |
           (method                         |
             (def)                         |
@@ -483,7 +483,7 @@ describe 'fetch' do
     end
 
     it 'should print a vertical sexpr without sources' do
-      assert_equal root.sexpr(vertical: true), <<~SEXPR.chomp
+      assert_equal <<~SEXPR.chomp, root.sexpr(vertical: true)
         (program
           (method
             (def)
