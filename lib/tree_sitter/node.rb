@@ -178,12 +178,18 @@ module TreeSitter
     # This provides a better sexpr where you can control the "screen" width to
     # decide when to break.
     #
-    # @param indent  [Integer] indentation for nested nodes.
-    # @param width   [Integer] the screen's width.
-    # @param source  [Nil|String] display source on the margin if not {Nil}.
+    # @param indent   [Integer]
+    #   indentation for nested nodes.
+    # @param width    [Integer]
+    #   the screen's width.
+    # @param source   [Nil|String]
+    #   display source on the margin if not `nil`.
+    # @param vertical [Boolean]
+    #   fit as much sexpr on a single line if `false`, else, go vertical.
+    #   This is always `true` if `source` is not `nil`.
     #
     # @return [String] the pretty-printed sexpr.
-    def sexpr(indent: 2, width: 120, source: nil)
+    def sexpr(indent: 2, width: 120, source: nil, vertical: false)
       if source
         res = sexpr_recur_source(indent: indent, width: width, source: source).output
         max_width = 0
@@ -200,29 +206,29 @@ module TreeSitter
           }
           .join("\n")
       else
-        sexpr_recur(indent: indent, width: width).output
+        sexpr_recur(indent: indent, width: width, vertical: vertical).output
       end
     end
 
     # Helper function for {sexpr}.
     #
     # @!visibility private
-    def sexpr_recur(indent: 2, width: 120, out: nil)
+    def sexpr_recur(indent: 2, width: 120, out: nil, vertical: false)
       out ||= Oppen::Wadler.new(width: width)
       out.group(indent) {
         out.text "(#{type}"
-        out.breakable if child_count.positive?
+        brk(out, vertical) if child_count.positive?
         each.with_index do |child, index|
           if field_name = field_name_for_child(index)
             out.text "#{field_name}:"
             out.group(indent) {
-              out.breakable
-              child.sexpr_recur(indent: indent, width: width, out: out)
+              brk(out, vertical)
+              child.sexpr_recur(indent: indent, width: width, out: out, vertical: vertical)
             }
           else
-            child.sexpr_recur(indent: indent, width: width, out: out)
+            child.sexpr_recur(indent: indent, width: width, out: out, vertical: vertical)
           end
-          out.breakable if index < child_count - 1
+          brk(out, vertical) if index < child_count - 1
         end
         out.text ')'
       }
@@ -255,6 +261,17 @@ module TreeSitter
         out.text ')'
       }
       out
+    end
+
+    # Break helper
+    #
+    # !@visibility private
+    def brk(out, vertical)
+      if vertical
+        out.break
+      else
+        out.breakable
+      end
     end
   end
 end
