@@ -43,6 +43,8 @@ OptionParser.new do |parser|
 end
 program.check!
 
+def print_matches = File.join(__dir__, 'print_matches')
+
 # ls -1 SOURCE QUERY |
 #   entr -c exe/print_matches
 #     --source SOURCE
@@ -52,7 +54,7 @@ def entr_cmd(source, query, parser)
   [
     'ls', '-1', source, query, '|',
     'entr', '-c',
-    'exe/print_matches',
+    print_matches,
     '--source', source,
     '--query', query,
     '--parser', parser
@@ -63,7 +65,7 @@ end
 def watch_cmd(source, query, parser)
   [
     'watch',
-    "'exe/print_matches --source #{source} --query #{query} --parser #{parser}'",
+    "'#{print_matches} --source #{source} --query #{query} --parser #{parser}'",
   ].join(' ')
 end
 
