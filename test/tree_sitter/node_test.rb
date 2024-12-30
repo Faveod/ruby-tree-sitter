@@ -398,7 +398,7 @@ describe 'fetch' do
   end
 
   describe 'sexpr' do
-    it 'should print a proper sexpr' do
+    it 'should print a proper sexpr when vertical is nil' do
       assert_equal root.sexpr, <<~SEXPR.chomp
         (program
           (method
@@ -414,6 +414,24 @@ describe 'fetch' do
                 (return (return) (argument_list (identifier))))
             (end)))
       SEXPR
+    end
+
+    it 'should print a proper sexpr when vertical is false' do
+      assert_equal root.sexpr(vertical: false), <<~SEXPR.chomp
+        (program
+          (method
+            (def)
+            name: (identifier)
+            parameters: (method_parameters (() (identifier) (,) (identifier) ()))
+            body:
+              (body_statement
+                (assignment left: (identifier) (=) right: (binary left: (identifier) operator: (*) right: (identifier)))
+                (call
+                  method: (identifier)
+                  arguments: (argument_list (call receiver: (identifier) operator: (.) method: (identifier))))
+                (return (return) (argument_list (identifier))))
+            (end)))
+    SEXPR
     end
 
     it 'should print a sexpr with sources on the margins' do
