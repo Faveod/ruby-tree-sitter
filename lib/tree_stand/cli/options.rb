@@ -37,6 +37,7 @@ module TreeStand
         error!('No parser file provided, specify with --parser', 6) unless parser_file
 
         parser_path = File.dirname(parser_file)
+        config = TreeStand.config
 
         TreeStand.configure do
           config.parser_path = parser_path

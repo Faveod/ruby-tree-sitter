@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.files        += Dir.glob('ext/**/*.{c,h,rb}')
   spec.files        += Dir.glob('lib/**/*.rb')
   spec.bindir        = 'exe'
-  spec.executables  << "rbts" << "print_matches"
+  spec.executables  << 'rbts' << 'print_matches'
   spec.require_paths = ['lib']
 
   spec.add_dependency 'sorbet-runtime'
