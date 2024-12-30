@@ -259,4 +259,40 @@ class NodeTest < Minitest::Test
   def test_respond_to_missing
     assert_respond_to(@tree.root_node.first, :left)
   end
+
+  def test_sexpr
+    assert_equal <<~SEXPR.chomp, @tree.root_node.sexpr(width: 10)
+      (expression
+        (sum
+          left:
+            (number)
+          (+)
+          right:
+            (product
+              left:
+                (variable)
+              (*)
+              right:
+                (number))))
+    SEXPR
+  end
+
+  def test_pp
+    output = StringIO.new
+    PP.pp(@tree.root_node, output)
+    assert_equal <<~SEXPR, output.string
+      (expression           |
+        (sum                |
+          left:             |
+            (number)        |1
+          (+)               |
+          right:            |
+            (product        |
+              left:         |
+                (variable)  |x
+              (*)           |
+              right:        |
+                (number)))) |3
+    SEXPR
+  end
 end

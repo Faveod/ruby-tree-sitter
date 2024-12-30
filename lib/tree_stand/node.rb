@@ -15,6 +15,8 @@ module TreeStand
     #   @return [Boolean] true if a syntax node has been edited.
     # @!method child_count
     #   @return [Integer] the number of child nodes.
+    # @!method error?
+    #   @return [bool] true if the node is an error node.
     # @!method extra?
     #   @return [Boolean] true if the node is *extra* (e.g. comments).
     # @!method has_error?
@@ -25,10 +27,10 @@ module TreeStand
     #   @return [Boolean] true if the node is not a literal in the grammar.
     # @!method named_child_count
     #   @return [Integer] the number of *named* children.
+    # @!method sexpr
+    #   @return [String] a pretty-printed sexpr.
     # @!method type
     #   @return [Symbol] the type of the node in the tree-sitter grammar.
-    # @!method error?
-    #   @return [bool] true if the node is an error node.
     def_delegators(
       :@ts_node,
       :changed?,
@@ -39,6 +41,7 @@ module TreeStand
       :missing?,
       :named?,
       :named_child_count,
+      :sexpr,
       :type,
     )
 
@@ -310,13 +313,10 @@ module TreeStand
       T.must(range == other.range && type == other.type && text == other.text)
     end
 
-    # (see TreeStand::Utils::Printer)
-    # Backed by {TreeStand::Utils::Printer}.
-    #
-    # @see TreeStand::Utils::Printer
+    # @see TreeSitter:Node::sexpr
     sig { params(pp: PP).void }
     def pretty_print(pp)
-      Utils::Printer.new(ralign: 80).print(self, io: pp.output)
+      pp.output << sexpr(source: text)
     end
 
     private
