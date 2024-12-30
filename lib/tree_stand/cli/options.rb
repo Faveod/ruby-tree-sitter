@@ -16,9 +16,9 @@ module TreeStand
 
       # @!visibility private
       def define_options(parser)
-        parser.banner = "usage: exe/#{progname} [options]"
-        parser.on('-v', '--verbose', 'Enable verbose logging') { logger.level -= 1 }
+        parser.on_tail('-v', '--verbose', 'Enable verbose logging') { logger.level -= 1 }
 
+        parser.separator('Required options:')
         parser.on('-s', '--source SOURCE', 'The filepath to the source code to be parsed') do |filepath|
           self.source_file = error_no_file(File.expand_path(filepath), "Source file not found: #{filepath}", 1)
         end
