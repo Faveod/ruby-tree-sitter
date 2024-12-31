@@ -209,7 +209,7 @@ module TreeSitter
           [base, extracted]
         }
         .map { |base, extracted|
-          "#{base}#{' ' * (max_width - base.length + 1)}|#{extracted}"
+          ("%-#{max_width}s | %s" % [base, extracted]).rstrip
         }
         .join("\n")
     end

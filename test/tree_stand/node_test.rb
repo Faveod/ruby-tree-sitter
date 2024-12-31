@@ -284,15 +284,15 @@ class NodeTest < Minitest::Test
       (expression           |
         (sum                |
           left:             |
-            (number)        |1
+            (number)        | 1
           (+)               |
           right:            |
             (product        |
               left:         |
-                (variable)  |x
+                (variable)  | x
               (*)           |
               right:        |
-                (number)))) |3
+                (number)))) | 3
     SEXPR
   end
 end

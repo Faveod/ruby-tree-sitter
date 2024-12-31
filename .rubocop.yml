@@ -70,6 +70,9 @@ Style/BlockDelimiters:
 Style/DoubleNegation:
   Enabled: false
 
+Style/FormatString:
+  Enabled: false
+
 Style/GlobalVars:
   Exclude:
     - ext/tree_sitter/extconf.rb

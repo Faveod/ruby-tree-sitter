@@ -440,44 +440,44 @@ describe 'fetch' do
           (method                         |
             (def)                         |
             name:                         |
-              (identifier)                |mul
+              (identifier)                | mul
             parameters:                   |
               (method_parameters          |
                 (()                       |
-                (identifier)              |a
+                (identifier)              | a
                 (,)                       |
-                (identifier)              |b
+                (identifier)              | b
                 ()))                      |
             body:                         |
               (body_statement             |
                 (assignment               |
                   left:                   |
-                    (identifier)          |res
+                    (identifier)          | res
                   (=)                     |
                   right:                  |
                     (binary               |
                       left:               |
-                        (identifier)      |a
+                        (identifier)      | a
                       operator:           |
                         (*)               |
                       right:              |
-                        (identifier)))    |b
+                        (identifier)))    | b
                 (call                     |
                   method:                 |
-                    (identifier)          |puts
+                    (identifier)          | puts
                   arguments:              |
                     (argument_list        |
                       (call               |
                         receiver:         |
-                          (identifier)    |res
+                          (identifier)    | res
                         operator:         |
                           (.)             |
                         method:           |
-                          (identifier)))) |inspect
+                          (identifier)))) | inspect
                 (return                   |
                   (return)                |
                   (argument_list          |
-                    (identifier))))       |res
+                    (identifier))))       | res
             (end)))                       |
       SEXPR
     end
