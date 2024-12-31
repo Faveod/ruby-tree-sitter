@@ -167,7 +167,7 @@ module TreeSitter
     # Regex for line annotation extraction from sexpr with source.
     #
     # @!visibility private
-    LINE_ANNOTATION = /@\{([^}]*)\}/
+    LINE_ANNOTATION = /\0\{(.*?)\0\}/
 
     # Pretty-prints the node's sexp.
     #
@@ -222,7 +222,7 @@ module TreeSitter
       out.group(indent) {
         out.text "(#{type}"
         if source.is_a?(String) && named? && child_count.zero?
-          out.text "@{#{source.byteslice(start_byte...end_byte)}}", width: 0
+          out.text "\0{#{source.byteslice(start_byte...end_byte)}\0}", width: 0
         end
         brk(out, vertical) if child_count.positive?
         each.with_index do |child, index|
