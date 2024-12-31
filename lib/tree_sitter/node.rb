@@ -221,7 +221,7 @@ module TreeSitter
       out ||= Oppen::Wadler.new(width: width)
       out.group(indent) {
         out.text "(#{type}"
-        if source.is_a?(String) && named? && child_count.zero?
+        if source.is_a?(String) && child_count.zero?
           out.text "\0{#{source.byteslice(start_byte...end_byte)}\0}", width: 0
         end
         brk(out, vertical) if child_count.positive?

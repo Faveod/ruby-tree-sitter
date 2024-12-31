@@ -285,12 +285,12 @@ class NodeTest < Minitest::Test
         (sum                |
           left:             |
             (number)        | 1
-          (+)               |
+          (+)               | +
           right:            |
             (product        |
               left:         |
                 (variable)  | x
-              (*)           |
+              (*)           | *
               right:        |
                 (number)))) | 3
     SEXPR
