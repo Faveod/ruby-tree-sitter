@@ -56,7 +56,7 @@ module TreeSitter
         case k = keys.first
         when Integer then named_child(k)
         when String, Symbol
-          raise IndexError, "Cannot find field #{k}. Available: #{fields}" unless fields.include?(k.to_sym)
+          raise IndexError, "Cannot find field #{k.to_sym}. Available: #{fields.to_a}" unless fields.include?(k.to_sym)
 
           child_by_field_name(k.to_s)
         else raise ArgumentError, <<~ERR
