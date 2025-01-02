@@ -2,7 +2,9 @@
 
 # [unreleaseed]
 
-- Use tree-sitter v0.24.5.
+# v1.11.0 (02-01-2025)
+
+- Use tree-sitter v0.24.6.
 - Added new `rbts` executable to aide with writing tree-sitter query's. It will watch a source & query file then print the match & capture nodes to the screen. See `rbts --help` for more details.
 - TreeSitter: better erorr message in `Node#[]`.
 - Cross-Compile:
