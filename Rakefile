@@ -23,7 +23,7 @@ PLATFORMS = %w[
   x86_64-linux-musl
 ].freeze
 
-CROSS_RUBIES = %w[3.3.0 3.2.0 3.1.0 3.0.0].freeze
+CROSS_RUBIES = %w[3.4.0 3.3.0 3.2.0 3.1.0 3.0.0].freeze
 
 ENV['RUBY_CC_VERSION'] = CROSS_RUBIES.join(':') if !ENV['RUBY_CC_VERSION']
 
