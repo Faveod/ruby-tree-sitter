@@ -43,6 +43,7 @@ gem-native:
 
 [group('gem')]
 gem-cross:
+  rm -rf Gemfile.lock
   bundle exec rake gem:cross
 
 [group('gem')]
