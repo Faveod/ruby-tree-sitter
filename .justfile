@@ -13,6 +13,7 @@ check: compile test lint doc-stats tc
 [group('compile')]
 clean:
   bundle exec rake clean
+  rm -rf lib/tree_sitter/tree_sitter.{bundle,so}
 
 [group('compile')]
 compile *args:
