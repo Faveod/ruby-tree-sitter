@@ -26,25 +26,8 @@ jobs:
         run: just gem-cross
       - name: download pre-compiled parsers
         run: just dl-parsers linux-x64 # TODO: test on a mac?
-      # FIXME: I faced a lot of issues with gemstash while running the project
-      # with gemstash and bundler. It refuses to correctly recognize the ruby
-      # version. For instance, with ruby-version 3.3 I get this:
-      #
-      #     Because every version of ruby_tree_sitter depends on Ruby >= 3.4, < 3.5.dev
-      #       and Gemfile depends on ruby_tree_sitter = 1.11.0,
-      #       Ruby >= 3.4, < 3.5.dev is required.
-      #
-      # Yes, I am running on a ruby 3.3 and getting complaints on ruby 3.4.
-      # But even before the release of 3.4, I got:
-      #
-      #       Ruby >= 3.3, < 3.4.dev is required.
-      #
-      # So I decided to turn it off and maybe get back to it later.
-      # I looked at issues of bundler, nokogiri, gemstash, and rake-compiler-doc,
-      # and I couldn't find anyone complaining about this issue.
-      #
-      # - name: test cross-compiled gems
-      #   run: just gem-cross-test
+      - name: test cross-compiled gems
+        run: just gem-cross-test
       - name: package platform-agnostic gem
         run: |
           rm -rf Gemfile.lock

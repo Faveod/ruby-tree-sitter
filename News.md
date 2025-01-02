@@ -5,7 +5,9 @@
 - Use tree-sitter v0.24.5.
 - Added new `rbts` executable to aide with writing tree-sitter query's. It will watch a source & query file then print the match & capture nodes to the screen. See `rbts --help` for more details.
 - TreeSitter: better erorr message in `Node#[]`.
-- Cross-Compile: build native ruby 3.4 gems.
+- Cross-Compile:
+  - build native ruby 3.4 gems.
+  - restore cross-compilation tests.
 
 # v1.10.0 (10-12-2024)
 
