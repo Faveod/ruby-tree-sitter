@@ -23,7 +23,11 @@ PLATFORMS = %w[
   x86_64-linux-musl
 ].freeze
 
-CROSS_RUBIES = %w[3.4.0 3.3.0 3.2.0 3.1.0 3.0.0].freeze
+# The only exception in the version scheme is ruby 3.3.5 because of an issue
+# with ruby cross compilation.
+#
+# See https://github.com/rake-compiler/rake-compiler-dock/blob/3811c31917a9dcb9cb139c0841f420c82663ae89/History.md?plain=1#L35C117-L35C156
+CROSS_RUBIES = %w[3.4.0 3.3.5 3.2.0 3.1.0 3.0.0].freeze
 
 ENV['RUBY_CC_VERSION'] = CROSS_RUBIES.join(':') if !ENV['RUBY_CC_VERSION']
 
