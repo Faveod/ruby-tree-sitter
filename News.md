@@ -2,6 +2,12 @@
 
 # [unreleaseed]
 
+# v1.11.1 (02-01-2025)
+
+- Fix:
+  - precompiled gem problem with ruby 3.3. See [rake-compiler-dock](https://github.com/rake-compiler/rake-compiler-dock/blob/3811c31917a9dcb9cb139c0841f420c82663ae89/History.md?plain=1#L35)
+  - tree-sitter version: we declared v0.24.6, but we were on v0.24.5!
+
 # v1.11.0 (02-01-2025)
 
 - Use tree-sitter v0.24.6.
