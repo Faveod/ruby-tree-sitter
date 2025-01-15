@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.executables  << 'rbts' << 'print_matches'
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'oppen', '0.9.8'
+  spec.add_dependency 'oppen', '~> 0.9.8'
   spec.add_dependency 'sorbet-runtime'
   spec.add_dependency 'zeitwerk'
 end
