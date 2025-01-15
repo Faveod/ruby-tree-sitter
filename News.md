@@ -2,6 +2,8 @@
 
 # [unreleaseed]
 
+- Fix Oppen version requirement in gemspec.
+
 # v1.11.1 (02-01-2025)
 
 - Fix:
