@@ -2,6 +2,8 @@
 
 # [unreleaseed]
 
+# v1.12.0 (15-01-2025)
+
 - Fix Oppen version requirement in gemspec.
 - Use tree-sitter v0.24.7.
 
