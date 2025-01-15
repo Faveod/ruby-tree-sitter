@@ -1,6 +1,6 @@
 build-dir = "vendor/parsers/build"
 out-dir = "vendor/parsers"
-tree-sitter-version = "0.24.6"
+tree-sitter-version = "0.24.7"
 
 [parsers]
 embedded-template = "0.23.2"
