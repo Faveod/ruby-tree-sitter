@@ -2,6 +2,7 @@
 
 require 'rake/extensiontask'
 require 'rake/testtask'
+require 'rake_compiler_dock'
 require 'ruby_memcheck'
 
 # NOTE: tree-sitter does not support:
@@ -23,13 +24,7 @@ PLATFORMS = %w[
   x86_64-linux-musl
 ].freeze
 
-# The only exception in the version scheme is ruby 3.3.5 because of an issue
-# with ruby cross compilation.
-#
-# See https://github.com/rake-compiler/rake-compiler-dock/blob/3811c31917a9dcb9cb139c0841f420c82663ae89/History.md?plain=1#L35C117-L35C156
-CROSS_RUBIES = %w[3.4.0 3.3.5 3.2.0 3.1.0].freeze
-
-ENV['RUBY_CC_VERSION'] = CROSS_RUBIES.join(':') if !ENV['RUBY_CC_VERSION']
+ENV['RUBY_CC_VERSION'] = RakeCompilerDock.ruby_cc_version('~> 3.1')
 
 gemspec = Gem::Specification.load('tree_sitter.gemspec')
 
@@ -47,10 +42,8 @@ task 'gem:cross' do
   require 'rake_compiler_dock'
   PLATFORMS.each do |plat|
     RakeCompilerDock.sh <<~CMD, platform: plat
-      bundle config set --local cache_all true \\
-      && bundle package --all-platforms \\
-      && RUBY_CC_VERSION='#{ENV.fetch('RUBY_CC_VERSION', nil)}' \\
-          bundle exec rake native:#{plat} gem
+      bundle package --all-platforms \\
+      && bundle exec rake native:#{plat} gem
     CMD
   end
 end
