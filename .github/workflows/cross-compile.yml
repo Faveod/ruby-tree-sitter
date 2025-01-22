@@ -12,10 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: extractions/setup-just@v1
-      - name: setup ruby 3.4
+      - name: setup ruby 3.3
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.4
+          ruby-version: 3.3 # rake-compiler-dock fails with newer rubies, complaining about GLIBC.
       - name: build and install tree-sitter
         run: just setup-ts
       - name: setup
