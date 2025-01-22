@@ -72,7 +72,7 @@ module TreeSitter
     # @!visibility private
     #
     # Allows access to child_by_field_name without using [].
-    def method_missing(method_name, *_args, &_block)
+    def method_missing(method_name, *_args, &)
       if fields.include?(method_name)
         child_by_field_name(method_name.to_s)
       else
@@ -89,7 +89,7 @@ module TreeSitter
     # Iterate over a node's children.
     #
     # @yieldparam child [Node] the child
-    def each(&_block)
+    def each(&)
       return enum_for __method__ if !block_given?
 
       (0...child_count).each do |i|
@@ -192,9 +192,9 @@ module TreeSitter
     def sexpr(indent: 2, width: 120, source: nil, vertical: nil)
       res =
         sexpr_recur(
-          indent: indent,
-          width: width,
-          source: source,
+          indent:,
+          width:,
+          source:,
           vertical: !source.nil? || !!vertical,
         ).output
       return res if source.nil?
@@ -208,9 +208,7 @@ module TreeSitter
           max_width = [max_width, base.length].max
           [base, extracted]
         }
-        .map { |base, extracted|
-          ("%-#{max_width}s | %s" % [base, extracted]).rstrip
-        }
+        .map { |base, extracted| ("%-#{max_width}s | %s" % [base, extracted]).rstrip }
         .join("\n")
     end
 
@@ -218,8 +216,8 @@ module TreeSitter
     #
     # @!visibility private
     def sexpr_recur(indent: 2, width: 120, out: nil, source: nil, vertical: false)
-      out ||= Oppen::Wadler.new(width: width)
-      out.group(indent) {
+      out ||= Oppen::Wadler.new(width:)
+      out.group(indent:) {
         out.text "(#{type}"
         if source.is_a?(String) && child_count.zero?
           out.text "\0{#{source.byteslice(start_byte...end_byte)}\0}", width: 0
@@ -227,13 +225,14 @@ module TreeSitter
         brk(out, vertical) if child_count.positive?
         each.with_index do |child, index|
           if field_name = field_name_for_child(index)
-            out.text "#{field_name}:"
-            out.group(indent) {
-              brk(out, vertical)
-              child.sexpr_recur(indent: indent, width: width, out: out, vertical: vertical, source: source)
-            }
+            out
+              .text("#{field_name}:")
+              .group(indent:) {
+                brk(out, vertical)
+                child.sexpr_recur(indent:, width:, out:, vertical:, source:)
+              }
           else
-            child.sexpr_recur(indent: indent, width: width, out: out, vertical: vertical, source: source)
+            child.sexpr_recur(indent:, width:, out:, vertical:, source:)
           end
           brk(out, vertical) if index < child_count - 1
         end

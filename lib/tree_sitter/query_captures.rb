@@ -15,7 +15,7 @@ module TreeSitter
     #
     # @yieldparam match [TreeSitter::QueryMatch]
     # @yieldparam capture_index [Integer]
-    def each(&_block)
+    def each(&)
       return enum_for __method__ if !block_given?
 
       while (capture_index, match = @cursor.next_capture)
