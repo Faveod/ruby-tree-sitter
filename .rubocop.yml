@@ -1,6 +1,6 @@
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3
+  TargetRubyVersion: 3.1
   SuggestExtensions: false
   Exclude:
     - tree-sitter-parsers/**/*
@@ -54,6 +54,12 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 20
 
+# To please sorbet.
+Naming/BlockForwarding:
+  Exclude:
+    - lib/tree_stand.rb
+    - lib/tree_stand/**/*
+
 Security/Eval:
   Exclude:
     - bin/*
@@ -76,6 +82,13 @@ Style/FormatString:
 Style/GlobalVars:
   Exclude:
     - ext/tree_sitter/extconf.rb
+
+# To please sorbet.
+Style/HashSyntax:
+  Exclude:
+    - lib/tree_stand.rb
+    - lib/tree_stand/**/*
+
 Style/IfUnlessModifier:
   Enabled: false
 

@@ -14,7 +14,7 @@ module TreeSitter
     # Iterator over matches.
     #
     # @yieldparam match [TreeSitter::QueryMatch]
-    def each(&_block)
+    def each(&)
       return enum_for __method__ if !block_given?
 
       while match = @cursor.next_match
@@ -27,7 +27,7 @@ module TreeSitter
     # Iterate over all the results presented as hashes of `capture name => node`.
     #
     # @yieldparam match [Hash<String, TreeSitter::Node>]
-    def each_capture_hash(&_block)
+    def each_capture_hash(&)
       # TODO: should we return [Array<Hash<Symbol, TreeSitter::Node]>>] instead?
       return enum_for __method__ if !block_given?
 
