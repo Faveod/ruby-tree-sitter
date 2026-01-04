@@ -14,7 +14,8 @@ TSInputEncoding value_to_encoding(VALUE encoding) {
 
   // NOTE: should we emit a warning instead of defaulting to UTF8?
   if (enc == u16) {
-    return TSInputEncodingUTF16;
+    // tree-sitter 0.26+ split UTF16 into UTF16LE and UTF16BE
+    return TSInputEncodingUTF16LE;
   } else {
     return TSInputEncodingUTF8;
   }

@@ -94,6 +94,7 @@ setup-bundler:
 setup-ts:
   #!/usr/bin/env bash
   set -euo pipefail
+  version=$(sed -nE 's/^tree-sitter-version[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' parsers.toml)
   if [ -d tree-sitter ]; then
     cd tree-sitter
     git reset --hard HEAD
@@ -103,7 +104,7 @@ setup-ts:
     git init
     git remote add origin https://github.com/tree-sitter/tree-sitter
   fi
-  git fetch origin --depth 1 v0.22.6
+  git fetch origin --depth 1 "v${version}"
   git reset --hard FETCH_HEAD
   make
   echo "now you can:"
