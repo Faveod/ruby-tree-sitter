@@ -2,6 +2,22 @@
 
 # [unreleaseed]
 
+## API Changes for tree-sitter 0.26.3 compatibility
+
+- Updated to tree-sitter v0.26.3
+- **Breaking Changes in tree-sitter 0.26.x API**:
+  - `ts_language_version` renamed to `ts_language_abi_version`
+  - `TSInputEncodingUTF16` split into `TSInputEncodingUTF16LE` and `TSInputEncodingUTF16BE`
+    (now using UTF16LE as default for backward compatibility)
+  - Cancellation flag API (`ts_parser_cancellation_flag`, `ts_parser_set_cancellation_flag`) removed
+    - `Parser#cancellation_flag` and `Parser#cancellation_flag=` are now no-ops for backward compatibility
+  - Timeout API (`ts_parser_timeout_micros`, `ts_parser_set_timeout_micros`) removed
+    - `Parser#timeout_micros` and `Parser#timeout_micros=` are now no-ops for backward compatibility
+  - Use `TSParseOptions` with `progress_callback` for cancellation/timeout functionality in 0.26+
+- `TREE_SITTER_LANGUAGE_VERSION` is now 15 (was 14)
+- `TREE_SITTER_MIN_COMPATIBLE_LANGUAGE_VERSION` is now 13 (was 6)
+- Grammar files (.so) must be built against tree-sitter 0.26+ to work with this version
+
 # v2.0.0 (22-01-2025)
 
 - Bump minimum supported Ruby version to 3.1.
