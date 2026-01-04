@@ -3,7 +3,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-typedef TSLanguage *(tree_sitter_lang)(void);
+// tree-sitter 0.26+ returns const TSLanguage*
+typedef const TSLanguage *(tree_sitter_lang)(void);
 const char *tree_sitter_prefix = "tree_sitter_";
 
 extern VALUE mTreeSitter;
@@ -40,23 +41,29 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
   VALUE path_s = rb_funcall(path, rb_intern("to_s"), 0);
   char *path_cstr = StringValueCStr(path_s);
   void *lib = dlopen(path_cstr, RTLD_NOW);
-  const char *err = dlerror();
-  if (err != NULL) {
+  if (lib == NULL) {
+    const char *err = dlerror();
     VALUE parser_not_found = rb_const_get(mTreeSitter, rb_intern("ParserNotFoundError"));
     rb_raise(parser_not_found,
-             "Could not load shared library `%s'.\nReason: %s", path_cstr, err);
+             "Could not load shared library `%s'.\nReason: %s", path_cstr, err ? err : "unknown error");
   }
 
   char buf[256];
   snprintf(buf, sizeof(buf), "tree_sitter_%s", StringValueCStr(name));
+
+  // Clear any previous error before dlsym (POSIX requirement)
+  dlerror();
+
   tree_sitter_lang *make_ts_language = dlsym(lib, buf);
-  err = dlerror();
-  if (err != NULL) {
+
+  // Only check dlerror if dlsym returned NULL
+  if (make_ts_language == NULL) {
+    const char *err = dlerror();
     dlclose(lib);
     VALUE symbol_not_found = rb_const_get(mTreeSitter, rb_intern("SymbolNotFoundError"));
     rb_raise(symbol_not_found,
-             "Could not load symbol `%s' from library `%s'.\nReason:%s",
-             StringValueCStr(name), path_cstr, err);
+             "Could not load symbol `%s' from library `%s'.\nReason: %s",
+             buf, path_cstr, err ? err : "symbol not found");
   }
 
   TSLanguage *lang = make_ts_language();
@@ -69,7 +76,8 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
              StringValueCStr(name), path_cstr);
   }
 
-  uint32_t version = ts_language_version(lang);
+  // tree-sitter 0.26+ renamed ts_language_version to ts_language_abi_version
+  uint32_t version = ts_language_abi_version(lang);
   if (version < TREE_SITTER_MIN_COMPATIBLE_LANGUAGE_VERSION) {
     VALUE version_error = rb_const_get(mTreeSitter, rb_intern("ParserVersionError"));
     rb_raise(version_error,
@@ -194,7 +202,8 @@ static VALUE language_symbol_type(VALUE self, VALUE symbol) {
  * @see Parser#language=
  */
 static VALUE language_version(VALUE self) {
-  return UINT2NUM(ts_language_version(SELF));
+  // tree-sitter 0.26+ renamed ts_language_version to ts_language_abi_version
+  return UINT2NUM(ts_language_abi_version(SELF));
 }
 
 void init_language(void) {
@@ -220,4 +229,5 @@ void init_language(void) {
   rb_define_method(cLanguage, "symbol_name", language_symbol_name, 1);
   rb_define_method(cLanguage, "symbol_type", language_symbol_type, 1);
   rb_define_method(cLanguage, "version", language_version, 0);
+  rb_define_method(cLanguage, "abi_version", language_version, 0);
 }

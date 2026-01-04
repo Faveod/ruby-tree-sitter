@@ -3,6 +3,7 @@
 *.gemfile
 *.lock
 *.log
+*.o
 *.so
 
 logs
@@ -15,3 +16,9 @@ logs
 /tree-sitter
 /tree-sitter-parsers
 /vendor
+
+# Build artifacts in ext/tree_sitter/
+/ext/tree_sitter/Makefile
+/ext/tree_sitter/extconf.h
+/ext/tree_sitter/tree-sitter-*/
+

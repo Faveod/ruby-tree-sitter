@@ -44,9 +44,14 @@ static VALUE parser_allocate(VALUE klass) {
  * Get the parser's current cancellation flag pointer.
  *
  * @return [Integer]
+ *
+ * @note DEPRECATED in tree-sitter 0.26+. This API was removed.
+ *       Use TSParseOptions with progress_callback instead.
  */
 static VALUE parser_get_cancellation_flag(VALUE self) {
-  return SIZET2NUM(*ts_parser_cancellation_flag(SELF));
+  // tree-sitter 0.26+ removed cancellation_flag API
+  // Return the stored value for backward compatibility
+  return SIZET2NUM(unwrap(self)->cancellation_flag);
 }
 
 /**
@@ -58,13 +63,15 @@ static VALUE parser_get_cancellation_flag(VALUE self) {
  *
  * @see parse
  *
- * @note This is not well-tested in the bindings.
+ * @note DEPRECATED in tree-sitter 0.26+. This API was removed.
+ *       Use TSParseOptions with progress_callback instead.
  *
  * @return nil
  */
 static VALUE parser_set_cancellation_flag(VALUE self, VALUE flag) {
+  // tree-sitter 0.26+ removed cancellation_flag API
+  // Store the value for backward compatibility but it won't affect parsing
   unwrap(self)->cancellation_flag = NUM2SIZET(flag);
-  ts_parser_set_cancellation_flag(SELF, &unwrap(self)->cancellation_flag);
   return Qnil;
 }
 
@@ -349,9 +356,15 @@ static VALUE parser_reset(VALUE self) {
  * Get the duration in microseconds that parsing is allowed to take.
  *
  * @return [Integer]
+ *
+ * @note DEPRECATED in tree-sitter 0.26+. This API was removed.
+ *       Use TSParseOptions with progress_callback instead.
  */
 static VALUE parser_get_timeout_micros(VALUE self) {
-  return ULL2NUM(ts_parser_timeout_micros(SELF));
+  // tree-sitter 0.26+ removed timeout_micros API
+  // Return 0 to indicate no timeout (was the default behavior)
+  (void)self;  // suppress unused parameter warning
+  return ULL2NUM(0);
 }
 
 /**
@@ -362,12 +375,18 @@ static VALUE parser_get_timeout_micros(VALUE self) {
  *
  * @see parse
  *
+ * @note DEPRECATED in tree-sitter 0.26+. This API was removed.
+ *       Use TSParseOptions with progress_callback instead.
+ *
  * @param timeout [Integer]
  *
  * @return [nil]
  */
 static VALUE parser_set_timeout_micros(VALUE self, VALUE timeout) {
-  ts_parser_set_timeout_micros(SELF, NUM2ULL(timeout));
+  // tree-sitter 0.26+ removed timeout_micros API
+  // This is a no-op for backward compatibility
+  (void)self;     // suppress unused parameter warning
+  (void)timeout;  // suppress unused parameter warning
   return Qnil;
 }
 
