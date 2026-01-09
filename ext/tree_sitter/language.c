@@ -66,7 +66,7 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
              buf, path_cstr, err ? err : "symbol not found");
   }
 
-  TSLanguage *lang = make_ts_language();
+  const TSLanguage *lang = make_ts_language();
   if (lang == NULL) {
     dlclose(lib);
     VALUE language_load_error = rb_const_get(mTreeSitter, rb_intern("LanguageLoadError"));
