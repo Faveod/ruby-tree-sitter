@@ -1,6 +1,6 @@
 # News
 
-# [unreleaseed]
+# [unreleased]
 
 ## API Changes for tree-sitter 0.26.3 compatibility
 
