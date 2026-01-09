@@ -121,25 +121,27 @@ if sanitizers
     $warnflags.gsub!(/#{r}/, '')
   end
 
-  cflags.concat %W[
-    -fms-extensions
-    -fdeclspec
-    -fsanitize=#{sanitizers}
-    -fsanitize-blacklist=../../../../.asanignore
-    -fsanitize-recover=#{sanitizers}
-    -fno-sanitize-recover=all
-    -fno-sanitize=null
-    -fno-sanitize=alignment
-    -fno-omit-frame-pointer
-  ]
+  cflags.push(*
+    %W[
+      -fms-extensions
+      -fdeclspec
+      -fsanitize=#{sanitizers}
+      -fsanitize-blacklist=../../../../.asanignore
+      -fsanitize-recover=#{sanitizers}
+      -fno-sanitize-recover=all
+      -fno-sanitize=null
+      -fno-sanitize=alignment
+      -fno-omit-frame-pointer
+    ])
 
-  ldflags.concat %W[
-    -fsanitize=#{sanitizers}
-    -dynamic-libasan
-  ]
+  ldflags.push(*
+    %W[
+      -fsanitize=#{sanitizers}
+      -dynamic-libasan
+    ])
 end
 
-cflags.concat %w[-std=c99 -fPIC -Wall]
+cflags.push(*%w[-std=c99 -fPIC -Wall])
 
 append_cflags(cflags)
 append_ldflags(ldflags)

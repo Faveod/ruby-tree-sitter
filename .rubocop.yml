@@ -76,6 +76,11 @@ Style/BlockDelimiters:
 Style/DoubleNegation:
   Enabled: false
 
+Style/ArgumentsForwarding:
+  Exclude:
+    - lib/tree_stand.rb
+    - lib/tree_stand/*
+
 Style/FormatString:
   Enabled: false
 
