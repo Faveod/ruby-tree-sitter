@@ -5,13 +5,13 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem 'bundler', '~> 2.3'
   gem 'debug', '~> 1.9', require: false
   gem 'gemstash', require: false
+  gem 'ostruct'
   gem 'rake', '~> 13.2'
   gem 'rake-compiler', '~> 1.2'
   gem 'rake-compiler-dock', '~> 1.5'
-  gem 'rubocop', '~> 1.39.0', require: false
+  gem 'rubocop'
   gem 'ruby-lsp', '~> 0.17', require: false
   gem 'ruby_memcheck', '~> 1.3'
   gem 'tapioca', '~> 0.11', require: false
