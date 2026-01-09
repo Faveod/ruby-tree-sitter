@@ -28,10 +28,7 @@ module Visitors
         1 + x * 3 + 2
       MATH
 
-      node_types = []
-      tree.each do |node|
-        node_types << node.type
-      end
+      node_types = tree.map(&:type)
 
       assert_equal(
         #             double sum nodes show the tree is walked depth-first.
@@ -42,10 +39,7 @@ module Visitors
     end
 
     def test_tree_api_walks_the_whole_tree
-      node_types = []
-      @tree.each do |node|
-        node_types << node.type
-      end
+      node_types = @tree.map(&:type)
 
       assert_equal(
         %i[expression sum number + product variable * number],

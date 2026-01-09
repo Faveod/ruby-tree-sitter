@@ -75,7 +75,6 @@ describe 'language' do
   end
 
   it 'must be of correct version' do
-    assert ruby.version <= TreeSitter::LANGUAGE_VERSION \
-           && ruby.version >= TreeSitter::MIN_COMPATIBLE_LANGUAGE_VERSION
+    assert ruby.version.between?(TreeSitter::MIN_COMPATIBLE_LANGUAGE_VERSION, TreeSitter::LANGUAGE_VERSION)
   end
 end
