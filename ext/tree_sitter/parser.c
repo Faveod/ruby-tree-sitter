@@ -352,44 +352,6 @@ static VALUE parser_reset(VALUE self) {
   return Qnil;
 }
 
-/**
- * Get the duration in microseconds that parsing is allowed to take.
- *
- * @return [Integer]
- *
- * @note DEPRECATED in tree-sitter 0.26+. This API was removed.
- *       Use TSParseOptions with progress_callback instead.
- */
-static VALUE parser_get_timeout_micros(VALUE self) {
-  // tree-sitter 0.26+ removed timeout_micros API
-  // Return 0 to indicate no timeout (was the default behavior)
-  (void)self;  // suppress unused parameter warning
-  return ULL2NUM(0);
-}
-
-/**
- * Set the maximum duration in microseconds that parsing should be allowed to
- * take before halting.
- *
- * If parsing takes longer than this, it will halt early, returning +nil+.
- *
- * @see parse
- *
- * @note DEPRECATED in tree-sitter 0.26+. This API was removed.
- *       Use TSParseOptions with progress_callback instead.
- *
- * @param timeout [Integer]
- *
- * @return [nil]
- */
-static VALUE parser_set_timeout_micros(VALUE self, VALUE timeout) {
-  // tree-sitter 0.26+ removed timeout_micros API
-  // This is a no-op for backward compatibility
-  (void)self;     // suppress unused parameter warning
-  (void)timeout;  // suppress unused parameter warning
-  return Qnil;
-}
-
 void init_parser(void) {
   cParser = rb_define_class_under(mTreeSitter, "Parser", rb_cObject);
 
@@ -412,6 +374,4 @@ void init_parser(void) {
                    parser_parse_string_encoding, 3);
   rb_define_method(cParser, "print_dot_graphs", parser_print_dot_graphs, 1);
   rb_define_method(cParser, "reset", parser_reset, 0);
-  rb_define_method(cParser, "timeout_micros", parser_get_timeout_micros, 0);
-  rb_define_method(cParser, "timeout_micros=", parser_set_timeout_micros, 1);
 }
