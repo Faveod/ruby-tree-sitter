@@ -218,7 +218,7 @@ describe 'matches' do
     matches.each do |m|
       _(m).must_be_kind_of Hash
       _(m.keys.sort).must_equal %w[product product.left product.right sum sum.left]
-      _(m.values.all? { |n| TreeSitter::Node == n.class }).must_be_equal true
+      _(m.values.all? { |n| n.instance_of?(TreeSitter::Node) }).must_be_equal true
     end
   end
 end

@@ -39,7 +39,7 @@ module TreeSitter
     end
 
     def extract?
-      !exe.filter { |k, v| %i[tar zip].include?(k) && v }.empty?
+      exe.any? { |k, v| %i[tar zip].include?(k) && v }
     end
 
     def download
@@ -50,7 +50,7 @@ module TreeSitter
       %w[git curl wget].each do |cmd|
         res =
           if find_executable(cmd)
-            send("sources_from_#{cmd}")
+            send("sources_from_#{cmd}?")
           else
             false
           end
@@ -76,7 +76,7 @@ module TreeSitter
       MSG
     end
 
-    def sources_from_curl
+    def sources_from_curl?
       return false if !exe?(:curl) || !extract?
 
       if exe?(:tar)
@@ -90,7 +90,7 @@ module TreeSitter
       true
     end
 
-    def sources_from_git
+    def sources_from_git?
       return false if !exe?(:git)
 
       sh <<~SHELL.chomp
@@ -104,7 +104,7 @@ module TreeSitter
       true
     end
 
-    def sources_from_wget
+    def sources_from_wget?
       return false if !exe?(:wget) || !extract?
 
       if exe?(:tar)

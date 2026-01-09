@@ -45,11 +45,7 @@ module TreeSitter
       pattern_count.times do |i| # rubocop:disable Metrics/BlockLength
         predicate_steps = predicates_for_pattern(i)
         byte_offset = start_byte_for_pattern(i)
-        row =
-          source.chars.map.with_index
-            .take_while { |_, i| i < byte_offset } # rubocop:disable Lint/ShadowingOuterLocalVariable
-            .filter { |c, _| c == "\n" }
-            .size
+        row = source[0...byte_offset].count("\n")
         text_predicates = []
         property_predicates = []
         property_settings = []
