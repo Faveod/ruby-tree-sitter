@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
-
 begin
   RUBY_VERSION =~ /(\d+\.\d+)/
   require "tree_sitter/#{Regexp.last_match(1)}/tree_sitter"
