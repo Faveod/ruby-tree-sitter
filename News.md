@@ -2,6 +2,8 @@
 
 # [unreleased]
 
+# v2.1.0 (19-02-2026)
+
 ## API Changes for tree-sitter 0.26.3 compatibility
 
 - Updated to tree-sitter v0.26.3
@@ -17,6 +19,12 @@
 - `TREE_SITTER_LANGUAGE_VERSION` is now 15 (was 14)
 - `TREE_SITTER_MIN_COMPATIBLE_LANGUAGE_VERSION` is now 13 (was 6)
 - Grammar files (.so) must be built against tree-sitter 0.26+ to work with this version
+
+## Bug Fixes
+
+- Fixed duplicate method definition in QueryCursor ([#100](https://github.com/Faveod/ruby-tree-sitter/pull/99) by [yancya](https://github.com/yancya))
+- Fixed a use-after-free in the logger ([#100](https://github.com/Faveod/ruby-tree-sitter/pull/100) by [yancya](https://github.com/yancya))
+- Fixed a potential buffer overflow when loading parsers.
 
 # v2.0.0 (22-01-2025)
 
@@ -108,17 +116,17 @@
 # v1.6.0
 
 - Cross-compilation is now working for most targets:
-  + `aarch64-linux-gnu`
-  + `aarch64-linux-musl`
-  + `arm-linux-gnu`
-  + `arm-linux-musl`
-  + `x86_64-linux-gnu`
-  + `x86_64-linux-musl`
-  + `x86-linux-musl`
-  + `arm64-darwin`
-  + `x86_64-darwin`
-  We now produce fat native gems so you don't have to install tree-sitter on your machine,
-  and not even compile it if you don't need to.
+  - `aarch64-linux-gnu`
+  - `aarch64-linux-musl`
+  - `arm-linux-gnu`
+  - `arm-linux-musl`
+  - `x86_64-linux-gnu`
+  - `x86_64-linux-musl`
+  - `x86-linux-musl`
+  - `arm64-darwin`
+  - `x86_64-darwin`
+    We now produce fat native gems so you don't have to install tree-sitter on your machine,
+    and not even compile it if you don't need to.
 
 # v1.5.1
 
@@ -137,6 +145,7 @@
 # v1.4.2
 
 - Remove sorbet's `T.unsafe`. This prevented `TreeSitter.language` to function outside of `TreeStand`.
+
 # v1.4.1
 
 v1.4.0 had issues publishing to [rubygems.org](https://rubygems.org/gems/ruby_tree_sitter).
@@ -202,8 +211,8 @@ This version is identical to the previous one.
 ## v0.20.8.2
 
 1. When you use `--disable-sys-lib` this extension will:
-  1. download `tree-sitter` via `git`, `curl`, or `wget`.
-  1. statically link against downloaded `tree-sitter`.
+   1. download `tree-sitter` via `git`, `curl`, or `wget`.
+   1. statically link against downloaded `tree-sitter`.
 1. The native gems are also statically linked.
 
 With static linking, any installed version of `tree-sitter` will not be loaded.
