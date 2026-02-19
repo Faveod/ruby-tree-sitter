@@ -48,8 +48,8 @@ static VALUE language_load(VALUE self, VALUE name, VALUE path) {
              "Could not load shared library `%s'.\nReason: %s", path_cstr, err ? err : "unknown error");
   }
 
-  char buf[256];
-  snprintf(buf, sizeof(buf), "tree_sitter_%s", StringValueCStr(name));
+  VALUE symbol_name = rb_sprintf("tree_sitter_%s", StringValueCStr(name));
+  char *buf = StringValueCStr(symbol_name);
 
   // Clear any previous error before dlsym (POSIX requirement)
   dlerror();
