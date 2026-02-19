@@ -4,9 +4,9 @@
 
 # v2.1.0 (19-02-2026)
 
-## API Changes for tree-sitter 0.26.3 compatibility
+## API Changes for tree-sitter 0.26 compatibility
 
-- Updated to tree-sitter v0.26.3
+- Updated to tree-sitter v0.26.5
 - **Breaking Changes in tree-sitter 0.26.x API**:
   - `ts_language_version` renamed to `ts_language_abi_version`
   - `TSInputEncodingUTF16` split into `TSInputEncodingUTF16LE` and `TSInputEncodingUTF16BE`
