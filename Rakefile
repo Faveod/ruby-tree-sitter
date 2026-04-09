@@ -24,7 +24,7 @@ PLATFORMS = %w[
   x86_64-linux-musl
 ].freeze
 
-ENV['RUBY_CC_VERSION'] = RakeCompilerDock.ruby_cc_version('~> 3.1')
+ENV['RUBY_CC_VERSION'] = RakeCompilerDock.ruby_cc_version('~> 3.1', '~> 4.0')
 
 gemspec = Gem::Specification.load('tree_sitter.gemspec')
 
