@@ -10,7 +10,7 @@ group :development, :test do
   gem 'ostruct'
   gem 'rake', '~> 13.2'
   gem 'rake-compiler', '~> 1.2'
-  gem 'rake-compiler-dock', '~> 1.5'
+  gem 'rake-compiler-dock', '~> 1.11'
   gem 'rubocop'
   gem 'ruby-lsp', '~> 0.17', require: false
   gem 'ruby_memcheck', '~> 1.3'
