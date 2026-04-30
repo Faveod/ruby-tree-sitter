@@ -1,6 +1,8 @@
 # News
 
-# [unreleased]
+# v2.1.1 (30-04-2026)
+
+- Precompiled gems for ruby 4 are here.
 
 # v2.1.0 (19-02-2026)
 
